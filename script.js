@@ -2213,7 +2213,8 @@
                 icon: "📖",
                 desc: "Study alone (free)",
                 costPerHour: 0, // Free - just reading/practicing
-                requires: () => true,
+                requires: () => !(state.job === 'military' || state.educationType === 'military_training' || state.educationType === 'military_service'),
+                requiresText: "Not available in military",
                 effects: {
                     technical: 0.2,
                     creativity: 0.05,
@@ -2228,7 +2229,8 @@
                 icon: "👨‍🏫",
                 desc: "Study with a tutor",
                 costPerHour: 25,
-                requires: () => true,
+                requires: () => !(state.job === 'military' || state.educationType === 'military_training' || state.educationType === 'military_service'),
+                requiresText: "Not available in military",
                 effects: {
                     technical: 0.5,
                     creativity: 0.15,
@@ -2958,6 +2960,22 @@
             
             // ============ FITNESS GAINS ============
             
+            // Military bonus - mandatory PT keeps you in shape
+            let inMilitary = state.job === 'military' || state.phase === 'military_training' || state.educationType === 'military_training' || state.educationType === 'military_service';
+            if (inMilitary) {
+                // Military has mandatory fitness training
+                fitnessGain += 4 * gainMultiplier; // Strong weekly fitness gain
+                state.skills.physical = Math.min(100, state.skills.physical + 1.5 * gainMultiplier);
+                state.fitness.workoutStreak++; // Counts as gym
+                state.fitness.routineEstablished = true; // Military enforces routine
+                
+                // Boot camp is especially intense
+                if (state.educationType === 'military_training') {
+                    fitnessGain += 3 * gainMultiplier; // Extra gains during training
+                    state.skills.physical = Math.min(100, state.skills.physical + 1 * gainMultiplier);
+                }
+            }
+            
             // Gym workout gains (must have membership)
             if (state.fitness.gymMember && gymHours > 0) {
                 state.fitness.workoutStreak++;
@@ -2976,8 +2994,8 @@
                     state.fitness.routineEstablished = true;
                     state.stress = Math.max(0, state.stress - 1);
                 }
-            } else {
-                // Break workout streak if not going to gym
+            } else if (!inMilitary) {
+                // Break workout streak if not going to gym (and not in military)
                 if (state.fitness.workoutStreak > 0) {
                     // Older people lose their routine faster
                     let streakLoss = age >= 40 ? 3 : 2;
@@ -3320,6 +3338,10 @@
             let income = 0;
             let expenses = 0;
             
+            // Check if in military or jail (housing/transport provided)
+            let inMilitary = state.job === 'military' || state.phase === 'military_training' || state.educationType === 'military_training' || state.educationType === 'military_service';
+            let inJail = state.criminal?.inJail;
+            
             if (state.employed && state.job) {
                 // Military uses rank-based pay
                 if (state.job === 'military') {
@@ -3336,9 +3358,16 @@
                 }
             }
             
-            expenses += HOUSING[state.home].rent;
-            expenses += TRANSPORT[state.car].cost;
-            expenses += 50; // Base living expenses
+            // Military: barracks provided, no housing/transport costs
+            // Jail: incarcerated, no housing/transport costs
+            if (inMilitary || inJail) {
+                // No rent or transport costs - barracks/jail provided
+                expenses += 0;
+            } else {
+                expenses += HOUSING[state.home].rent;
+                expenses += TRANSPORT[state.car].cost;
+            }
+            expenses += 50; // Base living expenses (food, toiletries, etc.)
             
             if (state.debt > 0) {
                 expenses += Math.ceil(state.debt / 200); // Loan payments
@@ -10680,21 +10709,44 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
                 statusViewIcon.style.display = state.phase === 'employed' || state.phase === 'job_hunting' || state.phase === 'education' ? '' : 'none';
             }
             
-            // Housing
-            let home = HOUSING[state.home];
-            document.getElementById('homeIcon').innerText = home.icon;
-            document.getElementById('homeName').innerText = home.name;
-            let homeStressIndicator = home.stress > 0 ? ` 😰+${home.stress}` : home.stress < 0 ? ` 😌${home.stress}` : '';
-            let homeAppealIndicator = (state.gender === 'male' && home.appeal !== 0) ? ` 💕${home.appeal > 0 ? '+' : ''}${home.appeal}` : '';
-            document.getElementById('homeDesc').innerText = home.desc + homeStressIndicator + homeAppealIndicator;
+            // Housing - special cases for military/jail
+            let inMilitary = state.job === 'military' || state.educationType === 'military_training' || state.educationType === 'military_service';
+            let inJail = state.criminal?.inJail;
             
-            // Transport
-            let car = TRANSPORT[state.car];
-            document.getElementById('carIcon').innerText = car.icon;
-            document.getElementById('carName').innerText = car.name;
-            let carStressIndicator = car.stress > 0 ? ` 😰+${car.stress}` : car.stress < 0 ? ` 😌${car.stress}` : '';
-            let carAppealIndicator = (state.gender === 'male' && car.appeal !== 0) ? ` 💕${car.appeal > 0 ? '+' : ''}${car.appeal}` : '';
-            document.getElementById('carDesc').innerText = car.desc + carStressIndicator + carAppealIndicator;
+            if (inJail) {
+                document.getElementById('homeIcon').innerText = '🔒';
+                document.getElementById('homeName').innerText = 'Incarcerated';
+                document.getElementById('homeDesc').innerText = `${state.criminal.jailWeeksRemaining} weeks remaining`;
+            } else if (inMilitary) {
+                document.getElementById('homeIcon').innerText = '🎖️';
+                document.getElementById('homeName').innerText = 'Military Barracks';
+                document.getElementById('homeDesc').innerText = 'Housing provided';
+            } else {
+                let home = HOUSING[state.home];
+                document.getElementById('homeIcon').innerText = home.icon;
+                document.getElementById('homeName').innerText = home.name;
+                let homeStressIndicator = home.stress > 0 ? ` 😰+${home.stress}` : home.stress < 0 ? ` 😌${home.stress}` : '';
+                let homeAppealIndicator = (state.gender === 'male' && home.appeal !== 0) ? ` 💕${home.appeal > 0 ? '+' : ''}${home.appeal}` : '';
+                document.getElementById('homeDesc').innerText = home.desc + homeStressIndicator + homeAppealIndicator;
+            }
+            
+            // Transport - special cases for military/jail
+            if (inJail) {
+                document.getElementById('carIcon').innerText = '🚔';
+                document.getElementById('carName').innerText = 'N/A';
+                document.getElementById('carDesc').innerText = 'No transport needed';
+            } else if (inMilitary) {
+                document.getElementById('carIcon').innerText = '🚛';
+                document.getElementById('carName').innerText = 'Military Transport';
+                document.getElementById('carDesc').innerText = 'Transport provided';
+            } else {
+                let car = TRANSPORT[state.car];
+                document.getElementById('carIcon').innerText = car.icon;
+                document.getElementById('carName').innerText = car.name;
+                let carStressIndicator = car.stress > 0 ? ` 😰+${car.stress}` : car.stress < 0 ? ` 😌${car.stress}` : '';
+                let carAppealIndicator = (state.gender === 'male' && car.appeal !== 0) ? ` 💕${car.appeal > 0 ? '+' : ''}${car.appeal}` : '';
+                document.getElementById('carDesc').innerText = car.desc + carStressIndicator + carAppealIndicator;
+            }
             
             // Job
             if (state.employed && state.job) {
@@ -10870,9 +10922,15 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
                 document.getElementById('fitnessLevel').className = 'text-red-400';
             }
             
-            // Gym and eating status
-            document.getElementById('fitnessGym').innerText = state.fitness.gymMember ? '🏋️ Gym' : '❌ No gym';
-            document.getElementById('fitnessGym').className = state.fitness.gymMember ? 'text-green-400 text-[9px]' : 'text-gray-500 text-[9px]';
+            // Gym and eating status - special case for military
+            let inMilitaryForFitness = state.job === 'military' || state.educationType === 'military_training' || state.educationType === 'military_service';
+            if (inMilitaryForFitness) {
+                document.getElementById('fitnessGym').innerText = '🎖️ Military PT';
+                document.getElementById('fitnessGym').className = 'text-green-400 text-[9px]';
+            } else {
+                document.getElementById('fitnessGym').innerText = state.fitness.gymMember ? '🏋️ Gym' : '❌ No gym';
+                document.getElementById('fitnessGym').className = state.fitness.gymMember ? 'text-green-400 text-[9px]' : 'text-gray-500 text-[9px]';
+            }
             document.getElementById('fitnessEating').innerText = state.fitness.healthyEating ? '🥗 Healthy' : '🍔 Normal';
             document.getElementById('fitnessEating').className = state.fitness.healthyEating ? 'text-green-400 text-[9px]' : 'text-gray-500 text-[9px]';
             
@@ -11321,6 +11379,19 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
 
         // ============ HOUSING & TRANSPORT MODALS ============
         function openHousingModal() {
+            // Can't change housing while in military or jail
+            let inMilitary = state.job === 'military' || state.educationType === 'military_training' || state.educationType === 'military_service';
+            let inJail = state.criminal?.inJail;
+            
+            if (inMilitary) {
+                alert("🎖️ Military Housing\n\nYou're living in barracks provided by the military. Housing and transportation are taken care of for the duration of your service.");
+                return;
+            }
+            if (inJail) {
+                alert("🔒 Incarcerated\n\nYou don't have housing options while serving your sentence.");
+                return;
+            }
+            
             let modal = document.getElementById('housingModal');
             let optionsDiv = document.getElementById('housingOptions');
             optionsDiv.innerHTML = '';
@@ -11436,6 +11507,19 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
         }
         
         function openTransportModal() {
+            // Can't change transport while in military or jail
+            let inMilitary = state.job === 'military' || state.educationType === 'military_training' || state.educationType === 'military_service';
+            let inJail = state.criminal?.inJail;
+            
+            if (inMilitary) {
+                alert("🎖️ Military Transport\n\nThe military provides all necessary transportation. Your personal vehicle expenses are suspended during service.");
+                return;
+            }
+            if (inJail) {
+                alert("🔒 Incarcerated\n\nYou don't have transportation options while serving your sentence.");
+                return;
+            }
+            
             let modal = document.getElementById('transportModal');
             let optionsDiv = document.getElementById('transportOptions');
             optionsDiv.innerHTML = '';
@@ -12671,7 +12755,13 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
                     desc: `${timeStr} to go. The yard is where reputations are made.`,
                     choices: [
                         { text: "Keep to yourself", effect: () => { state.stress += 5; return { icon: "😐", text: "Staying out of trouble.", stats: "+5 Stress" }; }},
-                        { text: "Join a workout group", effect: () => { state.skills.physical += 3; state.criminal.connections += 1; return { icon: "🏋️", text: "Gains and connections.", stats: "+3 Physical, +1 Connection" }; }},
+                        { text: "Join a workout group", effect: () => { 
+                            state.skills.physical += 3; 
+                            state.criminal.connections += 1; 
+                            state.fitness.fitnessLevel = Math.min(100, state.fitness.fitnessLevel + 3);
+                            state.fitness.workoutStreak++;
+                            return { icon: "🏋️", text: "Prison iron. Gains and connections.", stats: "+3 Physical, +3 Fitness, +1 Connection" }; 
+                        }},
                         { text: "Get in a fight", effect: () => {
                             if (Math.random() < 0.5) {
                                 state.health -= 15; state.criminal.jailWeeksRemaining += 8;
@@ -15105,7 +15195,7 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
                 let interested = match.interested ? '💚 Interested in you' : '❓ Unknown';
                 
                 return `
-                    <div class="p-3 bg-gray-800 rounded-lg ${match.interested ? 'border border-green-500/30' : ''} cursor-pointer hover:bg-gray-700/50 transition-colors" onclick="viewMatchProfile(${index})">
+                    <div id="dating-match-${index}" class="p-3 bg-gray-800 rounded-lg ${match.interested ? 'border border-green-500/30' : ''} cursor-pointer hover:bg-gray-700/50 transition-colors" onclick="viewMatchProfile(${index})">
                         <div class="flex items-center gap-3">
                             <div class="text-3xl">${match.icon || (match.gender === 'female' ? '👩' : '👨')}</div>
                             <div class="flex-grow">
@@ -15119,7 +15209,7 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
                             </div>
                         </div>
                         <div class="text-xs text-gray-400 mt-2 italic">"${match.bio}"</div>
-                        <div class="flex gap-2 mt-3" onclick="event.stopPropagation()">
+                        <div id="dating-match-actions-${index}" class="flex gap-2 mt-3" onclick="event.stopPropagation()">
                             <button onclick="swipeLeft(${index})" class="flex-1 py-2 bg-red-600/50 hover:bg-red-600 text-white rounded text-sm transition-colors">
                                 ❌ Pass
                             </button>
@@ -15192,11 +15282,10 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
         
         function swipeLeft(index) {
             // Remove the match from the list
-            let matchEl = document.querySelectorAll('#datingContent .bg-gray-800')[index];
-            if (matchEl) {
-                matchEl.style.opacity = '0.3';
-                matchEl.querySelector('.flex.gap-2').innerHTML = '<div class="text-center text-gray-500 py-2">Passed</div>';
-            }
+            let matchEl = document.getElementById(`dating-match-${index}`);
+            let actionsEl = document.getElementById(`dating-match-actions-${index}`);
+            if (matchEl) matchEl.style.opacity = '0.3';
+            if (actionsEl) actionsEl.innerHTML = '<div class="text-center text-gray-500 py-2">Passed</div>';
         }
         
         function viewMatchProfile(index) {
@@ -15279,7 +15368,8 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
             let match = currentMatches[index];
             if (!match) return;
             
-            let matchEl = document.querySelectorAll('#datingContent .bg-gray-800')[index];
+            let matchEl = document.getElementById(`dating-match-${index}`);
+            let actionsEl = document.getElementById(`dating-match-actions-${index}`);
             
             if (match.willMatch && match.interested) {
                 // It's an instant match!
@@ -15301,8 +15391,8 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
                 alert(`💕 It's a Match!\n\nYou and ${match.name} liked each other!\n\nYou've started chatting and decided to meet up. This could be the start of something special!\n\n(You'll learn more about them as you spend time together)`);
             } else if (match.willMatch) {
                 // They might like you back - show pending then resolve
-                if (matchEl) {
-                    matchEl.querySelector('.flex.gap-2').innerHTML = '<div class="text-center text-yellow-400 py-2">💛 Waiting for them to see you...</div>';
+                if (actionsEl) {
+                    actionsEl.innerHTML = '<div class="text-center text-yellow-400 py-2">💛 Waiting for them to see you...</div>';
                 }
                 
                 // Delayed match - always resolves (30% match, 70% no match)
@@ -15322,18 +15412,16 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
                         updateUI();
                         alert(`💕 ${match.name} liked you back!\n\nLooks like they were interested after all!\n\n(You'll learn more about them as you spend time together)`);
                         closeDatingModal();
-                    } else if (matchEl) {
+                    } else {
                         // They didn't match back - show no match
-                        matchEl.style.opacity = '0.5';
-                        matchEl.querySelector('.flex.gap-2').innerHTML = '<div class="text-center text-gray-500 py-2">They didn\'t swipe back 😔</div>';
+                        if (matchEl) matchEl.style.opacity = '0.5';
+                        if (actionsEl) actionsEl.innerHTML = '<div class="text-center text-gray-500 py-2">They didn\'t swipe back 😔</div>';
                     }
                 }, 1500); // 1.5 second delay for suspense
             } else {
                 // They're not interested - immediate no match
-                if (matchEl) {
-                    matchEl.style.opacity = '0.5';
-                    matchEl.querySelector('.flex.gap-2').innerHTML = '<div class="text-center text-gray-500 py-2">No match 😔</div>';
-                }
+                if (matchEl) matchEl.style.opacity = '0.5';
+                if (actionsEl) actionsEl.innerHTML = '<div class="text-center text-gray-500 py-2">No match 😔</div>';
             }
         }
         
@@ -17514,6 +17602,13 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
             }
             if (!state.employed && state.freeTime.overtime > 0) {
                 state.freeTime.overtime = 0;
+            }
+            
+            // Military: no studying or tutoring
+            let inMilitary = state.job === 'military' || state.educationType === 'military_training' || state.educationType === 'military_service';
+            if (inMilitary) {
+                if (state.freeTime.study > 0) state.freeTime.study = 0;
+                if (state.freeTime.study_premium > 0) state.freeTime.study_premium = 0;
             }
         }
 
