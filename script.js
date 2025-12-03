@@ -15279,8 +15279,10 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
             let match = currentMatches[index];
             if (!match) return;
             
+            let matchEl = document.querySelectorAll('#datingContent .bg-gray-800')[index];
+            
             if (match.willMatch && match.interested) {
-                // It's a match!
+                // It's an instant match!
                 state.hasPartner = true;
                 state.partnerName = match.name;
                 state.partnerStats = {
@@ -15298,35 +15300,36 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
                 
                 alert(`💕 It's a Match!\n\nYou and ${match.name} liked each other!\n\nYou've started chatting and decided to meet up. This could be the start of something special!\n\n(You'll learn more about them as you spend time together)`);
             } else if (match.willMatch) {
-                // They haven't swiped yet - show pending
-                let matchEl = document.querySelectorAll('#datingContent .bg-gray-800')[index];
+                // They might like you back - show pending then resolve
                 if (matchEl) {
-                    matchEl.querySelector('.flex.gap-2').innerHTML = '<div class="text-center text-yellow-400 py-2">💛 Liked - waiting for them...</div>';
+                    matchEl.querySelector('.flex.gap-2').innerHTML = '<div class="text-center text-yellow-400 py-2">💛 Waiting for them to see you...</div>';
                 }
                 
-                // Small chance they match back later
-                if (Math.random() < 0.3) {
-                    setTimeout(() => {
-                        if (!state.hasPartner) {
-                            state.hasPartner = true;
-                            state.partnerName = match.name;
-                            state.partnerStats = {
-                                ...match,
-                                supportiveness: Math.floor(Math.random() * 30 + 35),
-                                traitsRevealed: { attractiveness: true, job: false, income: false, trait: false, flaw: false },
-                                datingStartWeek: state.totalWeeks
-                            };
-                            state.relationshipWeeks = 0;
-                            addLog(`${match.name} matched with you!`);
-                            updateUI();
-                            alert(`💕 ${match.name} liked you back!\n\nLooks like they were interested after all!\n\n(You'll learn more about them as you spend time together)`);
-                            closeDatingModal();
-                        }
-                    }, 2000);
-                }
+                // Delayed match - always resolves (30% match, 70% no match)
+                let willMatchBack = Math.random() < 0.3;
+                setTimeout(() => {
+                    if (willMatchBack && !state.hasPartner) {
+                        state.hasPartner = true;
+                        state.partnerName = match.name;
+                        state.partnerStats = {
+                            ...match,
+                            supportiveness: Math.floor(Math.random() * 30 + 35),
+                            traitsRevealed: { attractiveness: true, job: false, income: false, trait: false, flaw: false },
+                            datingStartWeek: state.totalWeeks
+                        };
+                        state.relationshipWeeks = 0;
+                        addLog(`${match.name} matched with you!`);
+                        updateUI();
+                        alert(`💕 ${match.name} liked you back!\n\nLooks like they were interested after all!\n\n(You'll learn more about them as you spend time together)`);
+                        closeDatingModal();
+                    } else if (matchEl) {
+                        // They didn't match back - show no match
+                        matchEl.style.opacity = '0.5';
+                        matchEl.querySelector('.flex.gap-2').innerHTML = '<div class="text-center text-gray-500 py-2">They didn\'t swipe back 😔</div>';
+                    }
+                }, 1500); // 1.5 second delay for suspense
             } else {
-                // They're not interested
-                let matchEl = document.querySelectorAll('#datingContent .bg-gray-800')[index];
+                // They're not interested - immediate no match
                 if (matchEl) {
                     matchEl.style.opacity = '0.5';
                     matchEl.querySelector('.flex.gap-2').innerHTML = '<div class="text-center text-gray-500 py-2">No match 😔</div>';
