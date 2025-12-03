@@ -17702,13 +17702,27 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
             let date = document.getElementById('eventDate')?.innerText || '';
             let title = document.getElementById('eventTitle')?.innerText || '';
             let desc = document.getElementById('eventDesc')?.innerText || '';
-            let choices = document.getElementById('choicesContainer')?.innerHTML || '';
             
             if (document.getElementById('eventCategoryMobile')) document.getElementById('eventCategoryMobile').innerText = category;
             if (document.getElementById('eventDateMobile')) document.getElementById('eventDateMobile').innerText = date;
             if (document.getElementById('eventTitleMobile')) document.getElementById('eventTitleMobile').innerText = title;
             if (document.getElementById('eventDescMobile')) document.getElementById('eventDescMobile').innerText = desc;
-            if (document.getElementById('choicesContainerMobile')) document.getElementById('choicesContainerMobile').innerHTML = choices;
+            
+            // Clone choice buttons WITH their event handlers
+            let desktopChoices = document.getElementById('choicesContainer');
+            let mobileChoices = document.getElementById('choicesContainerMobile');
+            
+            if (desktopChoices && mobileChoices) {
+                mobileChoices.innerHTML = '';
+                
+                // Clone each button and copy its onclick handler
+                desktopChoices.querySelectorAll('button').forEach(btn => {
+                    let clone = btn.cloneNode(true);
+                    // Copy the onclick handler (cloneNode doesn't copy event listeners)
+                    clone.onclick = btn.onclick;
+                    mobileChoices.appendChild(clone);
+                });
+            }
         }
         
         function syncMobileLog() {
