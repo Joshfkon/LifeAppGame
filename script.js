@@ -3424,6 +3424,13 @@
             entry.className = 'border-l-2 border-gray-700 pl-2';
             entry.innerText = `Age ${age}: ${text}`;
             document.getElementById('eventLog').prepend(entry);
+            
+            // Sync to mobile log
+            let mobileLog = document.getElementById('eventLogMobile');
+            if (mobileLog) {
+                let mobileEntry = entry.cloneNode(true);
+                mobileLog.prepend(mobileEntry);
+            }
         }
 
         // ============ EVENT SYSTEM ============
@@ -10497,6 +10504,9 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
                 };
                 container.appendChild(btn);
             });
+            
+            // Sync to mobile event card
+            syncMobileEventCard();
         }
         
         // Check if an event is on cooldown or was recently shown
@@ -10547,14 +10557,25 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
                 playSound('coin');
             }
             
-            // Show outcome
+            // Show outcome (desktop)
             document.getElementById('outcomeIcon').innerText = outcome.icon;
             document.getElementById('outcomeText').innerText = outcome.text;
             document.getElementById('outcomeStats').innerText = outcome.stats || '';
             document.getElementById('outcomeDisplay').classList.remove('hidden');
             
+            // Show outcome (mobile)
+            if (document.getElementById('outcomeIconMobile')) {
+                document.getElementById('outcomeIconMobile').innerText = outcome.icon;
+                document.getElementById('outcomeTextMobile').innerText = outcome.text;
+                document.getElementById('outcomeStatsMobile').innerText = outcome.stats || '';
+                document.getElementById('outcomeDisplayMobile').classList.remove('hidden');
+            }
+            
             setTimeout(() => {
                 document.getElementById('outcomeDisplay').classList.add('hidden');
+                if (document.getElementById('outcomeDisplayMobile')) {
+                    document.getElementById('outcomeDisplayMobile').classList.add('hidden');
+                }
                 nextEvent();
             }, 1500);
         }
@@ -11148,6 +11169,15 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
                 debtWarning.innerText = `⚠️ $${totalDebt.toLocaleString()} in debt`;
             } else {
                 debtWarning.classList.add('hidden');
+            }
+            
+            // Sync mobile displays
+            updateMobileStats();
+            syncMobileLog();
+            
+            // Refresh mobile status cards periodically (not every update for performance)
+            if (state.totalWeeks % 4 === 0 || state.totalWeeks <= 1) {
+                setTimeout(refreshMobileStatusCards, 50);
             }
         }
 
@@ -17624,11 +17654,114 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
             }
         }
 
+        // ============ MOBILE SUPPORT ============
+        
+        function showMobilePanel(panel) {
+            // Hide all panels
+            document.querySelectorAll('.mobile-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+            
+            // Show selected panel
+            let panelId = `mobile${panel.charAt(0).toUpperCase() + panel.slice(1)}Panel`;
+            let navId = `nav${panel.charAt(0).toUpperCase() + panel.slice(1)}`;
+            
+            document.getElementById(panelId)?.classList.add('active');
+            document.getElementById(navId)?.classList.add('active');
+        }
+        
+        function updateMobileStats() {
+            // Sync stat values
+            let healthVal = document.getElementById('healthVal')?.innerText || '100';
+            let energyVal = document.getElementById('energyVal')?.innerText || '100';
+            let happyVal = document.getElementById('happyVal')?.innerText || '75';
+            let stressVal = document.getElementById('stressVal')?.innerText || '20';
+            
+            document.getElementById('healthValMobile')?.setAttribute('innerText', healthVal);
+            document.getElementById('energyValMobile')?.setAttribute('innerText', energyVal);
+            document.getElementById('happyValMobile')?.setAttribute('innerText', happyVal);
+            document.getElementById('stressValMobile')?.setAttribute('innerText', stressVal);
+            
+            if (document.getElementById('healthValMobile')) document.getElementById('healthValMobile').innerText = healthVal;
+            if (document.getElementById('energyValMobile')) document.getElementById('energyValMobile').innerText = energyVal;
+            if (document.getElementById('happyValMobile')) document.getElementById('happyValMobile').innerText = happyVal;
+            if (document.getElementById('stressValMobile')) document.getElementById('stressValMobile').innerText = stressVal;
+            
+            // Sync age and money
+            let ageDisplay = document.getElementById('ageDisplay')?.innerText || '18';
+            let moneyDisplay = document.getElementById('moneyDisplay')?.innerText || '$1,200';
+            let phaseBadge = document.getElementById('phaseBadge')?.innerText || 'Deciding';
+            
+            if (document.getElementById('ageDisplayMobile')) document.getElementById('ageDisplayMobile').innerText = ageDisplay;
+            if (document.getElementById('moneyDisplayMobile')) document.getElementById('moneyDisplayMobile').innerText = moneyDisplay;
+            if (document.getElementById('phaseBadgeMobile')) document.getElementById('phaseBadgeMobile').innerText = phaseBadge;
+        }
+        
+        function syncMobileEventCard() {
+            // Sync event card content to mobile
+            let category = document.getElementById('eventCategory')?.innerText || '';
+            let date = document.getElementById('eventDate')?.innerText || '';
+            let title = document.getElementById('eventTitle')?.innerText || '';
+            let desc = document.getElementById('eventDesc')?.innerText || '';
+            let choices = document.getElementById('choicesContainer')?.innerHTML || '';
+            
+            if (document.getElementById('eventCategoryMobile')) document.getElementById('eventCategoryMobile').innerText = category;
+            if (document.getElementById('eventDateMobile')) document.getElementById('eventDateMobile').innerText = date;
+            if (document.getElementById('eventTitleMobile')) document.getElementById('eventTitleMobile').innerText = title;
+            if (document.getElementById('eventDescMobile')) document.getElementById('eventDescMobile').innerText = desc;
+            if (document.getElementById('choicesContainerMobile')) document.getElementById('choicesContainerMobile').innerHTML = choices;
+        }
+        
+        function syncMobileLog() {
+            // Sync log entries to mobile
+            let logContent = document.getElementById('eventLog')?.innerHTML || '';
+            if (document.getElementById('eventLogMobile')) {
+                document.getElementById('eventLogMobile').innerHTML = logContent;
+            }
+        }
+        
+        function initMobileStatusCards() {
+            // Clone status cards to mobile panel
+            let statusContent = document.getElementById('mobileStatusContent');
+            if (!statusContent) return;
+            
+            // Get all possession cards from desktop left panel
+            // The desktop panel has class "hidden md:flex" and contains a "w-56" div
+            let desktopArea = document.querySelectorAll('.w-56');
+            let leftPanel = null;
+            
+            // Find the w-56 that's inside the desktop layout (has possession-card children)
+            desktopArea.forEach(el => {
+                if (el.querySelector('.possession-card') && el.querySelector('#statusCard')) {
+                    leftPanel = el;
+                }
+            });
+            
+            if (!leftPanel) return;
+            
+            let cards = leftPanel.querySelectorAll('.possession-card');
+            statusContent.innerHTML = '';
+            
+            cards.forEach(card => {
+                let clone = card.cloneNode(true);
+                statusContent.appendChild(clone);
+            });
+        }
+        
+        // Re-sync mobile status cards when UI updates (for dynamic content)
+        function refreshMobileStatusCards() {
+            initMobileStatusCards();
+        }
+
         function init() {
             createParticles();
             let events = getPhaseEvents();
             displayEvent(events[0]);
             updateUI();
+            
+            // Initialize mobile status cards after a short delay
+            setTimeout(() => {
+                initMobileStatusCards();
+            }, 100);
         }
 
         init();

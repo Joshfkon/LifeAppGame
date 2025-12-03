@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -280,8 +281,43 @@
 
     <div class="h-screen flex flex-col max-w-5xl mx-auto relative z-10">
 
-        <!-- Top Stats Bar -->
-        <div class="p-3 flex justify-between items-center border-b border-gray-800/50">
+        <!-- Top Stats Bar - MOBILE VERSION -->
+        <div class="md:hidden p-2 border-b border-gray-800/50">
+            <!-- Row 1: Age, Phase, Money, Menu -->
+            <div class="flex justify-between items-center mb-2">
+                <div class="text-sm font-bold text-white">
+                    <span id="ageDisplayMobile">18</span> yrs
+                </div>
+                <div id="phaseBadgeMobile" class="phase-badge bg-purple-900/50 text-purple-300 text-[8px]">Deciding</div>
+                <div class="text-sm font-bold text-green-400" id="moneyDisplayMobile">$1,200</div>
+                <div class="flex gap-1">
+                    <button onclick="toggleSound()" class="p-1.5 rounded bg-gray-800 text-gray-400 text-sm">🔊</button>
+                    <button onclick="openGameMenu()" class="p-1.5 rounded bg-gray-800 text-gray-400 text-sm">⚙️</button>
+                </div>
+            </div>
+            <!-- Row 2: Stats Grid -->
+            <div class="mobile-stats-grid">
+                <div class="mobile-stat-item" onclick="openStatsModal('health')">
+                    <div class="stat-icon bg-red-900/50 text-red-400">♥</div>
+                    <span class="stat-value text-red-400" id="healthValMobile">100</span>
+                </div>
+                <div class="mobile-stat-item" onclick="openStatsModal('energy')">
+                    <div class="stat-icon bg-yellow-900/50 text-yellow-400">⚡</div>
+                    <span class="stat-value text-yellow-400" id="energyValMobile">100</span>
+                </div>
+                <div class="mobile-stat-item" onclick="openStatsModal('happiness')">
+                    <div class="stat-icon bg-blue-900/50 text-blue-400">☺</div>
+                    <span class="stat-value text-blue-400" id="happyValMobile">75</span>
+                </div>
+                <div class="mobile-stat-item" onclick="openStatsModal('stress')">
+                    <div class="stat-icon bg-purple-900/50 text-purple-400">😰</div>
+                    <span class="stat-value text-purple-400" id="stressValMobile">20</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Stats Bar - DESKTOP VERSION -->
+        <div class="hidden md:flex p-3 justify-between items-center border-b border-gray-800/50">
             <div class="flex gap-4">
                 <div class="flex items-center gap-1 cursor-pointer hover:opacity-80" title="Click for details" onclick="openStatsModal('health')">
                     <div class="stat-icon bg-red-900/50 text-red-400">♥</div>
@@ -339,9 +375,9 @@
         </div>
 
         <!-- Phase Progress Bar -->
-        <div class="px-4 py-2 border-b border-gray-800/30">
+        <div class="px-3 md:px-4 py-1.5 md:py-2 border-b border-gray-800/30">
             <div class="flex items-center gap-2">
-                <span class="text-[10px] text-gray-500 w-24" id="phaseLabel">Week 1</span>
+                <span class="text-[10px] text-gray-500 w-16 md:w-24" id="phaseLabel">Week 1</span>
                 <div class="flex-grow h-1 bg-gray-800 rounded-full overflow-hidden">
                     <div id="phaseProgress" class="h-full bg-purple-500 rounded-full transition-all" style="width: 0%"></div>
                 </div>
@@ -349,8 +385,64 @@
             </div>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="flex-grow flex gap-4 p-4 overflow-hidden">
+        <!-- Main Content Area - MOBILE VERSION (Tabbed) -->
+        <div class="md:hidden flex-grow overflow-hidden">
+            <!-- Mobile Status Panel -->
+            <div id="mobileStatusPanel" class="mobile-panel">
+                <div id="mobileStatusContent" class="space-y-2">
+                    <!-- Status cards will be cloned here by JS -->
+                </div>
+            </div>
+            
+            <!-- Mobile Event Panel (Default Active) -->
+            <div id="mobileEventPanel" class="mobile-panel active">
+                <div id="mobileEventArea" class="flex flex-col h-full">
+                    <!-- Dice display for mobile -->
+                    <div id="diceDisplayMobile" class="hidden flex items-center justify-center py-8">
+                        <div class="dice-container text-center">
+                            <div id="diceRollerMobile" class="dice-roller">
+                                <div class="dice">🎲</div>
+                            </div>
+                            <div id="diceResultMobile" class="dice-result hidden">
+                                <span id="diceValueMobile" class="text-4xl font-bold text-white">20</span>
+                                <div id="diceLabelMobile" class="text-sm text-gray-400 mt-1">Rolling...</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Outcome display for mobile -->
+                    <div id="outcomeDisplayMobile" class="hidden py-4">
+                        <div class="outcome-flash bg-gray-900/95 border border-gray-700 rounded-xl p-4 text-center">
+                            <div id="outcomeIconMobile" class="text-3xl mb-2">⚡</div>
+                            <p id="outcomeTextMobile" class="text-sm text-gray-300"></p>
+                            <div id="outcomeStatsMobile" class="mt-2 text-xs text-gray-500"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Event card for mobile -->
+                    <div id="eventCardMobile" class="event-card rounded-xl p-4 flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="text-[10px] uppercase tracking-wider text-gray-500" id="eventCategoryMobile">Life Event</div>
+                            <div class="text-[10px] text-gray-600" id="eventDateMobile">Week 1</div>
+                        </div>
+                        <h2 class="text-lg font-semibold text-white mb-2" id="eventTitleMobile">Loading...</h2>
+                        <p class="text-gray-400 leading-relaxed mb-4 text-sm" id="eventDescMobile"></p>
+                        <div id="choicesContainerMobile" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Log Panel -->
+            <div id="mobileLogPanel" class="mobile-panel">
+                <div class="text-sm text-gray-500 mb-3 uppercase tracking-wide">Life Log</div>
+                <div id="eventLogMobile" class="space-y-2 text-sm text-gray-400">
+                    <!-- Log entries will be synced here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area - DESKTOP VERSION (3 columns) -->
+        <div class="hidden md:flex flex-grow gap-4 p-4 overflow-hidden">
             
             <!-- Left Panel: Status -->
             <div class="w-56 flex flex-col gap-2 overflow-y-auto">
@@ -765,6 +857,22 @@
             </div>
         </div>
     </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav" id="mobileNav">
+        <button class="mobile-nav-btn" onclick="showMobilePanel('status')" id="navStatus">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Status</span>
+        </button>
+        <button class="mobile-nav-btn active" onclick="showMobilePanel('event')" id="navEvent">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-label">Event</span>
+        </button>
+        <button class="mobile-nav-btn" onclick="showMobilePanel('log')" id="navLog">
+            <span class="nav-icon">📜</span>
+            <span class="nav-label">Log</span>
+        </button>
+    </nav>
 
     <!-- Game Over Screen -->
     <div id="gameOverScreen" class="hidden fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-8 overflow-y-auto">
