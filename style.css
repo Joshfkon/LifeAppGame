@@ -1,112 +1,112 @@
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
         
-body { 
-    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
-    min-height: 100vh;
-    font-family: 'Crimson Text', serif;
-}
+        body { 
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            min-height: 100vh;
+            font-family: 'Crimson Text', serif;
+        }
 
-.event-card {
-    background: linear-gradient(145deg, #2a2a4a 0%, #1a1a3a 100%);
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-    transition: all 0.3s ease;
-}
+        .event-card {
+            background: linear-gradient(145deg, #2a2a4a 0%, #1a1a3a 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
 
-.choice-btn {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.2);
-    transition: all 0.2s ease;
-}
-.choice-btn:hover {
-    background: rgba(255,255,255,0.15);
-    border-color: rgba(255,255,255,0.4);
-    transform: translateY(-2px);
-}
-.choice-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-    transform: none;
-}
+        .choice-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.2s ease;
+        }
+        .choice-btn:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.4);
+            transform: translateY(-2px);
+        }
+        .choice-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
 
-.stat-icon {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
-}
+        .stat-icon {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px;
+        }
 
-.stat-fill { transition: width 0.5s ease; }
+        .stat-fill { transition: width 0.5s ease; }
 
-.phase-badge {
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+        .phase-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-.outcome-flash { animation: flashIn 0.3s ease; }
-@keyframes flashIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .outcome-flash { animation: flashIn 0.3s ease; }
+        @keyframes flashIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-/* Dice rolling animation */
-.dice-container {
-    background: rgba(0, 0, 0, 0.9);
-    padding: 2rem 3rem;
-    border-radius: 1rem;
-    border: 2px solid #4a5568;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-}
+        /* Dice rolling animation */
+        .dice-container {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 2rem 3rem;
+            border-radius: 1rem;
+            border: 2px solid #4a5568;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+        }
+        
+        .dice-roller .dice {
+            font-size: 5rem;
+            animation: diceRoll 0.6s ease-in-out;
+            display: inline-block;
+        }
+        
+        @keyframes diceRoll {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(180deg) scale(1.2); }
+            50% { transform: rotate(360deg) scale(0.9); }
+            75% { transform: rotate(540deg) scale(1.1); }
+            100% { transform: rotate(720deg) scale(1); }
+        }
+        
+        .dice-result {
+            animation: resultReveal 0.3s ease-out;
+        }
+        
+        @keyframes resultReveal {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .dice-nat20 { color: #ffd700 !important; text-shadow: 0 0 20px #ffd700; }
+        .dice-nat1 { color: #ff4444 !important; text-shadow: 0 0 20px #ff4444; }
+        .dice-success { color: #48bb78 !important; }
+        .dice-fail { color: #f56565 !important; }
 
-.dice-roller .dice {
-    font-size: 5rem;
-    animation: diceRoll 0.6s ease-in-out;
-    display: inline-block;
-}
+        .particle {
+            position: absolute; width: 2px; height: 2px;
+            background: rgba(255,255,255,0.3); border-radius: 50%;
+            animation: float 20s infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; } 90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
 
-@keyframes diceRoll {
-    0% { transform: rotate(0deg) scale(1); }
-    25% { transform: rotate(180deg) scale(1.2); }
-    50% { transform: rotate(360deg) scale(0.9); }
-    75% { transform: rotate(540deg) scale(1.1); }
-    100% { transform: rotate(720deg) scale(1); }
-}
+        .possession-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
 
-.dice-result {
-    animation: resultReveal 0.3s ease-out;
-}
+        .tab-btn.active {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+        }
 
-@keyframes resultReveal {
-    from { opacity: 0; transform: scale(0.5); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.dice-nat20 { color: #ffd700 !important; text-shadow: 0 0 20px #ffd700; }
-.dice-nat1 { color: #ff4444 !important; text-shadow: 0 0 20px #ff4444; }
-.dice-success { color: #48bb78 !important; }
-.dice-fail { color: #f56565 !important; }
-
-.particle {
-    position: absolute; width: 2px; height: 2px;
-    background: rgba(255,255,255,0.3); border-radius: 50%;
-    animation: float 20s infinite;
-}
-@keyframes float {
-    0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
-    10% { opacity: 1; } 90% { opacity: 1; }
-    100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
-}
-
-.possession-card {
-    background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-.tab-btn.active {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.3);
-}
-
-.progress-ring {
-    transform: rotate(-90deg);
-}
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
