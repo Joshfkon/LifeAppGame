@@ -2319,15 +2319,25 @@
     function calculateTFR() {
       const baseTFR = 1.62;
       let grossLow = 0, grossHigh = 0;
+      let enabledCount = 0;
+      
       [...liberalPolicies, ...illiberalPolicies].forEach(p => {
         if (p.enabled) {
+          enabledCount++;
           // tfrLow and tfrHigh are already scaled by the slider
           grossLow += p.tfrLow;
           grossHigh += p.tfrHigh;
         }
       });
 
-      const factor = (1 - modelParams.interactionDiscount/100) * (1 - modelParams.contextAdjustment/100) * (modelParams.implementationRate/100);
+      // Interaction discount only applies when multiple policies are stacked
+      // With 1 policy: no interaction discount
+      // With 2+ policies: apply discount for diminishing returns
+      const interactionFactor = enabledCount > 1 ? (1 - modelParams.interactionDiscount/100) : 1;
+      const contextFactor = (1 - modelParams.contextAdjustment/100);
+      const implementationFactor = (modelParams.implementationRate/100);
+      
+      const factor = interactionFactor * contextFactor * implementationFactor;
       let netLow = grossLow * factor, netHigh = grossHigh * factor;
 
       const fiscal = calculateFiscal();
