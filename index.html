@@ -2758,21 +2758,35 @@
       });
     }
 
-    function getPersonalityType(tfr, fiscal, policies, entitlements, taxes, illiberal) {
+    function getPersonalityType(tfr, fiscal, policies, entitlements, taxes, illiberalPolicies) {
       const tfrMid = tfr.mid;
       const netFiscal = fiscal.net;
       const policyCount = policies;
       const entitlementCount = entitlements;
       const taxCount = taxes;
-      const hasIlliberal = illiberal > 0;
+      
+      // Check which illiberal policies are enabled
+      const hardAuthoritarian = illiberalPolicies.filter(p => 
+        p.enabled && (p.id === 'abortion-ban' || p.id === 'contraception-ban')
+      ).length > 0;
+      
+      const softAuthoritarian = illiberalPolicies.filter(p => 
+        p.enabled && (p.id === 'celibacy-tax' || p.id === 'mandatory-marriage' || p.id === 'divorce-restrictions')
+      ).length > 0;
+      
+      const anyIlliberal = illiberalPolicies.filter(p => p.enabled).length > 0;
 
       // Personality types based on choices
-      if (policyCount === 0 && entitlementCount === 0 && taxCount === 0) {
+      if (policyCount === 0 && entitlementCount === 0 && taxCount === 0 && !anyIlliberal) {
         return { icon: '🤷', title: 'The Spectator', desc: 'You\'re still exploring the options. Try enabling some policies!' };
       }
       
-      if (hasIlliberal) {
+      if (hardAuthoritarian) {
         return { icon: '⚔️', title: 'The Authoritarian', desc: 'You believe the ends justify the means. History will judge.' };
+      }
+      
+      if (softAuthoritarian && !hardAuthoritarian) {
+        return { icon: '🎭', title: 'The Soft Authoritarian', desc: 'Nudges with teeth. You prefer carrots and sticks over outright bans.' };
       }
       
       if (tfrMid >= 2.1 && netFiscal <= 0) {
@@ -2873,7 +2887,7 @@
         enabledPolicies.length, 
         enabledEntitlements.length, 
         enabledTaxes.length,
-        enabledIlliberal.length
+        illiberalPolicies
       );
 
       document.getElementById('share-type-icon').textContent = type.icon;
