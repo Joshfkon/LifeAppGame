@@ -1443,6 +1443,7 @@
     function renderTaxCard(tax, container) {
       const cardContainer = document.createElement('div');
       cardContainer.className = 'card-container';
+      cardContainer.setAttribute('data-tax-id', tax.id);
 
       const savingsMid = Math.round((tax.savingsLow + tax.savingsHigh) / 2);
 
@@ -1490,8 +1491,8 @@
               <div class="policy-header">
                 <span class="policy-title" data-flip="true">${tax.name}</span>
                 <div class="policy-stats">
-                  <span class="policy-stat cost">$${savingsMid}B/yr</span>
-                  <span class="policy-stat drag">−${tax.growthDrag.toFixed(2)} TFR</span>
+                  <span class="policy-stat cost tax-cost">$${savingsMid}B/yr</span>
+                  <span class="policy-stat drag tax-drag">−${tax.growthDrag.toFixed(2)} TFR</span>
                 </div>
               </div>
               <p class="policy-description">${tax.description} <em style="color:#5d4037;">(${tax.dragRationale})</em></p>
@@ -1553,6 +1554,8 @@
       const thresholdRow = cardContainer.querySelector('.threshold-row');
       const thresholdValue = cardContainer.querySelector('.threshold-value');
       const toggleLabel = cardContainer.querySelector('.toggle-label');
+      const costStat = cardContainer.querySelector('.tax-cost');
+      const dragStat = cardContainer.querySelector('.tax-drag');
 
       toggle.addEventListener('change', () => {
         tax.enabled = toggle.checked;
@@ -1565,14 +1568,14 @@
       thresholdSlider.addEventListener('input', () => {
         tax.threshold = parseInt(thresholdSlider.value);
         thresholdValue.textContent = formatThreshold(tax.threshold);
-        updateTaxRevenue(tax);
+        updateTaxRevenue(tax, costStat, dragStat);
         updateDisplay();
       });
 
       container.appendChild(cardContainer);
     }
 
-    function updateTaxRevenue(tax) {
+    function updateTaxRevenue(tax, costStat, dragStat) {
       // Adjust revenue based on threshold
       const baseRevenueLow = tax.id === 'income-tax-top' ? 80 :
                              tax.id === 'corporate-tax' ? 100 :
@@ -1590,49 +1593,64 @@
                               tax.id === 'carbon-tax' ? 120 :
                               tax.id === 'vat' ? 600 : 75;
 
+      // Base growth drags (at default threshold)
+      const baseDrag = tax.id === 'income-tax-top' ? 0.01 :
+                       tax.id === 'corporate-tax' ? 0.04 :
+                       tax.id === 'capital-gains' ? 0.05 :
+                       tax.id === 'financial-transaction' ? 0.02 :
+                       tax.id === 'estate-tax' ? 0.01 :
+                       tax.id === 'carbon-tax' ? 0.02 :
+                       tax.id === 'vat' ? 0.02 : 0.01;
+
       // Calculate multiplier based on threshold vs default
       let multiplier = 1;
+      let dragMultiplier = 1;
+      
       if (tax.id === 'income-tax-top') {
         // Lower threshold = more revenue, but also more drag
-        multiplier = 500 / tax.threshold; // $500k is base
-        tax.growthDrag = 0.01 * multiplier;
+        // $500k is base; $250k doubles revenue/drag, $1M halves it
+        multiplier = 500 / tax.threshold;
+        dragMultiplier = multiplier;
       } else if (tax.id === 'corporate-tax') {
         // Higher rate = more revenue and more drag
-        multiplier = tax.threshold / 28; // 28% is base
-        tax.growthDrag = 0.04 * multiplier;
+        // 28% is base
+        multiplier = tax.threshold / 28;
+        dragMultiplier = multiplier;
       } else if (tax.id === 'capital-gains') {
         // Lower threshold = more revenue
+        // $1M is base
         multiplier = 1000 / tax.threshold;
-        tax.growthDrag = 0.05 * Math.min(multiplier, 1.5);
+        dragMultiplier = Math.min(multiplier, 1.5); // Cap drag increase
       } else if (tax.id === 'financial-transaction') {
-        // Higher rate = more revenue but diminishing returns
-        multiplier = (tax.threshold / 10) * (1 - (tax.threshold - 10) * 0.01);
-        tax.growthDrag = 0.02 * (tax.threshold / 10);
+        // Higher rate = more revenue but diminishing returns due to reduced trading
+        // 10bp is base
+        const rateRatio = tax.threshold / 10;
+        multiplier = rateRatio * (1 - (tax.threshold - 10) * 0.005); // Diminishing returns
+        dragMultiplier = rateRatio;
       } else if (tax.id === 'estate-tax') {
         // Lower exemption = more revenue
+        // $3.5M is base
         multiplier = 3500 / tax.threshold;
-        tax.growthDrag = 0.01 * Math.min(multiplier, 2);
+        dragMultiplier = Math.min(multiplier, 2); // Cap drag increase
       } else if (tax.id === 'carbon-tax') {
-        // Higher price = more revenue
+        // Higher price = more revenue (roughly linear)
+        // $50/ton is base
         multiplier = tax.threshold / 50;
-        tax.growthDrag = 0.02 * multiplier;
+        dragMultiplier = multiplier;
       } else if (tax.id === 'vat') {
-        // Higher rate = more revenue
+        // Higher rate = more revenue (roughly linear)
+        // 10% is base
         multiplier = tax.threshold / 10;
-        tax.growthDrag = 0.02 * multiplier;
+        dragMultiplier = multiplier;
       }
 
       tax.savingsLow = Math.round(baseRevenueLow * multiplier);
       tax.savingsHigh = Math.round(baseRevenueHigh * multiplier);
+      tax.growthDrag = baseDrag * dragMultiplier;
 
       // Update the displayed stats
-      const card = document.querySelector(`[data-tax-id="${tax.id}"]`);
-      if (card) {
-        const costStat = card.querySelector('.policy-stat.cost');
-        const dragStat = card.querySelector('.policy-stat.drag');
-        if (costStat) costStat.textContent = `$${Math.round((tax.savingsLow + tax.savingsHigh) / 2)}B/yr`;
-        if (dragStat) dragStat.textContent = `−${tax.growthDrag.toFixed(2)} TFR`;
-      }
+      if (costStat) costStat.textContent = `$${Math.round((tax.savingsLow + tax.savingsHigh) / 2)}B/yr`;
+      if (dragStat) dragStat.textContent = `−${tax.growthDrag.toFixed(2)} TFR`;
     }
 
     function renderModelParams(container) {
