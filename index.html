@@ -579,7 +579,7 @@
     .floating-share-btn {
       position: fixed;
       bottom: 20px;
-      right: 20px;
+      left: 20px;
       background: var(--ink);
       color: var(--paper);
       border: none;
@@ -735,7 +735,7 @@
     @media (max-width: 400px) {
       .floating-share-btn {
         bottom: 12px;
-        right: 12px;
+        left: 12px;
         padding: 10px 16px;
         font-size: 11px;
       }
@@ -2841,14 +2841,14 @@
         const tfr = calculateTFR();
         const type = document.getElementById('share-type-title').textContent;
         const text = `I'm "${type}" in the Fertility Policy Simulator! My package achieves TFR ${tfr.mid.toFixed(2)}. Can you do better?`;
-        const url = 'https://fertility-simulator.anthropic.com'; // placeholder
+        const url = 'https://joshfkon.github.io/LifeAppGame/';
         window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
       });
 
       shareCopy.addEventListener('click', () => {
         const tfr = calculateTFR();
         const type = document.getElementById('share-type-title').textContent;
-        const text = `Fertility Policy Simulator: I'm "${type}" with TFR ${tfr.mid.toFixed(2)}. Try it: https://fertility-simulator.anthropic.com`;
+        const text = `Fertility Policy Simulator: I'm "${type}" with TFR ${tfr.mid.toFixed(2)}. Try it: https://joshfkon.github.io/LifeAppGame/`;
         navigator.clipboard.writeText(text).then(() => {
           copiedMsg.classList.add('visible');
           setTimeout(() => copiedMsg.classList.remove('visible'), 2000);
