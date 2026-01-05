@@ -275,15 +275,16 @@
     }
 
     .penalty-badge {
-      display: none;
+      display: flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 10px;
+      padding: 6px 12px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11px;
+      color: var(--paper);
+      border-radius: 4px;
     }
 
-    .penalty-badge.visible { display: flex; }
     .penalty-badge.inflation { background: var(--accent); }
     .penalty-badge.growth { background: #5d4037; }
 
@@ -373,9 +374,18 @@
     }
 
     .flip-hint {
-      font-size: 12px;
+      font-size: 11px;
       opacity: 0.7;
       margin-left: 4px;
+      transition: opacity 0.2s ease;
+    }
+
+    .penalty-badge:hover .flip-hint {
+      opacity: 1;
+    }
+
+    .penalty-badge:hover {
+      filter: brightness(1.1);
     }
 
     .penalty-methodology {
@@ -1307,10 +1317,10 @@
 
     .splash-title {
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: 2rem;
+      font-size: 2.25rem;
       font-weight: 700;
       line-height: 1.2;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
     .splash-title em {
@@ -1321,9 +1331,9 @@
     }
 
     .splash-subtitle {
-      font-size: 1rem;
-      color: rgba(248, 246, 241, 0.8);
-      line-height: 1.5;
+      font-size: 1.15rem;
+      color: rgba(248, 246, 241, 0.85);
+      line-height: 1.6;
     }
 
     .splash-challenge {
@@ -1382,23 +1392,23 @@
 
     .splash-caveats-title {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 12px;
       letter-spacing: 1px;
       text-transform: uppercase;
       color: rgba(248, 246, 241, 0.7);
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .splash-caveats-list {
       list-style: none;
-      font-size: 0.85rem;
-      line-height: 1.6;
-      color: rgba(248, 246, 241, 0.8);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: rgba(248, 246, 241, 0.85);
     }
 
     .splash-caveats-list li {
-      margin-bottom: 10px;
-      padding-left: 16px;
+      margin-bottom: 12px;
+      padding-left: 18px;
       position: relative;
     }
 
@@ -1452,18 +1462,18 @@
     }
 
     .splash-credits {
-      font-size: 0.75rem;
-      color: rgba(248, 246, 241, 0.5);
-      line-height: 1.5;
+      font-size: 0.85rem;
+      color: rgba(248, 246, 241, 0.6);
+      line-height: 1.6;
     }
 
     @media (max-width: 500px) {
-      .splash-title { font-size: 1.5rem; }
-      .splash-subtitle { font-size: 0.9rem; }
+      .splash-title { font-size: 1.75rem; }
+      .splash-subtitle { font-size: 1rem; }
       .splash-challenge { flex-direction: column; gap: 12px; }
       .splash-goal-value, .splash-constraint-value { font-size: 1.1rem; }
       .splash-caveats { padding: 16px; }
-      .splash-caveats-list { font-size: 0.8rem; }
+      .splash-caveats-list { font-size: 0.9rem; }
       .splash-start-btn { padding: 14px 36px; font-size: 1rem; }
     }
   </style>
