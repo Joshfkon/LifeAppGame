@@ -575,6 +575,172 @@
       }
     }
 
+    /* Floating Share Button */
+    .floating-share-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      padding: 12px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 100;
+      transition: all 0.2s ease;
+    }
+
+    .floating-share-btn:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .floating-share-btn span {
+      font-size: 16px;
+    }
+
+    /* Share Modal Styles */
+    .share-modal-content {
+      max-width: 380px;
+    }
+
+    .share-header {
+      background: linear-gradient(135deg, var(--ink) 0%, #2a2a2a 100%);
+    }
+
+    .share-type-description {
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--muted);
+      text-align: center;
+      padding: 0 0 16px 0;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 16px;
+    }
+
+    .share-results {
+      background: var(--paper-dark);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+
+    .share-result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+
+    .share-result-label {
+      color: var(--muted);
+    }
+
+    .share-result-value {
+      font-weight: 600;
+    }
+
+    .share-policies {
+      margin-bottom: 16px;
+    }
+
+    .share-policies-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .share-policies-list {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .share-policy-item {
+      display: inline-block;
+      background: var(--paper-dark);
+      padding: 2px 8px;
+      margin: 2px 4px 2px 0;
+      font-size: 11px;
+    }
+
+    .share-policy-item.fertility { border-left: 2px solid var(--ink); }
+    .share-policy-item.entitlement { border-left: 2px solid var(--success); }
+    .share-policy-item.tax { border-left: 2px solid #5d4037; }
+    .share-policy-item.illiberal { border-left: 2px solid var(--accent); }
+
+    .share-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .share-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .share-btn-x {
+      background: #000;
+      color: #fff;
+    }
+
+    .share-btn-x:hover {
+      background: #333;
+    }
+
+    .share-btn-copy {
+      background: var(--paper-dark);
+      color: var(--ink);
+      border: 1px solid var(--rule);
+    }
+
+    .share-btn-copy:hover {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .share-copied {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--success);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .share-copied.visible {
+      opacity: 1;
+    }
+
+    @media (max-width: 400px) {
+      .floating-share-btn {
+        bottom: 12px;
+        right: 12px;
+        padding: 10px 16px;
+        font-size: 11px;
+      }
+    }
+
     /* Tab Navigation */
     .tab-nav {
       display: flex;
@@ -1228,6 +1394,60 @@
         <button class="modal-close-btn" id="close-deficit-modal">Got it</button>
       </div>
     </div>
+
+    <!-- Share Results Modal -->
+    <div class="modal-overlay" id="share-modal">
+      <div class="modal-content share-modal-content">
+        <div class="modal-header share-header">
+          <span class="modal-icon" id="share-type-icon">🎯</span>
+          <h3 id="share-type-title">The Pragmatist</h3>
+        </div>
+        <div class="modal-body">
+          <div class="share-type-description" id="share-type-desc">
+            You balance ambition with fiscal reality.
+          </div>
+          
+          <div class="share-results">
+            <div class="share-result-row">
+              <span class="share-result-label">Projected TFR</span>
+              <span class="share-result-value" id="share-tfr">1.62</span>
+            </div>
+            <div class="share-result-row">
+              <span class="share-result-label">GDP 2075</span>
+              <span class="share-result-value" id="share-gdp">$75T</span>
+            </div>
+            <div class="share-result-row">
+              <span class="share-result-label">Net Fiscal</span>
+              <span class="share-result-value" id="share-fiscal">$0B</span>
+            </div>
+          </div>
+
+          <div class="share-policies">
+            <div class="share-policies-title">Your Package</div>
+            <div class="share-policies-list" id="share-policies-list">
+              <em>No policies selected</em>
+            </div>
+          </div>
+
+          <div class="share-buttons">
+            <button class="share-btn share-btn-x" id="share-x">
+              <span>𝕏</span> Share
+            </button>
+            <button class="share-btn share-btn-copy" id="share-copy">
+              <span>📋</span> Copy Link
+            </button>
+          </div>
+          
+          <div class="share-copied" id="share-copied">Link copied!</div>
+        </div>
+        <button class="modal-close-btn" id="close-share-modal">Close</button>
+      </div>
+    </div>
+
+    <!-- Floating Share Button -->
+    <button class="floating-share-btn" id="open-share-modal">
+      <span>📊</span> Share Results
+    </button>
   </header>
 
   <nav class="tab-nav">
@@ -1675,23 +1895,24 @@
         id: 'carbon-tax', 
         name: 'Carbon Tax', 
         description: 'Price on carbon emissions, phased in over 5 years.', 
-        savingsLow: 80, savingsHigh: 120, 
+        savingsLow: 80, savingsHigh: 150, 
         enabled: false,
         threshold: 50, // $50/ton default
         thresholdMin: 25,
         thresholdMax: 150,
         thresholdLabel: 'Price per ton ($)',
-        growthDrag: 0.02, 
-        dragRationale: 'Transition costs; energy price increases disproportionately affect lower-income families',
+        growthDrag: 0.025, 
+        dragRationale: 'Energy price increases hit young families hardest; regressive burden 2-4x higher on low-income households',
         confidence: 'medium',
         methodology: {
-          derivation: 'Carbon tax is distortionary but can be revenue-recycled. At $50/ton: ~$200B revenue, ~0.5% increase in energy costs. Growth drag ~0.2-0.5% GDP short-term, declining as economy adjusts. TFR impact via increased cost of living for young families, partially offset by revenue recycling to child benefits.',
+          derivation: 'Revenue: ~$100-150B/yr at $50/ton. GDP impact disputed: CGE models (Goulder & Hafstead) estimate 0.5-1% GDP reduction over 20 years. Heritage/NERA estimate larger impacts ($1,400-1,900/yr per family of four). Regressivity well-documented: NBER finds burden 2-4x higher on low-income households as share of income. Growth drag set at 0.025 TFR reflecting regressive burden on young families even with partial revenue recycling.',
           sources: [
-            { cite: 'CBO (2016)', finding: 'Carbon tax revenue and GDP impact', elasticity: '~$20B per $10/ton' },
-            { cite: 'Metcalf & Stock (2020)', finding: 'Carbon tax macroeconomic effects', elasticity: 'Small long-run GDP effect' },
-            { cite: 'Goulder & Hafstead (2018)', finding: 'Distributional effects of carbon pricing', elasticity: 'Regressive before recycling' }
+            { cite: 'Goulder & Hafstead (2013)', finding: '$10/ton rising 5%/yr → 0.6% lower GDP at year 20', elasticity: 'Moderate' },
+            { cite: 'NERA/NAM (2013)', finding: '$20/ton → $350/household by year 20; 80% reduction → 3.4% GDP loss', elasticity: 'High' },
+            { cite: 'Heritage Foundation', finding: '$25/ton → $1,400-1,900/yr income loss per family of four', elasticity: 'High' },
+            { cite: 'NBER Grainger & Kolstad', finding: 'Burden 2-4x higher on low-income as share of income', elasticity: 'Regressive' }
           ],
-          notes: 'Growth drag assumes NO revenue recycling to families. If carbon revenue funds child benefits, net TFR effect could be positive.'
+          notes: 'KEY ISSUE: Carbon tax is regressive—low-income households spend larger share of income on energy. Young families particularly affected. Revenue recycling can offset but politically uncertain. Fertility drag assumes partial but incomplete recycling to families.'
         }
       },
       { 
@@ -2537,6 +2758,161 @@
       });
     }
 
+    function getPersonalityType(tfr, fiscal, policies, entitlements, taxes, illiberal) {
+      const tfrMid = tfr.mid;
+      const netFiscal = fiscal.net;
+      const policyCount = policies;
+      const entitlementCount = entitlements;
+      const taxCount = taxes;
+      const hasIlliberal = illiberal > 0;
+
+      // Personality types based on choices
+      if (policyCount === 0 && entitlementCount === 0 && taxCount === 0) {
+        return { icon: '🤷', title: 'The Spectator', desc: 'You\'re still exploring the options. Try enabling some policies!' };
+      }
+      
+      if (hasIlliberal) {
+        return { icon: '⚔️', title: 'The Authoritarian', desc: 'You believe the ends justify the means. History will judge.' };
+      }
+      
+      if (tfrMid >= 2.1 && netFiscal <= 0) {
+        return { icon: '🏆', title: 'The Unicorn', desc: 'Replacement fertility AND fiscal balance? You found the holy grail.' };
+      }
+      
+      if (tfrMid >= 2.1 && netFiscal > 500) {
+        return { icon: '💸', title: 'The MMT Maximalist', desc: 'Deficits are just numbers, right? Future generations can sort it out.' };
+      }
+      
+      if (tfrMid >= 2.0 && entitlementCount >= 4) {
+        return { icon: '⚖️', title: 'The Intergenerational Warrior', desc: 'You\'re willing to take on the AARP. Respect.' };
+      }
+      
+      if (taxCount >= 4 && entitlementCount === 0) {
+        return { icon: '🏛️', title: 'The Tax-and-Spend Liberal', desc: 'Soak the rich to save the future. Classic.' };
+      }
+      
+      if (entitlementCount >= 4 && taxCount === 0) {
+        return { icon: '📉', title: 'The Entitlement Reformer', desc: 'You\'re betting seniors will accept less for the next generation.' };
+      }
+      
+      if (tfrMid >= 1.9 && Math.abs(netFiscal) <= 100) {
+        return { icon: '🎯', title: 'The Pragmatist', desc: 'Meaningful impact without breaking the bank. Sensible.' };
+      }
+      
+      if (tfrMid < 1.75 && policyCount >= 3) {
+        return { icon: '😬', title: 'The Underfunder', desc: 'Good intentions, but you\'re not moving the needle much.' };
+      }
+      
+      if (policyCount === 1 && entitlementCount === 0 && taxCount === 0) {
+        return { icon: '🌱', title: 'The Minimalist', desc: 'One small step. Maybe add some funding?' };
+      }
+      
+      if (netFiscal < -200) {
+        return { icon: '💰', title: 'The Surplus Builder', desc: 'More offsets than spending? Future generations thank you.' };
+      }
+      
+      return { icon: '🔬', title: 'The Policy Wonk', desc: 'A thoughtful mix of interventions. Keep experimenting!' };
+    }
+
+    function initShareModal() {
+      const modal = document.getElementById('share-modal');
+      const openBtn = document.getElementById('open-share-modal');
+      const closeBtn = document.getElementById('close-share-modal');
+      const shareX = document.getElementById('share-x');
+      const shareCopy = document.getElementById('share-copy');
+      const copiedMsg = document.getElementById('share-copied');
+
+      openBtn.addEventListener('click', () => {
+        updateShareModal();
+        modal.classList.add('visible');
+      });
+
+      closeBtn.addEventListener('click', () => {
+        modal.classList.remove('visible');
+      });
+
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('visible');
+        }
+      });
+
+      shareX.addEventListener('click', () => {
+        const tfr = calculateTFR();
+        const type = document.getElementById('share-type-title').textContent;
+        const text = `I'm "${type}" in the Fertility Policy Simulator! My package achieves TFR ${tfr.mid.toFixed(2)}. Can you do better?`;
+        const url = 'https://fertility-simulator.anthropic.com'; // placeholder
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+      });
+
+      shareCopy.addEventListener('click', () => {
+        const tfr = calculateTFR();
+        const type = document.getElementById('share-type-title').textContent;
+        const text = `Fertility Policy Simulator: I'm "${type}" with TFR ${tfr.mid.toFixed(2)}. Try it: https://fertility-simulator.anthropic.com`;
+        navigator.clipboard.writeText(text).then(() => {
+          copiedMsg.classList.add('visible');
+          setTimeout(() => copiedMsg.classList.remove('visible'), 2000);
+        });
+      });
+    }
+
+    function updateShareModal() {
+      const tfr = calculateTFR();
+      const fiscal = calculateFiscal();
+      const entitlementSavings = calculateEntitlementSavings();
+      const gdp2075 = calculateGDP2075(tfr.mid, tfr.growthDrag, entitlementSavings, tfr.deficit);
+
+      const enabledPolicies = [...liberalPolicies].filter(p => p.enabled);
+      const enabledIlliberal = [...illiberalPolicies].filter(p => p.enabled);
+      const enabledEntitlements = entitlementReforms.filter(r => r.enabled);
+      const enabledTaxes = taxIncreases.filter(t => t.enabled);
+
+      // Get personality type
+      const type = getPersonalityType(
+        tfr, fiscal, 
+        enabledPolicies.length, 
+        enabledEntitlements.length, 
+        enabledTaxes.length,
+        enabledIlliberal.length
+      );
+
+      document.getElementById('share-type-icon').textContent = type.icon;
+      document.getElementById('share-type-title').textContent = type.title;
+      document.getElementById('share-type-desc').textContent = type.desc;
+
+      // Update results
+      document.getElementById('share-tfr').textContent = tfr.mid.toFixed(2);
+      document.getElementById('share-tfr').style.color = tfr.mid >= 2.1 ? 'var(--success)' : tfr.mid >= 1.8 ? '#daa520' : 'var(--accent)';
+      
+      document.getElementById('share-gdp').textContent = `$${gdp2075.toFixed(0)}T`;
+      
+      const fiscalEl = document.getElementById('share-fiscal');
+      if (fiscal.net <= 0) {
+        fiscalEl.textContent = `−$${Math.abs(Math.round(fiscal.net))}B`;
+        fiscalEl.style.color = 'var(--success)';
+      } else {
+        fiscalEl.textContent = `+$${Math.round(fiscal.net)}B`;
+        fiscalEl.style.color = 'var(--accent)';
+      }
+
+      // Build policy list
+      const listEl = document.getElementById('share-policies-list');
+      const allEnabled = [
+        ...enabledPolicies.map(p => ({ name: p.name, type: 'fertility' })),
+        ...enabledIlliberal.map(p => ({ name: p.name, type: 'illiberal' })),
+        ...enabledEntitlements.map(r => ({ name: r.name, type: 'entitlement' })),
+        ...enabledTaxes.map(t => ({ name: t.name, type: 'tax' }))
+      ];
+
+      if (allEnabled.length === 0) {
+        listEl.innerHTML = '<em>No policies selected</em>';
+      } else {
+        listEl.innerHTML = allEnabled.map(p => 
+          `<span class="share-policy-item ${p.type}">${p.name}</span>`
+        ).join('');
+      }
+    }
+
     function init() {
       liberalPolicies.forEach(p => renderPolicyCard(p, document.getElementById('liberal-policies')));
       illiberalPolicies.forEach(p => renderPolicyCard(p, document.getElementById('illiberal-policies'), true));
@@ -2546,6 +2922,7 @@
       initTabs();
       initPenaltyBadges();
       initDeficitModal();
+      initShareModal();
       updateDisplay();
     }
 
