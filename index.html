@@ -153,6 +153,107 @@
     .fiscal-value.positive { color: #7cb342; }
     .fiscal-value.negative { color: #ef5350; }
 
+    .fiscal-sublabel {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      margin-top: 2px;
+    }
+
+    .fiscal-sublabel.positive { color: #7cb342; }
+    .fiscal-sublabel.negative { color: #ef5350; }
+
+    .gdp-projection {
+      border-left: 1px solid rgba(255,255,255,0.2);
+      padding-left: 12px;
+      position: relative;
+    }
+
+    .gdp-clickable {
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .gdp-clickable:hover {
+      color: #ffb74d;
+    }
+
+    .gdp-clickable::after {
+      content: ' ⓘ';
+      font-size: 10px;
+      opacity: 0.6;
+    }
+
+    .gdp-methodology {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 12px);
+      right: 0;
+      width: 300px;
+      background: var(--paper);
+      color: var(--ink);
+      border: 1px solid var(--ink);
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .gdp-methodology.visible {
+      display: block;
+    }
+
+    .gdp-breakdown {
+      background: var(--paper-dark);
+      padding: 10px 12px;
+      margin: 10px 0;
+      border-left: 3px solid var(--success);
+    }
+
+    .gdp-breakdown-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--success);
+      margin-bottom: 8px;
+    }
+
+    .gdp-breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 3px 0;
+    }
+
+    .gdp-breakdown-row span:first-child {
+      color: var(--muted);
+    }
+
+    .gdp-breakdown-row.tax-drag-row span:last-child {
+      color: var(--accent);
+    }
+
+    .gdp-breakdown-row.pop-row span:last-child {
+      color: var(--success);
+    }
+
+    .gdp-breakdown-row.total-row {
+      border-top: 1px solid var(--rule);
+      margin-top: 4px;
+      padding-top: 6px;
+      font-weight: 500;
+    }
+
+    .gdp-breakdown-row.total-row span:first-child {
+      color: var(--ink);
+    }
+
+    @media (max-width: 400px) {
+      .gdp-methodology {
+        width: 280px;
+        right: -10px;
+      }
+    }
+
     .penalties {
       display: flex;
       gap: 12px;
@@ -172,6 +273,303 @@
     .penalty-badge.visible { display: flex; }
     .penalty-badge.inflation { background: var(--accent); }
     .penalty-badge.growth { background: #5d4037; }
+
+    .penalty-badge {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .penalty-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 280px;
+      padding: 12px 14px;
+      background: var(--ink);
+      color: var(--paper);
+      font-size: 12px;
+      line-height: 1.5;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .penalty-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 8px solid transparent;
+      border-top-color: var(--ink);
+    }
+
+    .penalty-badge:hover .penalty-tooltip,
+    .penalty-badge:focus .penalty-tooltip {
+      display: block;
+    }
+
+    .penalty-tooltip strong {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      color: #ffb74d;
+    }
+
+    .penalty-tooltip p {
+      margin: 0 0 8px 0;
+    }
+
+    .penalty-tooltip p:last-child {
+      margin-bottom: 0;
+    }
+
+    .penalty-tooltip em {
+      font-size: 10px;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 500px) {
+      .penalty-tooltip {
+        width: 240px;
+        left: 0;
+        transform: translateX(0);
+      }
+      .penalty-tooltip::after {
+        left: 20px;
+        transform: none;
+      }
+    }
+
+    /* Flippable Penalty Badges */
+    .penalty-badge-container {
+      display: none;
+      position: relative;
+    }
+
+    .penalty-badge-container.visible {
+      display: block;
+    }
+
+    .penalty-badge {
+      cursor: pointer;
+    }
+
+    .flip-hint {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-left: 4px;
+    }
+
+    .penalty-methodology {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 0;
+      width: 320px;
+      background: var(--paper);
+      color: var(--ink);
+      border: 1px solid var(--ink);
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .penalty-methodology.visible {
+      display: block;
+    }
+
+    .penalty-methodology-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .penalty-methodology-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #ffb74d;
+    }
+
+    .penalty-back-button {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: var(--paper);
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
+    .penalty-back-button:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .penalty-methodology-content {
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+
+    .penalty-methodology-content p {
+      margin: 0 0 10px 0;
+    }
+
+    .penalty-methodology-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .penalty-math-table {
+      width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      margin: 8px 0;
+      border-collapse: collapse;
+    }
+
+    .penalty-math-table td {
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .penalty-math-table td:first-child {
+      color: var(--muted);
+    }
+
+    /* Deficit Warning Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.visible {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--paper);
+      max-width: 340px;
+      width: 100%;
+      padding: 0;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      background: var(--accent);
+      color: var(--paper);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-icon {
+      font-size: 20px;
+    }
+
+    .modal-header h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .modal-body {
+      padding: 16px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+
+    .modal-body p {
+      margin: 0 0 12px 0;
+    }
+
+    .modal-math {
+      background: var(--paper-dark);
+      padding: 10px 12px;
+      margin: 12px 0;
+      border-left: 3px solid var(--accent);
+    }
+
+    .modal-math-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .modal-tier {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--ink);
+      margin: 4px 0;
+    }
+
+    .modal-tier span {
+      color: var(--muted);
+      display: inline-block;
+      width: 80px;
+    }
+
+    .modal-sources {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px !important;
+    }
+
+    .modal-assumption {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 0 !important;
+    }
+
+    .modal-close-btn {
+      display: block;
+      width: calc(100% - 32px);
+      margin: 0 16px 16px 16px;
+      padding: 10px;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .modal-close-btn:hover {
+      background: var(--accent);
+    }
+
+    @media (max-width: 400px) {
+      .penalty-methodology {
+        width: 280px;
+        left: -20px;
+      }
+    }
 
     /* Tab Navigation */
     .tab-nav {
@@ -308,6 +706,7 @@
 
     .policy-card.illiberal { border-left: 4px solid var(--accent); }
     .policy-card.tax-card { border-left: 4px solid #5d4037; }
+    .policy-card.entitlement-card { border-left: 4px solid var(--success); }
     .methodology-card.tax-methodology { border-left: 4px solid #5d4037; }
 
     .threshold-row {
@@ -710,16 +1109,114 @@
         <div class="fiscal-label">Net</div>
         <div class="fiscal-value" id="net-impact">$0B</div>
       </div>
+      <div class="fiscal-item gdp-projection" id="gdp-container">
+        <div class="fiscal-label">GDP 2075</div>
+        <div class="fiscal-value gdp-clickable" id="gdp-projection">$75T</div>
+        <div class="fiscal-sublabel" id="gdp-change"></div>
+        <div class="gdp-methodology" id="gdp-methodology">
+          <div class="penalty-methodology-header">
+            <span class="penalty-methodology-title">GDP 2075 Projection</span>
+            <button class="penalty-back-button gdp-back-button">← Back</button>
+          </div>
+          <div class="penalty-methodology-content">
+            <p><strong>Baseline:</strong> $28T (2024) → $75T (2075) at 2% real growth</p>
+            <div class="gdp-breakdown">
+              <div class="gdp-breakdown-title">Your Policy Impact</div>
+              <div class="gdp-breakdown-row">
+                <span>Baseline GDP 2075</span>
+                <span id="gdp-baseline-val">$75T</span>
+              </div>
+              <div class="gdp-breakdown-row tax-drag-row">
+                <span>Tax drag effect</span>
+                <span id="gdp-tax-drag-val">−$0T</span>
+              </div>
+              <div class="gdp-breakdown-row pop-row">
+                <span>Population effect</span>
+                <span id="gdp-pop-val">+$0T</span>
+              </div>
+              <div class="gdp-breakdown-row total-row">
+                <span>Projected GDP</span>
+                <span id="gdp-total-val">$75T</span>
+              </div>
+            </div>
+            <p><strong>Tax drag:</strong> Each 0.01 TFR drag ≈ 0.1% lower annual growth, compounded over 50 years.</p>
+            <p><strong>Population effect:</strong> Higher TFR → larger workforce in 20-50 years. Each +1.0 TFR ≈ +0.5% annual growth (phases in after year 20).</p>
+            <p><strong>Sources:</strong> CBO long-term projections; Maestas et al. (2016) on population-GDP; Jones (2022) on demographic drag.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="penalties">
-      <div class="penalty-badge inflation" id="penalty-inflation">
-        <span>⚠</span>
-        <span>Inflation: <span id="inflation-penalty-val">-0.00</span> TFR</span>
+      <div class="penalty-badge-container" id="inflation-container">
+        <div class="penalty-badge inflation" id="penalty-inflation">
+          <span>⚠</span>
+          <span>Inflation: <span id="inflation-penalty-val">-0.00</span> TFR</span>
+          <span class="flip-hint">ⓘ</span>
+        </div>
+        <div class="penalty-methodology" id="inflation-methodology">
+          <div class="penalty-methodology-header">
+            <span class="penalty-methodology-title">Deficit → Inflation → Fertility</span>
+            <button class="penalty-back-button">← Back</button>
+          </div>
+          <div class="penalty-methodology-content">
+            <p><strong>Mechanism:</strong> Unfunded spending increases money supply, driving inflation. Young families spend more on inflation-sensitive categories (housing, childcare, food).</p>
+            <p><strong>Penalty tiers:</strong></p>
+            <table class="penalty-math-table">
+              <tr><td>$0-200B deficit</td><td>−0.03 TFR per $100B</td></tr>
+              <tr><td>$200-500B</td><td>−0.05 TFR per $100B</td></tr>
+              <tr><td>$500-800B</td><td>−0.08 TFR per $100B</td></tr>
+              <tr><td>>$800B</td><td>−0.12 TFR per $100B</td></tr>
+            </table>
+            <p><strong>Sources:</strong> Adsera (2004) inflation-fertility relationship; Schaller (2016) recession timing effects; 1970s stagflation family formation data.</p>
+            <p><strong>Key assumption:</strong> Economy at full employment—no slack to absorb spending without price pressure.</p>
+          </div>
+        </div>
       </div>
-      <div class="penalty-badge growth" id="penalty-growth">
-        <span>📉</span>
-        <span>Growth Drag: <span id="growth-penalty-val">-0.00</span> TFR</span>
+      <div class="penalty-badge-container" id="growth-container">
+        <div class="penalty-badge growth" id="penalty-growth">
+          <span>📉</span>
+          <span>Growth Drag: <span id="growth-penalty-val">-0.00</span> TFR</span>
+          <span class="flip-hint">ⓘ</span>
+        </div>
+        <div class="penalty-methodology" id="growth-methodology">
+          <div class="penalty-methodology-header">
+            <span class="penalty-methodology-title">Tax → Growth Drag → Fertility</span>
+            <button class="penalty-back-button">← Back</button>
+          </div>
+          <div class="penalty-methodology-content">
+            <p><strong>Mechanism:</strong> Distortionary taxes reduce growth through labor supply effects, reduced investment, and capital misallocation. Lower growth = lower wages and higher uncertainty.</p>
+            <p><strong>Elasticity:</strong></p>
+            <table class="penalty-math-table">
+              <tr><td>1% GDP reduction</td><td>~0.005 TFR reduction</td></tr>
+              <tr><td>0.01 TFR drag</td><td>≈ 0.1% annual GDP drag</td></tr>
+            </table>
+            <p><strong>Sources:</strong> Becker (1960) income-fertility; Keane (2011) labor supply meta-analysis; CBO tax/GDP estimates; Romer & Romer (2010) tax multipliers.</p>
+            <p><strong>Note:</strong> Entitlement reform has no growth drag—it's a transfer, not a distortion.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Deficit Warning Modal -->
+    <div class="modal-overlay" id="deficit-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="modal-icon">⚠️</span>
+          <h3>Deficit Warning</h3>
+        </div>
+        <div class="modal-body">
+          <p>Unfunded spending creates inflationary pressure that hurts young families through higher housing, childcare, and food costs—partially offsetting fertility gains.</p>
+          <div class="modal-math">
+            <div class="modal-math-title">Penalty (scales with deficit)</div>
+            <div class="modal-tier"><span>$0-200B:</span> −0.03 TFR per $100B</div>
+            <div class="modal-tier"><span>$200-500B:</span> −0.05 TFR per $100B</div>
+            <div class="modal-tier"><span>$500B+:</span> −0.08-0.12 TFR per $100B</div>
+          </div>
+          <p class="modal-sources"><strong>Sources:</strong> Adsera (2004) inflation-fertility; Schaller (2016) recession timing effects.</p>
+          <p class="modal-assumption"><strong>Assumption:</strong> Economy at full employment—no slack to absorb spending without price pressure.</p>
+        </div>
+        <button class="modal-close-btn" id="close-deficit-modal">Got it</button>
       </div>
     </div>
   </header>
@@ -773,9 +1270,10 @@
       { 
         id: 'child-allowance', 
         name: 'Universal Child Allowance', 
-        description: '$500/mo ages 0-6, $300/mo ages 7-17. No phaseout.', 
+        description: 'Monthly payment per child, ages 0-6. (Ages 7-17 at 60%)', 
         costLow: 250, costHigh: 300, tfrLow: 0.15, tfrHigh: 0.20, 
         enabled: false, intensity: 100,
+        sliderConfig: { label: 'Monthly amount', min: 200, max: 800, default: 500, format: v => `$${v}/mo` },
         confidence: 'medium',
         methodology: {
           derivation: 'Laroque & Salanié (2014): €1k/mo → +0.05 TFR. At $500/mo (~€450/mo equivalent), base estimate: +0.02-0.03. Universal design + front-loading + no marriage penalty amplifies effect. Cohen elasticity applied to effective ~50% income increase for median family.',
@@ -789,9 +1287,10 @@
       { 
         id: 'third-child-bonus', 
         name: '3+ Child Tax Bonus', 
-        description: '100% federal tax return per 3rd+ child, ages 0-6.', 
+        description: 'Federal tax return per 3rd+ child, ages 0-6.', 
         costLow: 100, costHigh: 150, tfrLow: 0.10, tfrHigh: 0.15, 
         enabled: false, intensity: 100,
+        sliderConfig: { label: 'Tax return %', min: 50, max: 150, default: 100, format: v => `${v}%` },
         confidence: 'medium',
         methodology: {
           derivation: 'Cohen: ($32k/$12k) × 0.3 × 0.28 (3rd+ share) = +0.07. Duclos Quebec 3rd+ bonus showed +25% increase in 3rd births, scaled to US context = +0.08-0.12. Stacking on allowance creates additional marginal incentive.',
@@ -799,15 +1298,16 @@
             { cite: 'Cohen et al. (2013)', finding: 'Marginal incentive effects on higher-parity births', elasticity: '~0.3' },
             { cite: 'Duclos et al. (2001)', finding: 'Quebec 3rd+ bonus → +25% third births', elasticity: 'Parity-specific' }
           ],
-          notes: 'FISCAL REALITY: Not NPV-positive for median child. Approaches break-even only for married households with above-median earnings. This is a transfer, not an investment with positive fiscal return.'
+          notes: '100% = full federal tax liability returned. 150% = refundable beyond liability. FISCAL REALITY: This is a transfer, not an investment with positive fiscal return.'
         }
       },
       { 
         id: 'childcare', 
-        name: 'Universal Childcare ($5/day)', 
-        description: 'Quebec model. Ages 0-5.', 
+        name: 'Universal Childcare', 
+        description: 'Subsidized childcare, ages 0-5. Quebec model.', 
         costLow: 80, costHigh: 100, tfrLow: 0.10, tfrHigh: 0.15, 
         enabled: false, intensity: 100,
+        sliderConfig: { label: 'Family daily cost', min: 0, max: 20, default: 5, format: v => v === 0 ? 'Free' : `$${v}/day`, invert: true },
         confidence: 'high',
         methodology: {
           derivation: 'Direct application of Milligan (2005) Quebec estimate. This is the highest-confidence estimate in the package due to direct replication and sustained effects confirmed by Ang (2015).',
@@ -815,15 +1315,16 @@
             { cite: 'Milligan (2005)', finding: 'Quebec $5/day program → +0.10-0.15 TFR', elasticity: 'Direct estimate' },
             { cite: 'Ang (2015)', finding: 'Confirmed sustained effects of Quebec program', elasticity: 'Replication' }
           ],
-          notes: 'Current avg US childcare cost: ~$1,200/month. Program reduces to ~$100/month, creating ~$1,100/month savings per family.'
+          notes: 'Current avg US childcare cost: ~$50/day ($1,200/month). Quebec charges ~$9 CAD/day. $0 = fully subsidized.'
         }
       },
       { 
         id: 'parental-leave', 
-        name: 'Paid Parental Leave (12 mo)', 
-        description: '80% salary, job-protected. ~1% payroll tax.', 
+        name: 'Paid Parental Leave', 
+        description: '80% salary replacement, job-protected.', 
         costLow: 60, costHigh: 100, tfrLow: 0.08, tfrHigh: 0.12, 
         enabled: false, intensity: 100,
+        sliderConfig: { label: 'Leave duration', min: 3, max: 18, default: 12, format: v => `${v} months` },
         confidence: 'medium-high',
         methodology: {
           derivation: 'Lalive baseline: +0.04-0.06. Raute finding: +0.08-0.10 for educated women. US zero baseline maximizes potential impact. Extended to 12 months for full effect.',
@@ -831,15 +1332,16 @@
             { cite: 'Raute (2019)', finding: 'Germany Elterngeld → +22% first births among educated women', elasticity: '+0.08-0.10' },
             { cite: 'Lalive & Zweimüller (2009)', finding: 'Austria leave extension → +5.7% second births', elasticity: '+0.04-0.06' }
           ],
-          notes: 'The US is currently the only OECD country without federal paid parental leave. Zero baseline maximizes marginal impact of policy.'
+          notes: 'The US is the only OECD country without federal paid leave. Nordic countries offer 12-18 months. Effects diminish beyond ~12 months.'
         }
       },
       { 
         id: 'debt-relief', 
         name: 'Marriage-Linked Debt Relief', 
-        description: 'Loans paused on marriage, forgiven on birth.', 
+        description: 'Student loans paused on marriage, forgiven on birth.', 
         costLow: 60, costHigh: 80, tfrLow: 0.06, tfrHigh: 0.12, 
         enabled: false, intensity: 100,
+        sliderConfig: { label: 'Forgiveness %', min: 25, max: 100, default: 100, format: v => `${v}%` },
         confidence: 'low',
         methodology: {
           derivation: 'Addo: $10k debt → 7 month marriage delay. At $52k avg total debt → ~3yr shift in family formation timing. Curve shift estimate: +0.10-0.15, discounted 40% for tempo effects (timing vs. quantum).',
@@ -852,39 +1354,42 @@
       { 
         id: 'housing', 
         name: 'Federal Housing Program', 
-        description: '750k-1M units/year. Singapore HDB model.', 
+        description: 'Direct federal construction in high-cost metros.', 
         costLow: 150, costHigh: 200, tfrLow: 0.12, tfrHigh: 0.20, 
         enabled: false, intensity: 100,
+        sliderConfig: { label: 'Units per year', min: 250, max: 1500, default: 1000, format: v => `${v}k units` },
         confidence: 'low',
         methodology: {
           derivation: 'Dettling & Kearney: 10% housing price increase → 2-3% fertility decrease. Inverting: 30% price reduction × 2.5% × 1.62 baseline × 2.5 (multiplier for sustained effect) = +0.12-0.20.',
           sources: [
             { cite: 'Dettling & Kearney (2014)', finding: '10% housing price increase → 2-3% fertility decrease', elasticity: '~0.25' }
           ],
-          notes: 'HIGH UNCERTAINTY: Requires ~3x current multifamily construction capacity. Specific risks: land acquisition, labor constraints (20-40% cost overruns possible), NIMBY opposition. Asymmetric effects possible (positive effects from price drops may be smaller than negative effects from increases).'
+          notes: 'HIGH UNCERTAINTY: Current US multifamily construction ~400k/yr. 1M units requires 2.5x capacity increase. Singapore HDB model as reference.'
         }
       },
       { 
         id: 'fertility-coverage', 
         name: 'Universal Fertility Coverage', 
-        description: 'IVF, IUI, egg freezing. No limits.', 
+        description: 'IVF, IUI, egg freezing covered by insurance.', 
         costLow: 15, costHigh: 25, tfrLow: 0.02, tfrHigh: 0.05, 
         enabled: false, intensity: 100,
+        sliderConfig: { label: 'IVF cycles covered', min: 2, max: 10, default: 6, format: v => v >= 10 ? 'Unlimited' : `${v} cycles` },
         confidence: 'medium',
         methodology: {
           derivation: 'Israeli universal fertility coverage contributes ~0.03 TFR. 15-20% of couples affected by infertility. Modest but additive effect.',
           sources: [
             { cite: 'Israeli experience', finding: 'Universal coverage → ~0.03 TFR contribution', elasticity: 'Direct observation' }
           ],
-          notes: 'Current avg IVF cost: ~$15-20k per cycle, avg 2.5 cycles needed. High benefit to affected families even if modest aggregate TFR impact.'
+          notes: 'Israel covers unlimited cycles. Current avg IVF cost: ~$15-20k per cycle, avg 2.5 cycles needed.'
         }
       },
       { 
         id: 'baby-bonds', 
         name: 'Baby Bonds', 
-        description: '$10k at birth, accessible at 18.', 
+        description: 'Trust fund at birth, accessible at 18 for education/housing.', 
         costLow: 40, costHigh: 50, tfrLow: 0.03, tfrHigh: 0.06, 
         enabled: false, intensity: 100,
+        sliderConfig: { label: 'Bond amount', min: 5, max: 25, default: 10, format: v => `$${v}k` },
         confidence: 'low',
         methodology: {
           derivation: 'No direct fertility precedent. UK Child Trust Fund provides partial model. Theoretical signal effect: reduces parental anxiety about child\'s future economic prospects.',
@@ -983,13 +1488,62 @@
     ];
 
     const entitlementReforms = [
-      { id: 'medicare-age', name: 'Medicare to 67', savingsLow: 80, savingsHigh: 100, description: 'Phase in over 12 years', enabled: false },
-      { id: 'ss-means-test', name: 'SS Means-Test (>$100k)', savingsLow: 120, savingsHigh: 150, description: '50% clawback', enabled: false },
-      { id: 'ss-cola', name: 'SS COLA Adjustment', savingsLow: 80, savingsHigh: 100, description: 'Chained CPI -0.5%', enabled: false },
-      { id: 'medicare-drugs', name: 'Medicare Drug Negotiation', savingsLow: 50, savingsHigh: 80, description: 'Expand to 100 drugs', enabled: false },
-      { id: 'ss-retirement-70', name: 'SS Retirement to 70', savingsLow: 100, savingsHigh: 150, description: 'Phase in over 18 years', enabled: false },
-      { id: 'ss-cap', name: 'Cap SS at $3,200/mo', savingsLow: 60, savingsHigh: 80, description: '150% of median', enabled: false },
-      { id: 'medicare-premiums', name: 'Medicare Premiums', savingsLow: 40, savingsHigh: 60, description: 'Income-relating', enabled: false }
+      { 
+        id: 'medicare-age', 
+        name: 'Raise Medicare Age', 
+        savingsLow: 80, savingsHigh: 100, 
+        description: 'Phase in over 12 years.', 
+        enabled: false,
+        sliderConfig: { label: 'Eligibility age', min: 66, max: 70, default: 67, format: v => `${v} years` }
+      },
+      { 
+        id: 'ss-means-test', 
+        name: 'SS Means-Test', 
+        savingsLow: 120, savingsHigh: 150, 
+        description: 'Reduce benefits for high earners.', 
+        enabled: false,
+        sliderConfig: { label: 'Income threshold', min: 75, max: 200, default: 100, format: v => `>$${v}k` }
+      },
+      { 
+        id: 'ss-cola', 
+        name: 'SS COLA Adjustment', 
+        savingsLow: 80, savingsHigh: 100, 
+        description: 'Switch to Chained CPI.', 
+        enabled: false,
+        sliderConfig: { label: 'Annual reduction', min: 25, max: 75, default: 50, format: v => `−${(v/100).toFixed(2)}%` }
+      },
+      { 
+        id: 'medicare-drugs', 
+        name: 'Medicare Drug Negotiation', 
+        savingsLow: 50, savingsHigh: 80, 
+        description: 'Expand negotiation authority.', 
+        enabled: false,
+        sliderConfig: { label: 'Drugs covered', min: 50, max: 250, default: 100, format: v => `${v} drugs` }
+      },
+      { 
+        id: 'ss-retirement-70', 
+        name: 'Raise SS Retirement Age', 
+        savingsLow: 100, savingsHigh: 150, 
+        description: 'Phase in over 18 years.', 
+        enabled: false,
+        sliderConfig: { label: 'Full retirement age', min: 68, max: 72, default: 70, format: v => `${v} years` }
+      },
+      { 
+        id: 'ss-cap', 
+        name: 'Cap SS Benefits', 
+        savingsLow: 60, savingsHigh: 80, 
+        description: 'Maximum monthly benefit.', 
+        enabled: false,
+        sliderConfig: { label: 'Monthly cap', min: 2500, max: 4000, default: 3200, format: v => `$${v.toLocaleString()}/mo` }
+      },
+      { 
+        id: 'medicare-premiums', 
+        name: 'Medicare Premium Surcharge', 
+        savingsLow: 40, savingsHigh: 60, 
+        description: 'Income-related Part B/D premiums.', 
+        enabled: false,
+        sliderConfig: { label: 'Surcharge threshold', min: 50, max: 150, default: 85, format: v => `>$${v}k` }
+      }
     ];
 
     const taxIncreases = [
@@ -1177,13 +1731,59 @@
       return taxIncreases.filter(t => t.enabled && t.growthDrag).reduce((sum, t) => sum + t.growthDrag, 0);
     }
 
+    function calculateGDP2075(tfr, growthDrag) {
+      // Baseline assumptions:
+      // - Current US GDP: ~$28T (2024)
+      // - Baseline real growth: 2.0% per year
+      // - Population effect: higher TFR increases labor force in ~20 years
+      // - Tax drag: reduces annual growth rate
+      
+      const currentGDP = 28; // $28T
+      const years = 50; // 2025 to 2075
+      const baselineGrowth = 0.02; // 2% real growth
+      
+      // Tax policy drag on annual growth (direct effect)
+      // Growth drag in TFR terms ≈ 0.01 TFR per 0.1% GDP drag
+      // So growthDrag of 0.05 TFR ≈ 0.5% annual GDP drag
+      const taxDragOnGrowth = growthDrag * 0.1; // Convert TFR drag to GDP growth drag
+      
+      // Population growth effect on GDP
+      // Higher TFR → larger working-age population in 20-50 years
+      // Rule of thumb: 0.1 TFR increase → 0.05% higher annual growth after 20 years
+      // This is conservative; some estimates are higher
+      const tfrDelta = tfr - 1.62; // Change from baseline
+      const populationGrowthBoost = tfrDelta * 0.005; // 0.5% per 1.0 TFR
+      
+      // Phased population effect (kicks in after ~20 years)
+      // First 20 years: only tax drag
+      // Years 20-50: population boost phases in
+      
+      let gdp = currentGDP;
+      for (let year = 1; year <= years; year++) {
+        let annualGrowth = baselineGrowth - taxDragOnGrowth;
+        
+        // Population effect phases in after year 20
+        if (year > 20) {
+          const phaseIn = Math.min(1, (year - 20) / 10); // Full effect by year 30
+          annualGrowth += populationGrowthBoost * phaseIn;
+        }
+        
+        gdp *= (1 + annualGrowth);
+      }
+      
+      return gdp;
+    }
+
+    // Baseline GDP for comparison (no policy changes)
+    const baselineGDP2075 = calculateGDP2075(1.62, 0);
+
     function calculateFiscal() {
       let spending = 0, offsets = 0;
       [...liberalPolicies, ...illiberalPolicies].forEach(p => {
         if (p.enabled) {
-          const i = p.intensity / 100;
-          if (p.revenue) offsets += ((Math.abs(p.costLow) + Math.abs(p.costHigh)) / 2) * i;
-          else spending += ((p.costLow + p.costHigh) / 2) * i;
+          // costLow and costHigh are already scaled by the slider
+          if (p.revenue) offsets += (Math.abs(p.costLow) + Math.abs(p.costHigh)) / 2;
+          else spending += (p.costLow + p.costHigh) / 2;
         }
       });
       entitlementReforms.forEach(r => { if (r.enabled) offsets += (r.savingsLow + r.savingsHigh) / 2; });
@@ -1196,9 +1796,9 @@
       let grossLow = 0, grossHigh = 0;
       [...liberalPolicies, ...illiberalPolicies].forEach(p => {
         if (p.enabled) {
-          const i = p.intensity / 100;
-          grossLow += p.tfrLow * i;
-          grossHigh += p.tfrHigh * i;
+          // tfrLow and tfrHigh are already scaled by the slider
+          grossLow += p.tfrLow;
+          grossHigh += p.tfrHigh;
         }
       });
 
@@ -1256,14 +1856,56 @@
         netEl.className = 'fiscal-value negative';
       }
 
-      const inflationBadge = document.getElementById('penalty-inflation');
-      const growthBadge = document.getElementById('penalty-growth');
+      const inflationContainer = document.getElementById('inflation-container');
+      const growthContainer = document.getElementById('growth-container');
 
-      inflationBadge.classList.toggle('visible', tfr.inflationPenalty > 0);
+      inflationContainer.classList.toggle('visible', tfr.inflationPenalty > 0);
       if (tfr.inflationPenalty > 0) document.getElementById('inflation-penalty-val').textContent = `-${tfr.inflationPenalty.toFixed(2)}`;
 
-      growthBadge.classList.toggle('visible', tfr.growthDrag > 0);
+      growthContainer.classList.toggle('visible', tfr.growthDrag > 0);
       if (tfr.growthDrag > 0) document.getElementById('growth-penalty-val').textContent = `-${tfr.growthDrag.toFixed(2)}`;
+      
+      // Show deficit warning modal on first deficit
+      if (tfr.deficit > 0 && !window.deficitWarningShown) {
+        window.deficitWarningShown = true;
+        document.getElementById('deficit-modal').classList.add('visible');
+      }
+
+      // GDP 2075 projection
+      const gdp2075 = calculateGDP2075(tfr.mid, tfr.growthDrag);
+      const gdpEl = document.getElementById('gdp-projection');
+      const gdpChangeEl = document.getElementById('gdp-change');
+      
+      gdpEl.textContent = `$${gdp2075.toFixed(0)}T`;
+      
+      const gdpDelta = gdp2075 - baselineGDP2075;
+      const gdpPct = ((gdp2075 / baselineGDP2075) - 1) * 100;
+      
+      if (Math.abs(gdpPct) < 0.5) {
+        gdpChangeEl.textContent = '(baseline)';
+        gdpChangeEl.className = 'fiscal-sublabel';
+      } else if (gdpDelta > 0) {
+        gdpChangeEl.textContent = `+${gdpPct.toFixed(1)}%`;
+        gdpChangeEl.className = 'fiscal-sublabel positive';
+      } else {
+        gdpChangeEl.textContent = `${gdpPct.toFixed(1)}%`;
+        gdpChangeEl.className = 'fiscal-sublabel negative';
+      }
+
+      // Update GDP breakdown panel
+      document.getElementById('gdp-baseline-val').textContent = `$${baselineGDP2075.toFixed(0)}T`;
+      
+      // Calculate tax drag effect on GDP
+      const gdpWithoutTaxDrag = calculateGDP2075(tfr.mid, 0);
+      const taxDragEffect = gdp2075 - gdpWithoutTaxDrag;
+      document.getElementById('gdp-tax-drag-val').textContent = taxDragEffect >= 0 ? `+$${taxDragEffect.toFixed(0)}T` : `−$${Math.abs(taxDragEffect).toFixed(0)}T`;
+      
+      // Calculate population effect on GDP
+      const gdpWithoutPopEffect = calculateGDP2075(1.62, tfr.growthDrag);
+      const popEffect = gdp2075 - gdpWithoutPopEffect;
+      document.getElementById('gdp-pop-val').textContent = popEffect >= 0 ? `+$${popEffect.toFixed(0)}T` : `−$${Math.abs(popEffect).toFixed(0)}T`;
+      
+      document.getElementById('gdp-total-val').textContent = `$${gdp2075.toFixed(0)}T`;
 
       document.getElementById('count-policies').textContent = [...liberalPolicies, ...illiberalPolicies].filter(p => p.enabled).length;
       document.getElementById('count-entitlements').textContent = entitlementReforms.filter(r => r.enabled).length;
@@ -1306,6 +1948,10 @@
                               policy.confidence === 'medium-high' ? 'medium' :
                               policy.confidence === 'medium' ? 'medium' : 'low';
 
+      // Custom slider config or fallback to intensity
+      const sc = policy.sliderConfig || { label: 'Intensity', min: 25, max: 100, default: 100, format: v => `${v}%` };
+      const sliderValue = sc.default;
+
       cardContainer.innerHTML = `
         <div class="card-flipper">
           <div class="card-front">
@@ -1313,8 +1959,8 @@
               <div class="policy-header">
                 <span class="policy-title" data-flip="true">${policy.name}</span>
                 <div class="policy-stats">
-                  <span class="policy-stat tfr">+${tfrMid} TFR</span>
-                  <span class="policy-stat cost">${policy.revenue ? '−' : ''}$${Math.abs(costMid)}B</span>
+                  <span class="policy-stat tfr policy-tfr">+${tfrMid} TFR</span>
+                  <span class="policy-stat cost policy-cost">${policy.revenue ? '−' : ''}$${Math.abs(costMid)}B</span>
                 </div>
               </div>
               <p class="policy-description">${policy.description}</p>
@@ -1324,8 +1970,8 @@
                 <label class="toggle"><input type="checkbox"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
               </div>
               <div class="slider-row hidden">
-                <div class="slider-header"><span class="slider-label">Intensity</span><span class="slider-value">100%</span></div>
-                <input type="range" min="25" max="100" value="100">
+                <div class="slider-header"><span class="slider-label">${sc.label}</span><span class="slider-value">${sc.format(sliderValue)}</span></div>
+                <input type="range" min="${sc.min}" max="${sc.max}" value="${sliderValue}">
               </div>
             </div>
           </div>
@@ -1372,8 +2018,16 @@
       const toggle = cardContainer.querySelector('input[type="checkbox"]');
       const slider = cardContainer.querySelector('input[type="range"]');
       const sliderRow = cardContainer.querySelector('.slider-row');
-      const sliderValue = cardContainer.querySelector('.slider-value');
+      const sliderValueEl = cardContainer.querySelector('.slider-value');
       const toggleLabel = cardContainer.querySelector('.toggle-label');
+      const tfrStat = cardContainer.querySelector('.policy-tfr');
+      const costStat = cardContainer.querySelector('.policy-cost');
+
+      // Store base values for scaling
+      const baseTfrLow = policy.tfrLow;
+      const baseTfrHigh = policy.tfrHigh;
+      const baseCostLow = policy.costLow;
+      const baseCostHigh = policy.costHigh;
 
       toggle.addEventListener('change', () => {
         policy.enabled = toggle.checked;
@@ -1384,8 +2038,33 @@
       });
 
       slider.addEventListener('input', () => {
-        policy.intensity = parseInt(slider.value);
-        sliderValue.textContent = `${policy.intensity}%`;
+        const val = parseInt(slider.value);
+        sliderValueEl.textContent = sc.format(val);
+        
+        // Calculate intensity as ratio to default
+        let ratio = val / sc.default;
+        
+        // For inverted sliders (like childcare cost), lower = better
+        if (sc.invert) {
+          // $0/day = max effect, $20/day = min effect
+          // At $5 default: ratio = 1. At $0: ratio = 1.25. At $20: ratio = 0.25
+          ratio = 1 + ((sc.default - val) / sc.default) * 0.5;
+        }
+        
+        policy.intensity = ratio * 100;
+        
+        // Update displayed TFR and cost
+        policy.tfrLow = baseTfrLow * ratio;
+        policy.tfrHigh = baseTfrHigh * ratio;
+        policy.costLow = baseCostLow * ratio;
+        policy.costHigh = baseCostHigh * ratio;
+        
+        const newTfrMid = ((policy.tfrLow + policy.tfrHigh) / 2).toFixed(2);
+        const newCostMid = Math.round((policy.costLow + policy.costHigh) / 2);
+        
+        tfrStat.textContent = `+${newTfrMid} TFR`;
+        costStat.textContent = `${policy.revenue ? '−' : ''}$${Math.abs(newCostMid)}B`;
+        
         updateDisplay();
       });
 
@@ -1399,18 +2078,19 @@
         return;
       }
 
-      // Simple entitlement reform cards (no flip)
+      // Entitlement reform cards with optional sliders
       const card = document.createElement('div');
-      card.className = 'policy-card';
+      card.className = 'policy-card entitlement-card';
 
       const savingsMid = Math.round((reform.savingsLow + reform.savingsHigh) / 2);
       const hasDrag = reform.growthDrag > 0;
+      const sc = reform.sliderConfig;
 
       card.innerHTML = `
         <div class="policy-header">
           <span class="policy-title" style="cursor: default;">${reform.name}</span>
           <div class="policy-stats">
-            <span class="policy-stat cost">$${savingsMid}B/yr</span>
+            <span class="policy-stat cost reform-savings">$${savingsMid}B/yr</span>
             ${hasDrag ? `<span class="policy-stat drag">−${reform.growthDrag.toFixed(2)} TFR</span>` : ''}
           </div>
         </div>
@@ -1419,6 +2099,15 @@
           <span class="toggle-label">Disabled</span>
           <label class="toggle"><input type="checkbox"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
         </div>
+        ${sc ? `
+        <div class="slider-row hidden">
+          <div class="slider-header">
+            <span class="slider-label">${sc.label}</span>
+            <span class="slider-value">${sc.format(sc.default)}</span>
+          </div>
+          <input type="range" min="${sc.min}" max="${sc.max}" value="${sc.default}">
+        </div>
+        ` : ''}
       `;
 
       const title = card.querySelector('.policy-title');
@@ -1426,13 +2115,66 @@
 
       const toggle = card.querySelector('input[type="checkbox"]');
       const toggleLabel = card.querySelector('.toggle-label');
+      const sliderRow = card.querySelector('.slider-row');
+      const slider = card.querySelector('input[type="range"]');
+      const sliderValueEl = card.querySelector('.slider-value');
+      const savingsStat = card.querySelector('.reform-savings');
+
+      // Store base values for scaling
+      const baseSavingsLow = reform.savingsLow;
+      const baseSavingsHigh = reform.savingsHigh;
 
       toggle.addEventListener('change', () => {
         reform.enabled = toggle.checked;
         card.classList.toggle('enabled', reform.enabled);
+        if (sliderRow) sliderRow.classList.toggle('hidden', !reform.enabled);
         toggleLabel.textContent = reform.enabled ? 'Enabled' : 'Disabled';
         updateDisplay();
       });
+
+      if (slider && sc) {
+        slider.addEventListener('input', () => {
+          const val = parseInt(slider.value);
+          sliderValueEl.textContent = sc.format(val);
+          
+          // Calculate ratio based on reform type
+          let ratio = 1;
+          
+          if (reform.id === 'medicare-age') {
+            // 65 (current) to slider value, each year = ~$40-50B
+            ratio = (val - 65) / (sc.default - 65);
+          } else if (reform.id === 'ss-means-test') {
+            // Lower threshold = more savings (more people affected)
+            ratio = sc.default / val;
+          } else if (reform.id === 'ss-cola') {
+            // Higher reduction = more savings
+            ratio = val / sc.default;
+          } else if (reform.id === 'medicare-drugs') {
+            // More drugs = more savings
+            ratio = val / sc.default;
+          } else if (reform.id === 'ss-retirement-70') {
+            // 67 (current) to slider value
+            ratio = (val - 67) / (sc.default - 67);
+          } else if (reform.id === 'ss-cap') {
+            // Lower cap = more savings
+            ratio = sc.default / val;
+          } else if (reform.id === 'medicare-premiums') {
+            // Lower threshold = more savings
+            ratio = sc.default / val;
+          }
+          
+          // Clamp ratio to reasonable bounds
+          ratio = Math.max(0.25, Math.min(2.5, ratio));
+          
+          reform.savingsLow = Math.round(baseSavingsLow * ratio);
+          reform.savingsHigh = Math.round(baseSavingsHigh * ratio);
+          
+          const newSavingsMid = Math.round((reform.savingsLow + reform.savingsHigh) / 2);
+          savingsStat.textContent = `$${newSavingsMid}B/yr`;
+          
+          updateDisplay();
+        });
+      }
 
       const wrapper = document.createElement('div');
       wrapper.style.marginBottom = '12px';
@@ -1689,6 +2431,81 @@
       });
     }
 
+    function initPenaltyBadges() {
+      // Inflation badge flip
+      const inflationBadge = document.getElementById('penalty-inflation');
+      const inflationMethodology = document.getElementById('inflation-methodology');
+      const inflationBack = inflationMethodology.querySelector('.penalty-back-button');
+      
+      inflationBadge.addEventListener('click', () => {
+        inflationMethodology.classList.add('visible');
+      });
+      
+      inflationBack.addEventListener('click', (e) => {
+        e.stopPropagation();
+        inflationMethodology.classList.remove('visible');
+      });
+
+      // Growth badge flip
+      const growthBadge = document.getElementById('penalty-growth');
+      const growthMethodology = document.getElementById('growth-methodology');
+      const growthBack = growthMethodology.querySelector('.penalty-back-button');
+      
+      growthBadge.addEventListener('click', () => {
+        growthMethodology.classList.add('visible');
+      });
+      
+      growthBack.addEventListener('click', (e) => {
+        e.stopPropagation();
+        growthMethodology.classList.remove('visible');
+      });
+
+      // GDP projection click
+      const gdpValue = document.getElementById('gdp-projection');
+      const gdpMethodology = document.getElementById('gdp-methodology');
+      const gdpBack = gdpMethodology.querySelector('.gdp-back-button');
+      
+      gdpValue.addEventListener('click', () => {
+        gdpMethodology.classList.add('visible');
+      });
+      
+      gdpBack.addEventListener('click', (e) => {
+        e.stopPropagation();
+        gdpMethodology.classList.remove('visible');
+      });
+
+      // Close methodologies when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!inflationBadge.contains(e.target) && !inflationMethodology.contains(e.target)) {
+          inflationMethodology.classList.remove('visible');
+        }
+        if (!growthBadge.contains(e.target) && !growthMethodology.contains(e.target)) {
+          growthMethodology.classList.remove('visible');
+        }
+        if (!gdpValue.contains(e.target) && !gdpMethodology.contains(e.target)) {
+          gdpMethodology.classList.remove('visible');
+        }
+      });
+    }
+
+    function initDeficitModal() {
+      window.deficitWarningShown = false;
+      
+      const modal = document.getElementById('deficit-modal');
+      const closeBtn = document.getElementById('close-deficit-modal');
+      
+      closeBtn.addEventListener('click', () => {
+        modal.classList.remove('visible');
+      });
+      
+      // Close on overlay click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('visible');
+        }
+      });
+    }
+
     function init() {
       liberalPolicies.forEach(p => renderPolicyCard(p, document.getElementById('liberal-policies')));
       illiberalPolicies.forEach(p => renderPolicyCard(p, document.getElementById('illiberal-policies'), true));
@@ -1696,6 +2513,8 @@
       taxIncreases.forEach(t => renderReformCard(t, document.getElementById('tax-increases'), true));
       renderModelParams(document.getElementById('model-params'));
       initTabs();
+      initPenaltyBadges();
+      initDeficitModal();
       updateDisplay();
     }
 
