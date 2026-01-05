@@ -1,921 +1,902 @@
-
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE PATH // A Life in Choices</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>The Fertility Equation | Interactive Policy Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a1a1a;
+      --paper: #f8f6f1;
+      --paper-dark: #e8e4db;
+      --accent: #8b0000;
+      --success: #2d5016;
+      --muted: #666;
+      --rule: #ccc;
+    }
+
+```
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 16px 20px;
+  flex-shrink: 0;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.header-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.tfr-compact {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tfr-number-large {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+.tfr-number-large.at-replacement { color: #7cb342; }
+.tfr-number-large.below { color: #ffb74d; }
+.tfr-number-large.critical { color: #ef5350; }
+
+.tfr-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: right;
+}
+
+.tfr-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.tfr-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  background: rgba(255,255,255,0.1);
+}
+
+.tfr-progress {
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.tfr-progress-fill {
+  height: 100%;
+  background: var(--paper);
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.tfr-progress-fill.at-replacement { background: #7cb342; }
+
+.tfr-progress-marker {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  background: var(--accent);
+  left: 70%;
+}
+
+.tfr-progress-marker::after {
+  content: '2.1';
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--accent);
+}
+
+.fiscal-strip {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.fiscal-item { text-align: center; flex: 1; }
+
+.fiscal-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.fiscal-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.fiscal-value.positive { color: #7cb342; }
+.fiscal-value.negative { color: #ef5350; }
+
+.penalties {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.penalty-badge {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+}
+
+.penalty-badge.visible { display: flex; }
+.penalty-badge.inflation { background: var(--accent); }
+.penalty-badge.growth { background: #5d4037; }
+
+/* Tab Navigation */
+.tab-nav {
+  display: flex;
+  background: var(--paper-dark);
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 14px 12px;
+  background: none;
+  border: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ink);
+}
+
+.tab-btn .tab-count {
+  display: inline-block;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 9px;
+  font-size: 9px;
+  margin-left: 6px;
+}
+
+.tab-btn.active .tab-count { background: var(--accent); }
+
+/* Tab Content */
+.tab-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.tab-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  padding: 20px;
+  -webkit-overflow-scrolling: touch;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease;
+}
+
+.tab-panel.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Policy Cards */
+.policy-card {
+  border: 1px solid var(--rule);
+  padding: 16px;
+  margin-bottom: 12px;
+  background: var(--paper);
+  transition: all 0.2s ease;
+}
+
+.policy-card.enabled {
+  border-color: var(--ink);
+  background: white;
+}
+
+.policy-card.illiberal { border-left: 4px solid var(--accent); }
+
+.policy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.policy-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.policy-stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.policy-stat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--paper-dark);
+}
+
+.policy-stat.tfr { color: var(--success); }
+.policy-stat.cost { color: var(--muted); }
+.policy-stat.drag { color: #5d4037; background: rgba(93,64,55,0.1); }
+
+.policy-description {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggle input { opacity: 0; width: 0; height: 0; }
+
+.toggle-track {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--paper-dark);
+  border: 1px solid var(--rule);
+  transition: all 0.3s ease;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  background: var(--muted);
+  transition: all 0.3s ease;
+}
+
+.toggle input:checked + .toggle-track {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.toggle input:checked + .toggle-track .toggle-thumb {
+  transform: translateX(20px);
+  background: var(--paper);
+}
+
+.toggle-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.slider-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--paper-dark);
+}
+
+.slider-row.hidden { display: none; }
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.slider-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--paper-dark);
+  border: 1px solid var(--rule);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--ink);
+  cursor: pointer;
+}
+
+.section-header {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.section-intro {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.subsection { margin-top: 24px; }
+
+.subsection-header {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.subsection-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.callout {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-left: 3px solid var(--accent);
+  background: linear-gradient(90deg, rgba(139,0,0,0.05) 0%, var(--paper) 100%);
+  font-size: 0.85rem;
+}
+
+.callout-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.historical-note {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--muted);
+  padding: 10px 12px;
+  background: var(--paper-dark);
+  margin-top: 10px;
+}
+
+.params-card {
+  border: 1px solid var(--rule);
+  padding: 16px;
+  margin-bottom: 12px;
+  background: var(--paper);
+}
+
+.params-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.params-description {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+@media (max-width: 400px) {
+  .tfr-number-large { font-size: 2rem; }
+  .fiscal-strip { gap: 8px; }
+  .fiscal-value { font-size: 0.85rem; }
+}
+```
+
+  </style>
 </head>
-<body class="text-gray-200 overflow-hidden">
-
-    <div id="particles" class="fixed inset-0 pointer-events-none overflow-hidden"></div>
-
-    <!-- Housing Modal -->
-    <div id="housingModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg p-4 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-white">🏠 Change Living Situation</h3>
-                <button onclick="closeHousingModal()" class="text-gray-400 hover:text-white text-xl">&times;</button>
-            </div>
-            <div id="housingOptions" class="space-y-2"></div>
+<body>
+  <header class="header">
+    <div class="header-top">
+      <span class="header-title">Fertility Policy Simulator</span>
+      <div class="tfr-compact">
+        <div class="tfr-meta">
+          <span class="tfr-label">Projected TFR</span>
+          <span class="tfr-status" id="tfr-status">BELOW REPLACEMENT</span>
         </div>
+        <span class="tfr-number-large" id="tfr-number">1.62</span>
+      </div>
     </div>
 
-    <!-- Transport Modal -->
-    <div id="transportModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg p-4 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-white">🚗 Change Transportation</h3>
-                <button onclick="closeTransportModal()" class="text-gray-400 hover:text-white text-xl">&times;</button>
-            </div>
-            <div id="transportOptions" class="space-y-2"></div>
+```
+<div class="tfr-progress">
+  <div class="tfr-progress-fill" id="tfr-progress"></div>
+  <div class="tfr-progress-marker"></div>
+</div>
+
+<div class="fiscal-strip">
+  <div class="fiscal-item">
+    <div class="fiscal-label">Spending</div>
+    <div class="fiscal-value" id="total-spending">$0B</div>
+  </div>
+  <div class="fiscal-item">
+    <div class="fiscal-label">Offsets</div>
+    <div class="fiscal-value positive" id="total-offsets">$0B</div>
+  </div>
+  <div class="fiscal-item">
+    <div class="fiscal-label">Net</div>
+    <div class="fiscal-value" id="net-impact">$0B</div>
+  </div>
+</div>
+
+<div class="penalties">
+  <div class="penalty-badge inflation" id="penalty-inflation">
+    <span>⚠</span>
+    <span>Inflation: <span id="inflation-penalty-val">-0.00</span> TFR</span>
+  </div>
+  <div class="penalty-badge growth" id="penalty-growth">
+    <span>📉</span>
+    <span>Growth Drag: <span id="growth-penalty-val">-0.00</span> TFR</span>
+  </div>
+</div>
+```
+
+  </header>
+
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="0">
+      Policies<span class="tab-count" id="count-policies">0</span>
+    </button>
+    <button class="tab-btn" data-tab="1">
+      Entitlements<span class="tab-count" id="count-entitlements">0</span>
+    </button>
+    <button class="tab-btn" data-tab="2">
+      Taxes<span class="tab-count" id="count-taxes">0</span>
+    </button>
+  </nav>
+
+  <div class="tab-container">
+    <div class="tab-panel active" id="panel-0">
+      <h2 class="section-header">Fertility Policies</h2>
+      <p class="section-intro">Enable the full package with entitlement offsets to reach replacement (TFR 2.1). Deficit spending triggers inflation penalties.</p>
+      <div id="liberal-policies"></div>
+      <div class="subsection">
+        <div class="subsection-header">Illiberal Policies</div>
+        <div class="callout">
+          <div class="callout-title">Ethical Warning</div>
+          These policies restrict reproductive autonomy. Included for analytical completeness.
         </div>
+        <div id="illiberal-policies"></div>
+      </div>
+      <div class="subsection">
+        <div class="subsection-header">Model Parameters</div>
+        <div id="model-params"></div>
+      </div>
     </div>
 
-    <!-- Tutorial Modal -->
-    <div id="tutorialModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-cyan-500 rounded-lg p-6 max-w-xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="text-center mb-4">
-                <div class="text-4xl mb-2" id="tutorialIcon">📖</div>
-                <h3 class="text-xl font-bold text-white" id="tutorialTitle">Welcome to Life Game!</h3>
-            </div>
-            <div id="tutorialContent" class="text-gray-300 mb-6 space-y-3"></div>
-            <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-500" id="tutorialProgress">Step 1 of 5</span>
-                <div class="flex gap-2">
-                    <button onclick="skipTutorial()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors">
-                        Skip Tutorial
-                    </button>
-                    <button onclick="nextTutorialStep()" class="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded transition-colors" id="tutorialNextBtn">
-                        Next →
-                    </button>
-                </div>
-            </div>
+```
+<div class="tab-panel" id="panel-1">
+  <h2 class="section-header">Entitlement Reform</h2>
+  <p class="section-intro">Intergenerational rebalancing. These offsets have no growth penalty—the only "free" funding source.</p>
+  <div id="entitlement-reforms"></div>
+</div>
+
+<div class="tab-panel" id="panel-2">
+  <h2 class="section-header">Tax Increases</h2>
+  <p class="section-intro">Alternative funding. Distortionary taxes create growth drag that partially offsets fertility gains.</p>
+  <div id="tax-increases"></div>
+</div>
+```
+
+  </div>
+
+  <script>
+    const liberalPolicies = [
+      { id: 'child-allowance', name: 'Universal Child Allowance', description: '$500/mo ages 0-6, $300/mo ages 7-17. No phaseout.', costLow: 250, costHigh: 300, tfrLow: 0.15, tfrHigh: 0.20, enabled: false, intensity: 100 },
+      { id: 'third-child-bonus', name: '3+ Child Tax Bonus', description: '100% federal tax return per 3rd+ child, ages 0-6.', costLow: 100, costHigh: 150, tfrLow: 0.10, tfrHigh: 0.15, enabled: false, intensity: 100 },
+      { id: 'childcare', name: 'Universal Childcare ($5/day)', description: 'Quebec model. Ages 0-5.', costLow: 80, costHigh: 100, tfrLow: 0.10, tfrHigh: 0.15, enabled: false, intensity: 100 },
+      { id: 'parental-leave', name: 'Paid Parental Leave (12 mo)', description: '80% salary, job-protected. ~1% payroll tax.', costLow: 60, costHigh: 100, tfrLow: 0.08, tfrHigh: 0.12, enabled: false, intensity: 100 },
+      { id: 'debt-relief', name: 'Marriage-Linked Debt Relief', description: 'Loans paused on marriage, forgiven on birth.', costLow: 60, costHigh: 80, tfrLow: 0.06, tfrHigh: 0.12, enabled: false, intensity: 100 },
+      { id: 'housing', name: 'Federal Housing Program', description: '750k-1M units/year. Singapore HDB model.', costLow: 150, costHigh: 200, tfrLow: 0.12, tfrHigh: 0.20, enabled: false, intensity: 100 },
+      { id: 'fertility-coverage', name: 'Universal Fertility Coverage', description: 'IVF, IUI, egg freezing. No limits.', costLow: 15, costHigh: 25, tfrLow: 0.02, tfrHigh: 0.05, enabled: false, intensity: 100 },
+      { id: 'baby-bonds', name: 'Baby Bonds', description: '$10k at birth, accessible at 18.', costLow: 40, costHigh: 50, tfrLow: 0.03, tfrHigh: 0.06, enabled: false, intensity: 100 }
+    ];
+
+    const illiberalPolicies = [
+      { id: 'abortion-ban', name: 'Complete Abortion Ban', description: 'Total prohibition, criminal penalties.', costLow: 5, costHigh: 15, tfrLow: 0.15, tfrHigh: 0.35, enabled: false, intensity: 100, historical: 'Romania 1966: TFR 1.9→3.7 in one year. ~10,000 women died.' },
+      { id: 'contraception-ban', name: 'Contraception Restrictions', description: 'Ban hormonal contraception and IUDs.', costLow: 2, costHigh: 8, tfrLow: 0.25, tfrHigh: 0.50, enabled: false, intensity: 100, historical: 'Pre-Pill US TFR ~3.5 vs ~1.8 post-Pill.' },
+      { id: 'celibacy-tax', name: 'Childlessness Tax', description: '5-15% tax on childless adults over 25.', costLow: -50, costHigh: -30, tfrLow: 0.05, tfrHigh: 0.12, enabled: false, intensity: 100, revenue: true, historical: 'USSR 1941-1990: 6% tax. High compliance, unclear impact.' },
+      { id: 'divorce-restrictions', name: 'Divorce Restrictions', description: 'Eliminate no-fault divorce.', costLow: 0, costHigh: 5, tfrLow: 0.02, tfrHigh: 0.08, enabled: false, intensity: 100, historical: 'Pre-1970 US: higher stability, minimal fertility evidence.' },
+      { id: 'mandatory-marriage', name: 'Marriage Mandates', description: 'Benefits/housing tied to married status.', costLow: 5, costHigh: 15, tfrLow: 0.06, tfrHigh: 0.15, enabled: false, intensity: 100, historical: 'Singapore: Housing priority for married couples.' }
+    ];
+
+    const entitlementReforms = [
+      { id: 'medicare-age', name: 'Medicare to 67', savingsLow: 80, savingsHigh: 100, description: 'Phase in over 12 years', enabled: false },
+      { id: 'ss-means-test', name: 'SS Means-Test (>$100k)', savingsLow: 120, savingsHigh: 150, description: '50% clawback', enabled: false },
+      { id: 'ss-cola', name: 'SS COLA Adjustment', savingsLow: 80, savingsHigh: 100, description: 'Chained CPI -0.5%', enabled: false },
+      { id: 'medicare-drugs', name: 'Medicare Drug Negotiation', savingsLow: 50, savingsHigh: 80, description: 'Expand to 100 drugs', enabled: false },
+      { id: 'ss-retirement-70', name: 'SS Retirement to 70', savingsLow: 100, savingsHigh: 150, description: 'Phase in over 18 years', enabled: false },
+      { id: 'ss-cap', name: 'Cap SS at $3,200/mo', savingsLow: 60, savingsHigh: 80, description: '150% of median', enabled: false },
+      { id: 'medicare-premiums', name: 'Medicare Premiums', savingsLow: 40, savingsHigh: 60, description: 'Income-relating', enabled: false }
+    ];
+
+    const taxIncreases = [
+      { id: 'income-tax-top', name: 'Top Rate to 45%', savingsLow: 80, savingsHigh: 120, description: '>$500k bracket', enabled: false, growthDrag: 0.01, dragRationale: 'Labor supply effect' },
+      { id: 'corporate-tax', name: 'Corporate Tax to 28%', savingsLow: 100, savingsHigh: 150, description: 'Pre-TCJA level', enabled: false, growthDrag: 0.04, dragRationale: 'Reduces investment' },
+      { id: 'capital-gains', name: 'Capital Gains Parity', savingsLow: 150, savingsHigh: 200, description: 'Ordinary income >$1M', enabled: false, growthDrag: 0.05, dragRationale: 'Lock-in effects' },
+      { id: 'financial-transaction', name: 'Transaction Tax', savingsLow: 60, savingsHigh: 100, description: '0.1% on trades', enabled: false, growthDrag: 0.02, dragRationale: 'Liquidity reduction' },
+      { id: 'estate-tax', name: 'Estate Tax Reform', savingsLow: 40, savingsHigh: 70, description: '$3.5M exemption', enabled: false, growthDrag: 0.01, dragRationale: 'Minimal impact' },
+      { id: 'carbon-tax', name: 'Carbon Tax ($50/ton)', savingsLow: 80, savingsHigh: 120, description: 'Phased 5 years', enabled: false, growthDrag: 0.02, dragRationale: 'Transition costs' },
+      { id: 'vat', name: 'Federal VAT (10%)', savingsLow: 400, savingsHigh: 600, description: 'Necessity exemptions', enabled: false, growthDrag: 0.02, dragRationale: 'Consumption reduction' }
+    ];
+
+    const modelParams = { interactionDiscount: 25, contextAdjustment: 10, implementationRate: 90 };
+
+    // Progressive inflation penalty: accelerates as deficit grows
+    // Base: 0.03 TFR per $100B, but stacks progressively
+    function calculateInflationPenalty(deficit) {
+      if (deficit <= 0) return 0;
+      
+      // Tiered penalty structure:
+      // First $200B: 0.03 per $100B (baseline)
+      // $200B-$500B: 0.05 per $100B (moderate pressure)
+      // $500B-$800B: 0.08 per $100B (high pressure)
+      // >$800B: 0.12 per $100B (severe - crowding out, rate spikes)
+      
+      let penalty = 0;
+      
+      if (deficit <= 200) {
+        penalty = deficit * 0.0003; // 0.03 per $100B
+      } else if (deficit <= 500) {
+        penalty = 200 * 0.0003 + (deficit - 200) * 0.0005;
+      } else if (deficit <= 800) {
+        penalty = 200 * 0.0003 + 300 * 0.0005 + (deficit - 500) * 0.0008;
+      } else {
+        penalty = 200 * 0.0003 + 300 * 0.0005 + 300 * 0.0008 + (deficit - 800) * 0.0012;
+      }
+      
+      return penalty;
+    }
+
+    function calculateGrowthDrag() {
+      return taxIncreases.filter(t => t.enabled && t.growthDrag).reduce((sum, t) => sum + t.growthDrag, 0);
+    }
+
+    function calculateFiscal() {
+      let spending = 0, offsets = 0;
+      [...liberalPolicies, ...illiberalPolicies].forEach(p => {
+        if (p.enabled) {
+          const i = p.intensity / 100;
+          if (p.revenue) offsets += ((Math.abs(p.costLow) + Math.abs(p.costHigh)) / 2) * i;
+          else spending += ((p.costLow + p.costHigh) / 2) * i;
+        }
+      });
+      entitlementReforms.forEach(r => { if (r.enabled) offsets += (r.savingsLow + r.savingsHigh) / 2; });
+      taxIncreases.forEach(t => { if (t.enabled) offsets += (t.savingsLow + t.savingsHigh) / 2; });
+      return { spending, offsets, net: spending - offsets };
+    }
+
+    function calculateTFR() {
+      const baseTFR = 1.62;
+      let grossLow = 0, grossHigh = 0;
+      [...liberalPolicies, ...illiberalPolicies].forEach(p => {
+        if (p.enabled) {
+          const i = p.intensity / 100;
+          grossLow += p.tfrLow * i;
+          grossHigh += p.tfrHigh * i;
+        }
+      });
+
+      const factor = (1 - modelParams.interactionDiscount/100) * (1 - modelParams.contextAdjustment/100) * (modelParams.implementationRate/100);
+      let netLow = grossLow * factor, netHigh = grossHigh * factor;
+
+      const fiscal = calculateFiscal();
+      const deficit = fiscal.net > 0 ? fiscal.net : 0;
+      const inflationPenalty = calculateInflationPenalty(deficit);
+      netLow -= inflationPenalty;
+      netHigh -= inflationPenalty;
+
+      const growthDrag = calculateGrowthDrag();
+      netLow -= growthDrag;
+      netHigh -= growthDrag;
+
+      return { low: baseTFR + netLow, mid: baseTFR + (netLow + netHigh) / 2, high: baseTFR + netHigh, inflationPenalty, growthDrag, deficit };
+    }
+
+    function updateDisplay() {
+      const tfr = calculateTFR();
+      const fiscal = calculateFiscal();
+
+      const tfrEl = document.getElementById('tfr-number');
+      const statusEl = document.getElementById('tfr-status');
+      const progressEl = document.getElementById('tfr-progress');
+
+      tfrEl.textContent = tfr.mid.toFixed(2);
+      tfrEl.className = 'tfr-number-large';
+      progressEl.className = 'tfr-progress-fill';
+      
+      if (tfr.mid >= 2.1) {
+        statusEl.textContent = 'AT REPLACEMENT ✓';
+        tfrEl.classList.add('at-replacement');
+        progressEl.classList.add('at-replacement');
+      } else if (tfr.mid >= 1.8) {
+        statusEl.textContent = 'BELOW REPLACEMENT';
+        tfrEl.classList.add('below');
+      } else {
+        statusEl.textContent = 'CRITICALLY LOW';
+        tfrEl.classList.add('critical');
+      }
+
+      progressEl.style.width = `${Math.min(100, (tfr.mid / 3) * 100)}%`;
+
+      document.getElementById('total-spending').textContent = `$${Math.round(fiscal.spending)}B`;
+      document.getElementById('total-offsets').textContent = `$${Math.round(fiscal.offsets)}B`;
+      
+      const netEl = document.getElementById('net-impact');
+      if (fiscal.net <= 0) {
+        netEl.textContent = `−$${Math.abs(Math.round(fiscal.net))}B`;
+        netEl.className = 'fiscal-value positive';
+      } else {
+        netEl.textContent = `+$${Math.round(fiscal.net)}B`;
+        netEl.className = 'fiscal-value negative';
+      }
+
+      const inflationBadge = document.getElementById('penalty-inflation');
+      const growthBadge = document.getElementById('penalty-growth');
+
+      inflationBadge.classList.toggle('visible', tfr.inflationPenalty > 0);
+      if (tfr.inflationPenalty > 0) document.getElementById('inflation-penalty-val').textContent = `-${tfr.inflationPenalty.toFixed(2)}`;
+
+      growthBadge.classList.toggle('visible', tfr.growthDrag > 0);
+      if (tfr.growthDrag > 0) document.getElementById('growth-penalty-val').textContent = `-${tfr.growthDrag.toFixed(2)}`;
+
+      document.getElementById('count-policies').textContent = [...liberalPolicies, ...illiberalPolicies].filter(p => p.enabled).length;
+      document.getElementById('count-entitlements').textContent = entitlementReforms.filter(r => r.enabled).length;
+      document.getElementById('count-taxes').textContent = taxIncreases.filter(t => t.enabled).length;
+    }
+
+    function renderPolicyCard(policy, container, isIlliberal = false) {
+      const card = document.createElement('div');
+      card.className = `policy-card${isIlliberal ? ' illiberal' : ''}`;
+
+      const tfrMid = ((policy.tfrLow + policy.tfrHigh) / 2).toFixed(2);
+      const costMid = Math.round((policy.costLow + policy.costHigh) / 2);
+
+      card.innerHTML = `
+        <div class="policy-header">
+          <span class="policy-title">${policy.name}</span>
+          <div class="policy-stats">
+            <span class="policy-stat tfr">+${tfrMid} TFR</span>
+            <span class="policy-stat cost">${policy.revenue ? '−' : ''}$${Math.abs(costMid)}B</span>
+          </div>
         </div>
-    </div>
-
-    <!-- Game Menu Modal -->
-    <div id="gameMenuModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg p-6 max-w-sm w-full mx-4">
-            <h3 class="text-xl font-bold text-white text-center mb-6">⚙️ Game Menu</h3>
-            <div class="space-y-3">
-                <button onclick="saveGame()" class="w-full py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors flex items-center justify-center gap-2">
-                    💾 Save Game
-                </button>
-                <button onclick="loadGame()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors flex items-center justify-center gap-2">
-                    📂 Load Game
-                </button>
-                <button onclick="showTutorial()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg transition-colors flex items-center justify-center gap-2">
-                    📖 View Tutorial
-                </button>
-                <button onclick="confirmEndGame()" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors flex items-center justify-center gap-2">
-                    🏁 End Game Early
-                </button>
-                <button onclick="closeGameMenu()" class="w-full py-3 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors">
-                    Cancel
-                </button>
-            </div>
+        <p class="policy-description">${policy.description}</p>
+        ${policy.historical ? `<div class="historical-note">${policy.historical}</div>` : ''}
+        <div class="toggle-row">
+          <span class="toggle-label">Disabled</span>
+          <label class="toggle"><input type="checkbox"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
         </div>
-    </div>
-
-    <!-- Confirm End Game Modal -->
-    <div id="confirmEndModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-red-500 rounded-lg p-6 max-w-sm w-full mx-4 text-center">
-            <div class="text-4xl mb-4">⚠️</div>
-            <h3 class="text-xl font-bold text-white mb-2">End Game Early?</h3>
-            <p class="text-gray-400 mb-6">Your life story will be assessed based on your current progress. This cannot be undone.</p>
-            <div class="flex gap-3">
-                <button onclick="closeConfirmEnd()" class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded transition-colors">
-                    Keep Playing
-                </button>
-                <button onclick="endGameEarly()" class="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white rounded transition-colors">
-                    End Game
-                </button>
-            </div>
+        <div class="slider-row hidden">
+          <div class="slider-header"><span class="slider-label">Intensity</span><span class="slider-value">100%</span></div>
+          <input type="range" min="25" max="100" value="100">
         </div>
-    </div>
+      `;
 
-    <!-- Employment Modal -->
-    <div id="employmentModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg p-4 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-white">💼 Employment</h3>
-                <button onclick="closeEmploymentModal()" class="text-gray-400 hover:text-white text-xl">&times;</button>
-            </div>
-            <div id="employmentContent" class="space-y-4"></div>
-            <div id="employmentActions" class="mt-4 space-y-2"></div>
+      const toggle = card.querySelector('input[type="checkbox"]');
+      const slider = card.querySelector('input[type="range"]');
+      const sliderRow = card.querySelector('.slider-row');
+      const sliderValue = card.querySelector('.slider-value');
+      const toggleLabel = card.querySelector('.toggle-label');
+
+      toggle.addEventListener('change', () => {
+        policy.enabled = toggle.checked;
+        card.classList.toggle('enabled', policy.enabled);
+        sliderRow.classList.toggle('hidden', !policy.enabled);
+        toggleLabel.textContent = policy.enabled ? 'Enabled' : 'Disabled';
+        updateDisplay();
+      });
+
+      slider.addEventListener('input', () => {
+        policy.intensity = parseInt(slider.value);
+        sliderValue.textContent = `${policy.intensity}%`;
+        updateDisplay();
+      });
+
+      container.appendChild(card);
+    }
+
+    function renderReformCard(reform, container) {
+      const card = document.createElement('div');
+      card.className = 'policy-card';
+
+      const savingsMid = Math.round((reform.savingsLow + reform.savingsHigh) / 2);
+      const hasDrag = reform.growthDrag > 0;
+
+      card.innerHTML = `
+        <div class="policy-header">
+          <span class="policy-title">${reform.name}</span>
+          <div class="policy-stats">
+            <span class="policy-stat cost">$${savingsMid}B/yr</span>
+            ${hasDrag ? `<span class="policy-stat drag">−${reform.growthDrag.toFixed(2)} TFR</span>` : ''}
+          </div>
         </div>
-    </div>
-
-    <!-- Education/Status Modal -->
-    <div id="educationModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg p-4 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-white" id="eduModalTitle">📚 Academic Progress</h3>
-                <button onclick="closeEducationModal()" class="text-gray-400 hover:text-white text-xl">&times;</button>
-            </div>
-            <div id="educationContent" class="space-y-4"></div>
-            <div class="mt-4">
-                <button onclick="closeEducationModal()" class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded transition-colors">
-                    Close
-                </button>
-            </div>
+        <p class="policy-description">${reform.description}${hasDrag ? ` <em style="color:#5d4037;">(${reform.dragRationale})</em>` : ''}</p>
+        <div class="toggle-row">
+          <span class="toggle-label">Disabled</span>
+          <label class="toggle"><input type="checkbox"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
         </div>
-    </div>
+      `;
 
-    <!-- Partner Details Modal -->
-    <div id="partnerModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-pink-500/30 rounded-lg p-4 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-white">💕 Your Relationship</h3>
-                <button onclick="closePartnerModal()" class="text-gray-400 hover:text-white text-xl">&times;</button>
-            </div>
-            <div id="partnerDetails" class="space-y-3"></div>
-            <div class="mt-4">
-                <button onclick="closePartnerModal()" class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded transition-colors">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
+      const toggle = card.querySelector('input[type="checkbox"]');
+      const toggleLabel = card.querySelector('.toggle-label');
 
-    <!-- Credit/Budget Modal -->
-    <div id="creditModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-green-500/30 rounded-lg p-4 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-white">💳 Financial Management</h3>
-                <button onclick="closeCreditModal()" class="text-gray-400 hover:text-white text-xl">&times;</button>
-            </div>
-            <div id="creditContent" class="space-y-3"></div>
-            <div class="mt-4">
-                <button onclick="closeCreditModal()" class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded transition-colors">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
+      toggle.addEventListener('change', () => {
+        reform.enabled = toggle.checked;
+        card.classList.toggle('enabled', reform.enabled);
+        toggleLabel.textContent = reform.enabled ? 'Enabled' : 'Disabled';
+        updateDisplay();
+      });
 
-    <!-- Relationships Modal -->
-    <div id="relationshipsModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg p-4 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-white">👥 People in Your Life</h3>
-                <button onclick="closeRelationshipsModal()" class="text-gray-400 hover:text-white text-xl">&times;</button>
-            </div>
-            <div id="relationshipsList" class="space-y-3"></div>
-            <div class="mt-4">
-                <button onclick="closeRelationshipsModal()" class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded transition-colors">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
+      container.appendChild(card);
+    }
 
-    <!-- Fishing Mini-Game Modal -->
-    <div id="fishingModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gradient-to-b from-blue-900 to-blue-950 border border-blue-500 rounded-lg p-6 max-w-md w-full mx-4 text-center">
-            <div class="text-4xl mb-2" id="fishingIcon">🎣</div>
-            <h3 class="text-xl font-bold text-white mb-2" id="fishingTitle">Gone Fishing</h3>
-            <div id="fishingContent" class="text-gray-300 mb-4"></div>
-            <div id="fishingWater" class="text-6xl my-4 transition-all">🌊</div>
-            <div id="fishingActions" class="space-y-2"></div>
-        </div>
-    </div>
+    function renderModelParams(container) {
+      [
+        { key: 'interactionDiscount', name: 'Interaction Discount', desc: 'Overlapping benefits reduce effects (20-30%)', min: 10, max: 40 },
+        { key: 'contextAdjustment', name: 'US Context Adjustment', desc: 'European elasticities may not transfer', min: 0, max: 30 },
+        { key: 'implementationRate', name: 'Implementation Rate', desc: 'Admin capacity and execution risk', min: 70, max: 100 }
+      ].forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'params-card';
+        card.innerHTML = `
+          <div class="slider-header"><span class="params-title">${p.name}</span><span class="slider-value">${modelParams[p.key]}%</span></div>
+          <input type="range" min="${p.min}" max="${p.max}" value="${modelParams[p.key]}">
+          <p class="params-description">${p.desc}</p>
+        `;
+        const slider = card.querySelector('input[type="range"]');
+        const value = card.querySelector('.slider-value');
+        slider.addEventListener('input', () => {
+          modelParams[p.key] = parseInt(slider.value);
+          value.textContent = `${modelParams[p.key]}%`;
+          updateDisplay();
+        });
+        container.appendChild(card);
+      });
+    }
 
-    <!-- Habits Modal -->
-    <div id="habitsModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg p-4 max-w-xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-white">🧠 Manage Habits</h3>
-                <button onclick="closeHabitsModal()" class="text-gray-400 hover:text-white text-xl">&times;</button>
-            </div>
-            
-            <!-- Willpower Bar -->
-            <div class="bg-gray-800 rounded-lg p-3 mb-4">
-                <div class="flex justify-between text-sm mb-2">
-                    <span class="text-gray-400">Willpower Budget</span>
-                    <span id="habitsWillpowerText" class="text-purple-400">50/50</span>
-                </div>
-                <div class="w-full h-3 bg-gray-700 rounded-full overflow-hidden">
-                    <div id="habitsWillpowerBar" class="h-full bg-purple-500 rounded-full transition-all" style="width: 100%"></div>
-                </div>
-                <div class="text-xs text-gray-500 mt-2" id="willpowerFactors"></div>
-            </div>
-            
-            <div class="text-xs text-gray-400 mb-3">
-                <span class="text-green-400">Good habits</span> cost willpower but improve your life. 
-                <span class="text-red-400">Bad habits</span> give willpower back but have downsides.
-                <br><span class="text-purple-400">Habits maintained longer cost less willpower!</span>
-            </div>
-            
-            <div class="mb-3">
-                <div class="text-sm font-bold text-green-400 mb-2">✨ Good Habits</div>
-                <div id="goodHabitsList" class="space-y-2"></div>
-            </div>
-            
-            <div class="mb-3">
-                <div class="text-sm font-bold text-red-400 mb-2">⚠️ Bad Habits</div>
-                <div id="badHabitsList" class="space-y-2"></div>
-            </div>
-            
-            <div class="mt-4 flex gap-2">
-                <button onclick="closeHabitsModal()" class="flex-1 bg-purple-600 hover:bg-purple-500 text-white py-2 px-4 rounded transition-colors">
-                    Done
-                </button>
-            </div>
-        </div>
-    </div>
+    // Tab navigation (tap only, no swipe)
+    function initTabs() {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tabIndex = btn.dataset.tab;
+          
+          // Update buttons
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          
+          // Update panels
+          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+          document.getElementById(`panel-${tabIndex}`).classList.add('active');
+        });
+      });
+    }
 
-    <!-- Subscriptions Modal -->
-    <div id="subscriptionsModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg p-4 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-white">📱 Manage Subscriptions</h3>
-                <button onclick="closeSubscriptionsModal()" class="text-gray-400 hover:text-white text-xl">&times;</button>
-            </div>
-            <div class="text-sm text-gray-400 mb-4">
-                Total: <span id="subsModalCost" class="text-yellow-400 font-bold">$0</span>/week
-            </div>
-            <div id="subscriptionsList" class="space-y-2"></div>
-            <div class="mt-4 flex gap-2">
-                <button onclick="closeSubscriptionsModal()" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white py-2 px-4 rounded transition-colors">
-                    Done
-                </button>
-            </div>
-        </div>
-    </div>
+    function init() {
+      liberalPolicies.forEach(p => renderPolicyCard(p, document.getElementById('liberal-policies')));
+      illiberalPolicies.forEach(p => renderPolicyCard(p, document.getElementById('illiberal-policies'), true));
+      entitlementReforms.forEach(r => renderReformCard(r, document.getElementById('entitlement-reforms')));
+      taxIncreases.forEach(t => renderReformCard(t, document.getElementById('tax-increases')));
+      renderModelParams(document.getElementById('model-params'));
+      initTabs();
+      updateDisplay();
+    }
 
-    <!-- Free Time Modal -->
-    <div id="freeTimeModal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg p-4 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-white">⏰ Manage Weekly Schedule</h3>
-                <button onclick="closeFreeTimeModal()" class="text-gray-400 hover:text-white text-xl">&times;</button>
-            </div>
-            <div class="text-sm text-gray-400 mb-2">
-                Allocate your <span class="text-cyan-400 font-bold">20 hours</span> of free time per week.
-                <br><span class="text-gray-500">Remaining: <span id="freeTimeRemaining" class="text-cyan-400">20</span> hrs | Cost: <span id="freeTimeModalCost" class="text-yellow-400">$0</span>/week</span>
-            </div>
-            <div class="text-xs text-gray-500 mb-4 p-2 bg-gray-800/50 rounded border border-gray-700">
-                <span class="text-cyan-400 font-medium">Priority System:</span> When your available time decreases (new job, exams, kids, etc.), 
-                activities are automatically cut starting from <span class="text-red-400">lowest priority</span>. 
-                Use ▲▼ to set priority order. <span class="text-green-400">#1 = protected first</span>, higher numbers get cut first.
-            </div>
-            <div id="freeTimeActivities" class="space-y-3"></div>
-            <div class="mt-4 pt-4 border-t border-gray-700">
-                <div class="text-xs text-gray-500 mb-2">Weekly Effects Preview:</div>
-                <div id="freeTimeEffectsPreview" class="text-xs text-gray-400 grid grid-cols-2 gap-1"></div>
-            </div>
-            <div class="mt-4 flex gap-2">
-                <button onclick="saveFreeTimeAllocation()" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white py-2 px-4 rounded transition-colors">
-                    Save Schedule
-                </button>
-                <button onclick="closeFreeTimeModal()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded transition-colors">
-                    Cancel
-                </button>
-            </div>
-        </div>
-    </div>
+    init();
+  </script>
 
-    <div class="h-screen flex flex-col max-w-5xl mx-auto relative z-10">
-
-        <!-- Top Stats Bar - MOBILE VERSION -->
-        <div class="md:hidden p-2 border-b border-gray-800/50">
-            <!-- Row 1: Age, Phase, Money, Menu -->
-            <div class="flex justify-between items-center mb-2">
-                <div class="text-sm font-bold text-white">
-                    <span id="ageDisplayMobile">18</span> yrs
-                </div>
-                <div id="phaseBadgeMobile" class="phase-badge bg-purple-900/50 text-purple-300 text-[8px]">Deciding</div>
-                <div class="text-sm font-bold text-green-400" id="moneyDisplayMobile">$1,200</div>
-                <div class="flex gap-1">
-                    <button onclick="toggleSound()" class="p-1.5 rounded bg-gray-800 text-gray-400 text-sm">🔊</button>
-                    <button onclick="openGameMenu()" class="p-1.5 rounded bg-gray-800 text-gray-400 text-sm">⚙️</button>
-                </div>
-            </div>
-            <!-- Row 2: Stats Grid -->
-            <div class="mobile-stats-grid">
-                <div class="mobile-stat-item" onclick="openStatsModal('health')">
-                    <div class="stat-icon bg-red-900/50 text-red-400">♥</div>
-                    <span class="stat-value text-red-400" id="healthValMobile">100</span>
-                </div>
-                <div class="mobile-stat-item" onclick="openStatsModal('energy')">
-                    <div class="stat-icon bg-yellow-900/50 text-yellow-400">⚡</div>
-                    <span class="stat-value text-yellow-400" id="energyValMobile">100</span>
-                </div>
-                <div class="mobile-stat-item" onclick="openStatsModal('happiness')">
-                    <div class="stat-icon bg-blue-900/50 text-blue-400">☺</div>
-                    <span class="stat-value text-blue-400" id="happyValMobile">75</span>
-                </div>
-                <div class="mobile-stat-item" onclick="openStatsModal('stress')">
-                    <div class="stat-icon bg-purple-900/50 text-purple-400">😰</div>
-                    <span class="stat-value text-purple-400" id="stressValMobile">20</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Top Stats Bar - DESKTOP VERSION -->
-        <div class="hidden md:flex p-3 justify-between items-center border-b border-gray-800/50">
-            <div class="flex gap-4">
-                <div class="flex items-center gap-1 cursor-pointer hover:opacity-80" title="Click for details" onclick="openStatsModal('health')">
-                    <div class="stat-icon bg-red-900/50 text-red-400">♥</div>
-                    <div class="w-14 h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                        <div id="healthBar" class="stat-fill h-full bg-red-500 rounded-full" style="width: 100%"></div>
-                    </div>
-                    <span class="text-xs text-gray-500" id="healthVal">100</span>
-                </div>
-                <div class="flex items-center gap-1 cursor-pointer hover:opacity-80" title="Click for details" onclick="openStatsModal('energy')">
-                    <div class="stat-icon bg-yellow-900/50 text-yellow-400">⚡</div>
-                    <div class="w-14 h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                        <div id="energyBar" class="stat-fill h-full bg-yellow-500 rounded-full" style="width: 100%"></div>
-                    </div>
-                    <span class="text-xs text-gray-500" id="energyVal">100</span>
-                </div>
-                <div class="flex items-center gap-1 cursor-pointer hover:opacity-80" title="Click for details" onclick="openStatsModal('happiness')">
-                    <div class="stat-icon bg-blue-900/50 text-blue-400">☺</div>
-                    <div class="w-14 h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                        <div id="happyBar" class="stat-fill h-full bg-blue-500 rounded-full" style="width: 75%"></div>
-                    </div>
-                    <span class="text-xs text-gray-500" id="happyVal">75</span>
-                </div>
-                <div class="flex items-center gap-1 cursor-pointer hover:opacity-80" title="Click for details" onclick="openStatsModal('stress')">
-                    <div class="stat-icon bg-purple-900/50 text-purple-400">😰</div>
-                    <div class="w-14 h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                        <div id="stressBar" class="stat-fill h-full bg-purple-500 rounded-full" style="width: 20%"></div>
-                    </div>
-                    <span class="text-xs text-gray-500" id="stressVal">20</span>
-                </div>
-            </div>
-            
-            <div class="text-center">
-                <div class="text-lg font-bold text-white">
-                    <span id="ageDisplay">18</span> yrs, <span id="monthDisplay">1</span> mo
-                </div>
-                <div id="phaseBadge" class="phase-badge bg-purple-900/50 text-purple-300">Deciding Future</div>
-            </div>
-
-            <div class="text-right flex items-center gap-3">
-                <div>
-                <div class="text-lg font-bold text-green-400" id="moneyDisplay">$1,200</div>
-                <div class="text-[10px] text-gray-500">Savings</div>
-                <div class="text-[10px] text-red-400 hidden" id="debtDisplay"></div>
-                </div>
-                <button onclick="toggleMusic()" id="musicToggle" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors opacity-50" title="Toggle Music">
-                    🎵
-                </button>
-                <button onclick="toggleSound()" id="soundToggle" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors" title="Toggle Sound Effects">
-                    🔊
-                </button>
-                <button onclick="openGameMenu()" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors" title="Game Menu">
-                    ⚙️
-                </button>
-            </div>
-        </div>
-
-        <!-- Phase Progress Bar -->
-        <div class="px-3 md:px-4 py-1.5 md:py-2 border-b border-gray-800/30">
-            <div class="flex items-center gap-2">
-                <span class="text-[10px] text-gray-500 w-16 md:w-24" id="phaseLabel">Week 1</span>
-                <div class="flex-grow h-1 bg-gray-800 rounded-full overflow-hidden">
-                    <div id="phaseProgress" class="h-full bg-purple-500 rounded-full transition-all" style="width: 0%"></div>
-                </div>
-                <span class="text-[10px] text-gray-500" id="phaseTarget"></span>
-            </div>
-        </div>
-
-        <!-- Main Content Area - MOBILE VERSION (Tabbed) -->
-        <div class="md:hidden flex-grow overflow-hidden">
-            <!-- Mobile Status Panel -->
-            <div id="mobileStatusPanel" class="mobile-panel">
-                <div id="mobileStatusContent" class="space-y-2">
-                    <!-- Status cards will be cloned here by JS -->
-                </div>
-            </div>
-            
-            <!-- Mobile Event Panel (Default Active) -->
-            <div id="mobileEventPanel" class="mobile-panel active">
-                <div id="mobileEventArea" class="flex flex-col h-full">
-                    <!-- Dice display for mobile -->
-                    <div id="diceDisplayMobile" class="hidden flex items-center justify-center py-8">
-                        <div class="dice-container text-center">
-                            <div id="diceRollerMobile" class="dice-roller">
-                                <div class="dice">🎲</div>
-                            </div>
-                            <div id="diceResultMobile" class="dice-result hidden">
-                                <span id="diceValueMobile" class="text-4xl font-bold text-white">20</span>
-                                <div id="diceLabelMobile" class="text-sm text-gray-400 mt-1">Rolling...</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Outcome display for mobile -->
-                    <div id="outcomeDisplayMobile" class="hidden py-4">
-                        <div class="outcome-flash bg-gray-900/95 border border-gray-700 rounded-xl p-4 text-center">
-                            <div id="outcomeIconMobile" class="text-3xl mb-2">⚡</div>
-                            <p id="outcomeTextMobile" class="text-sm text-gray-300"></p>
-                            <div id="outcomeStatsMobile" class="mt-2 text-xs text-gray-500"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Event card for mobile -->
-                    <div id="eventCardMobile" class="event-card rounded-xl p-4 flex-grow">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="text-[10px] uppercase tracking-wider text-gray-500" id="eventCategoryMobile">Life Event</div>
-                            <div class="text-[10px] text-gray-600" id="eventDateMobile">Week 1</div>
-                        </div>
-                        <h2 class="text-lg font-semibold text-white mb-2" id="eventTitleMobile">Loading...</h2>
-                        <p class="text-gray-400 leading-relaxed mb-4 text-sm" id="eventDescMobile"></p>
-                        <div id="choicesContainerMobile" class="space-y-2"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Mobile Log Panel -->
-            <div id="mobileLogPanel" class="mobile-panel">
-                <div class="text-sm text-gray-500 mb-3 uppercase tracking-wide">Life Log</div>
-                <div id="eventLogMobile" class="space-y-2 text-sm text-gray-400">
-                    <!-- Log entries will be synced here -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content Area - DESKTOP VERSION (3 columns) -->
-        <div class="hidden md:flex flex-grow gap-4 p-4 overflow-hidden">
-            
-            <!-- Left Panel: Status -->
-            <div class="w-56 flex flex-col gap-2 overflow-y-auto">
-                <div class="possession-card p-2 rounded cursor-pointer hover:bg-gray-700/50 transition-colors" id="statusCard" onclick="openEducationModal()" title="Click for details">
-                    <div class="text-[10px] text-gray-500 uppercase flex justify-between items-center">
-                        <span>Current Status</span>
-                        <span class="text-cyan-400" id="statusViewIcon">👁️</span>
-                    </div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-xl" id="statusIcon">🎓</span>
-                        <div>
-                            <div class="text-sm text-white" id="statusTitle">High School Senior</div>
-                            <div class="text-[10px] text-gray-500" id="statusDesc">Graduation approaching</div>
-                        </div>
-                    </div>
-                    <div id="gpaDisplay" class="text-[10px] mt-1 hidden">
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">GPA:</span>
-                            <span id="gpaValue" class="text-cyan-400">3.00</span>
-                        </div>
-                        <div class="h-1 bg-gray-800 rounded-full mt-0.5">
-                            <div id="gpaBar" class="h-full bg-cyan-500 rounded-full" style="width: 75%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded" id="traitsCard" style="display:none;">
-                    <div class="text-[10px] text-gray-500 uppercase mb-1">Character Traits</div>
-                    <div class="text-[10px] space-y-1.5">
-                        <!-- Height/Build (gender-dependent) -->
-                        <div>
-                            <div class="flex justify-between mb-0.5">
-                                <span id="traitPhysicalLabel" class="text-gray-400">📏 Height</span>
-                                <span id="traitPhysical" class="text-gray-300">-</span>
-                            </div>
-                            <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                                <div id="traitPhysicalBar" class="h-full bg-gray-400 rounded-full transition-all" style="width: 50%"></div>
-                            </div>
-                        </div>
-                        <!-- Family Wealth -->
-                        <div>
-                            <div class="flex justify-between mb-0.5">
-                                <span class="text-gray-400">💰 Family</span>
-                                <span id="traitWealth" class="text-yellow-400">-</span>
-                            </div>
-                            <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                                <div id="traitWealthBar" class="h-full bg-yellow-500 rounded-full transition-all" style="width: 50%"></div>
-                            </div>
-                        </div>
-                        <!-- Intelligence -->
-                        <div>
-                            <div class="flex justify-between mb-0.5">
-                                <span class="text-gray-400">🧠 Intelligence</span>
-                                <span id="traitIntel" class="text-blue-400">-</span>
-                            </div>
-                            <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                                <div id="traitIntelBar" class="h-full bg-blue-500 rounded-full transition-all" style="width: 50%"></div>
-                            </div>
-                        </div>
-                        <!-- Attractiveness -->
-                        <div>
-                            <div class="flex justify-between mb-0.5">
-                                <span class="text-gray-400">✨ Looks</span>
-                                <span id="traitAttr" class="text-pink-400">-</span>
-                            </div>
-                            <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                                <div id="traitAttrBar" class="h-full bg-pink-500 rounded-full transition-all" style="width: 50%"></div>
-                            </div>
-                        </div>
-                        <!-- Self-Control -->
-                        <div>
-                            <div class="flex justify-between mb-0.5">
-                                <span class="text-gray-400">💪 Self-Control</span>
-                                <span id="traitSelfControl" class="text-purple-400">-</span>
-                            </div>
-                            <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                                <div id="traitSelfControlBar" class="h-full bg-purple-500 rounded-full transition-all" style="width: 50%"></div>
-                            </div>
-                        </div>
-                        <!-- Dating Appeal -->
-                        <div class="border-t border-gray-700 pt-1.5 mt-1">
-                            <div class="flex justify-between mb-0.5">
-                                <span class="text-gray-400">💕 Dating Appeal</span>
-                                <span id="datingAppeal" class="text-pink-400">-</span>
-                            </div>
-                            <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                                <div id="datingAppealBar" class="h-full bg-gradient-to-r from-pink-500 to-red-500 rounded-full transition-all" style="width: 50%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded" id="fitnessCard">
-                    <div class="text-[10px] text-gray-500 uppercase">Fitness & Health</div>
-                    <div class="text-[10px] space-y-1 mt-1">
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-400">Fitness:</span>
-                            <span id="fitnessLevel" class="text-cyan-400">Average</span>
-                        </div>
-                        <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                            <div id="fitnessBar" class="h-full bg-green-500 rounded-full transition-all" style="width: 50%"></div>
-                        </div>
-                        <div class="flex justify-between text-[9px]">
-                            <span id="fitnessGym" class="text-gray-500">No gym</span>
-                            <span id="fitnessEating" class="text-gray-500">Normal diet</span>
-                        </div>
-                        <div id="fitnessStreak" class="text-[9px] text-gray-500"></div>
-                        <div id="fitnessWarning" class="text-[9px] text-orange-400 hidden"></div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded cursor-pointer hover:bg-gray-700/50 transition-colors" onclick="openFreeTimeModal()" title="Click to manage">
-                    <div class="text-[10px] text-gray-500 uppercase flex justify-between items-center">
-                        <span>⏰ Weekly Schedule</span>
-                        <span class="text-cyan-400">⚙️</span>
-                    </div>
-                    <div class="text-[10px] space-y-0.5 mt-1">
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Free Time:</span>
-                            <span id="freeTimeUsed" class="text-cyan-400">0/20 hrs</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Weekly Cost:</span>
-                            <span id="freeTimeCost" class="text-yellow-400">$0</span>
-                        </div>
-                        <div id="freeTimeSummary" class="text-[9px] text-gray-500 mt-1"></div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded cursor-pointer hover:bg-gray-700/50 transition-colors" onclick="openHousingModal()" title="Click to change">
-                    <div class="text-[10px] text-gray-500 uppercase flex justify-between items-center">
-                        <span>Living Situation</span>
-                        <span class="text-cyan-400">⚙️</span>
-                    </div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-xl" id="homeIcon">🏠</span>
-                        <div>
-                            <div class="text-sm text-white" id="homeName">Parents' House</div>
-                            <div class="text-[10px] text-gray-500" id="homeDesc">Free rent</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded cursor-pointer hover:bg-gray-700/50 transition-colors" onclick="openTransportModal()" title="Click to change">
-                    <div class="text-[10px] text-gray-500 uppercase flex justify-between items-center">
-                        <span>Transportation</span>
-                        <span class="text-cyan-400">⚙️</span>
-                    </div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-xl" id="carIcon">🚌</span>
-                        <div>
-                            <div class="text-sm text-white" id="carName">Bus Pass</div>
-                            <div class="text-[10px] text-gray-500" id="carDesc">$20/week</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded cursor-pointer hover:bg-gray-700/50 transition-colors" onclick="openSubscriptionsModal()" title="Click to manage">
-                    <div class="text-[10px] text-gray-500 uppercase flex justify-between items-center">
-                        <span>📱 Subscriptions</span>
-                        <span class="text-cyan-400">⚙️</span>
-                    </div>
-                    <div class="text-[10px] space-y-0.5 mt-1">
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Active:</span>
-                            <span id="subsCount" class="text-cyan-400">0</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Cost:</span>
-                            <span id="subsCost" class="text-yellow-400">$0/week</span>
-                        </div>
-                        <div id="subsSummary" class="text-[9px] text-gray-500 mt-1"></div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded cursor-pointer hover:bg-gray-700/50 transition-colors" onclick="openHobbiesModal()" title="Click to manage">
-                    <div class="text-[10px] text-gray-500 uppercase flex justify-between items-center">
-                        <span>🎨 Hobbies</span>
-                        <span class="text-purple-400">⚙️</span>
-                    </div>
-                    <div class="text-[10px] space-y-0.5 mt-1">
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Active:</span>
-                            <span id="hobbiesCount" class="text-purple-400">0/3</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Top Skill:</span>
-                            <span id="topHobbySkill" class="text-cyan-400">-</span>
-                        </div>
-                        <div id="hobbiesSummary" class="text-[9px] text-gray-500 mt-1">Click to pick hobbies</div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded cursor-pointer hover:bg-gray-700/50 transition-colors" onclick="openHabitsModal()" title="Click to manage">
-                    <div class="text-[10px] text-gray-500 uppercase flex justify-between items-center">
-                        <span>🧠 Habits</span>
-                        <span class="text-cyan-400">⚙️</span>
-                    </div>
-                    <div class="text-[10px] space-y-0.5 mt-1">
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Willpower:</span>
-                            <span id="willpowerDisplay" class="text-purple-400">50/50</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Habit Cost:</span>
-                            <span id="habitCostDisplay" class="text-cyan-400">0</span>
-                        </div>
-                        <div id="habitsSummary" class="text-[9px] text-gray-500 mt-1"></div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded cursor-pointer hover:bg-gray-700/50 transition-colors" id="jobCard" style="display:none;" onclick="openEmploymentModal()" title="Click for job options">
-                    <div class="text-[10px] text-gray-500 uppercase flex justify-between items-center">
-                        <span>Employment</span>
-                        <span class="text-cyan-400">👁️</span>
-                    </div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-xl" id="jobIcon">💼</span>
-                        <div>
-                            <div class="text-sm text-white" id="jobName">--</div>
-                            <div class="text-[10px] text-green-400" id="jobPay">--</div>
-                        </div>
-                    </div>
-                    <div class="mt-1">
-                        <div class="flex justify-between text-[10px]">
-                            <span class="text-gray-500">Performance</span>
-                            <span id="jobPerfVal" class="text-yellow-400">50%</span>
-                        </div>
-                        <div class="h-1 bg-gray-800 rounded-full mt-0.5">
-                            <div id="jobPerfBar" class="h-full bg-yellow-500 rounded-full" style="width: 50%"></div>
-                        </div>
-                    </div>
-                    <div class="mt-1 text-[10px]">
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Boss:</span>
-                            <span id="bossStatus" class="text-gray-400">--</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded cursor-pointer hover:bg-gray-700/50 transition-colors" id="businessCard" style="display:none;" onclick="openBusinessModal()" title="Manage your business">
-                    <div class="text-[10px] text-gray-500 uppercase flex justify-between items-center">
-                        <span>Your Business</span>
-                        <span class="text-green-400">👁️</span>
-                    </div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-xl" id="bizIcon">🏢</span>
-                        <div>
-                            <div class="text-sm text-white" id="bizName">--</div>
-                            <div class="text-[10px]" id="bizProfit">--</div>
-                        </div>
-                    </div>
-                    <div class="mt-1">
-                        <div class="flex justify-between text-[10px]">
-                            <span class="text-gray-500">Reputation</span>
-                            <span id="bizRepVal" class="text-yellow-400">50%</span>
-                        </div>
-                        <div class="h-1 bg-gray-800 rounded-full mt-0.5">
-                            <div id="bizRepBar" class="h-full bg-yellow-500 rounded-full" style="width: 50%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded cursor-pointer hover:bg-gray-700/50 transition-colors" id="partnerCard" onclick="openRelationshipModal()" title="View relationship details">
-                    <div class="text-[10px] text-gray-500 uppercase flex justify-between">
-                        <span>Relationship</span>
-                        <span class="text-pink-400">👁️</span>
-                    </div>
-                    <div class="flex items-center gap-2 mt-1" id="partnerContent">
-                        <span class="text-xl">💕</span>
-                        <div class="flex-grow">
-                            <div class="text-sm text-white" id="partnerName">--</div>
-                            <div class="text-[10px] text-gray-500" id="partnerStatus">Dating</div>
-                        </div>
-                    </div>
-                    <div class="mt-1">
-                        <div class="flex justify-between text-[10px]">
-                            <span class="text-gray-500">Bond</span>
-                            <span id="partnerBondVal" class="text-pink-400">50%</span>
-                        </div>
-                        <div class="h-1 bg-gray-800 rounded-full mt-0.5">
-                            <div id="partnerBondBar" class="h-full bg-pink-500 rounded-full" style="width: 50%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded cursor-pointer hover:bg-gray-700/50 transition-colors" onclick="openRelationshipsModal()" title="View all relationships">
-                    <div class="text-[10px] text-gray-500 uppercase flex justify-between items-center">
-                        <span>👥 People in Your Life</span>
-                        <span class="text-cyan-400">👁️</span>
-                    </div>
-                    <div id="relationshipsSummary" class="text-[10px] space-y-0.5 mt-1">
-                        <div class="text-gray-500">No close relationships yet</div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded">
-                    <div class="text-[10px] text-gray-500 uppercase">Your Skills</div>
-                    <div class="mt-1 space-y-1">
-                        <div class="flex items-center gap-1">
-                            <span class="text-[10px] w-12 text-gray-500">Tech</span>
-                            <div class="flex-grow h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                                <div id="techBar" class="h-full bg-blue-500 rounded-full transition-all" style="width: 10%"></div>
-                            </div>
-                            <span class="text-[10px] text-gray-500 w-6" id="techVal">10</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <span class="text-[10px] w-12 text-gray-500">Social</span>
-                            <div class="flex-grow h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                                <div id="socialBar" class="h-full bg-purple-500 rounded-full transition-all" style="width: 30%"></div>
-                            </div>
-                            <span class="text-[10px] text-gray-500 w-6" id="socialVal">30</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <span class="text-[10px] w-12 text-gray-500">Physical</span>
-                            <div class="flex-grow h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                                <div id="physicalBar" class="h-full bg-green-500 rounded-full transition-all" style="width: 40%"></div>
-                            </div>
-                            <span class="text-[10px] text-gray-500 w-6" id="physicalVal">40</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <span class="text-[10px] w-12 text-gray-500">Creative</span>
-                            <div class="flex-grow h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                                <div id="creativeBar" class="h-full bg-orange-500 rounded-full transition-all" style="width: 20%"></div>
-                            </div>
-                            <span class="text-[10px] text-gray-500 w-6" id="creativeVal">20</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded">
-                    <div class="text-[10px] text-gray-500 uppercase">Education & Traits</div>
-                    <div id="skillsList" class="text-[10px] text-gray-400 mt-1">
-                        High School Diploma (in progress)
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded" id="networkCard">
-                    <div class="text-[10px] text-gray-500 uppercase">Network & Connections</div>
-                    <div class="text-[10px] space-y-0.5 mt-1">
-                        <div class="flex justify-between"><span class="text-gray-500">Contacts:</span><span id="networkContacts" class="text-cyan-400">0</span></div>
-                        <div class="flex justify-between"><span class="text-gray-500">Credit Score:</span><span id="creditScoreDisplay" class="text-yellow-400">650</span></div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded cursor-pointer hover:bg-gray-700/50 transition-colors" onclick="openCreditModal()" title="Manage finances & credit">
-                    <div class="text-[10px] text-gray-500 uppercase flex justify-between">
-                        <span>Monthly Budget</span>
-                        <span class="text-green-400">💳</span>
-                    </div>
-                    <div class="text-[10px] space-y-0.5 mt-1">
-                        <div class="flex justify-between"><span class="text-gray-500">Income:</span><span id="monthlyIncome" class="text-green-400">$0</span></div>
-                        <div class="flex justify-between"><span class="text-gray-500">Expenses:</span><span id="monthlyExpenses" class="text-red-400">$0</span></div>
-                        <div class="flex justify-between border-t border-gray-700 pt-0.5"><span class="text-gray-400">Net:</span><span id="monthlyNet" class="text-white">$0</span></div>
-                        <div id="debtWarning" class="text-red-400 text-center mt-1 hidden">⚠️ In Debt</div>
-                    </div>
-                </div>
-
-                <div class="possession-card p-2 rounded" id="creditCardCard" style="display: none;">
-                    <div class="text-[10px] text-gray-500 uppercase">💳 Credit Card</div>
-                    <div class="text-[10px] space-y-0.5 mt-1">
-                        <div class="flex justify-between"><span class="text-gray-500">Balance:</span><span id="creditBalance" class="text-red-400">$0</span></div>
-                        <div class="flex justify-between"><span class="text-gray-500">Limit:</span><span id="creditLimit" class="text-gray-400">$0</span></div>
-                        <div class="flex justify-between"><span class="text-gray-500">APR:</span><span id="creditAPR" class="text-yellow-400">0%</span></div>
-                        <div class="flex justify-between"><span class="text-gray-500">Available:</span><span id="creditAvailable" class="text-green-400">$0</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Center: Event Card -->
-            <div class="flex-grow flex items-center justify-center relative">
-                
-                <div id="diceDisplay" class="hidden absolute inset-0 flex items-center justify-center z-30">
-                    <div class="dice-container text-center">
-                        <div id="diceRoller" class="dice-roller">
-                            <div class="dice">🎲</div>
-                        </div>
-                        <div id="diceResult" class="dice-result hidden">
-                            <span id="diceValue" class="text-5xl font-bold text-white">20</span>
-                            <div id="diceLabel" class="text-sm text-gray-400 mt-1">Rolling...</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="outcomeDisplay" class="hidden absolute inset-0 flex items-center justify-center z-20">
-                    <div class="outcome-flash bg-gray-900/95 border border-gray-700 rounded-xl p-6 text-center max-w-sm">
-                        <div id="outcomeIcon" class="text-4xl mb-3">⚡</div>
-                        <p id="outcomeText" class="text-base text-gray-300"></p>
-                        <div id="outcomeStats" class="mt-3 text-sm text-gray-500"></div>
-                    </div>
-                </div>
-
-                <div id="eventCard" class="event-card rounded-2xl p-5 w-full max-w-md">
-                    <div class="flex justify-between items-start mb-2">
-                        <div class="text-[10px] uppercase tracking-wider text-gray-500" id="eventCategory">Life Event</div>
-                        <div class="text-[10px] text-gray-600" id="eventDate">Week 1, Year 1</div>
-                    </div>
-                    <h2 class="text-xl font-semibold text-white mb-3" id="eventTitle">The Journey Begins</h2>
-                    <p class="text-gray-400 leading-relaxed mb-4 text-sm" id="eventDesc">
-                        You're 18, about to graduate high school. The future stretches before you.
-                    </p>
-                    <div id="choicesContainer" class="space-y-2"></div>
-                </div>
-            </div>
-
-            <!-- Right Panel: Log -->
-            <div class="w-48 flex flex-col">
-                <div class="text-[10px] uppercase text-gray-500 mb-2">Life Log</div>
-                <div id="eventLog" class="flex-grow overflow-y-auto space-y-1 text-[10px] text-gray-500">
-                    <div class="border-l-2 border-gray-700 pl-2">Age 18: Senior year begins...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Mobile Bottom Navigation -->
-    <nav class="mobile-nav" id="mobileNav">
-        <button class="mobile-nav-btn" onclick="showMobilePanel('status')" id="navStatus">
-            <span class="nav-icon">📊</span>
-            <span class="nav-label">Status</span>
-        </button>
-        <button class="mobile-nav-btn active" onclick="showMobilePanel('event')" id="navEvent">
-            <span class="nav-icon">🎯</span>
-            <span class="nav-label">Event</span>
-        </button>
-        <button class="mobile-nav-btn" onclick="showMobilePanel('log')" id="navLog">
-            <span class="nav-icon">📜</span>
-            <span class="nav-label">Log</span>
-        </button>
-    </nav>
-
-    <!-- Game Over Screen -->
-    <div id="gameOverScreen" class="hidden fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-8 overflow-y-auto">
-        <div class="text-center max-w-2xl my-8">
-            <div class="text-6xl mb-4" id="endIcon">🌅</div>
-            <h1 class="text-4xl font-bold text-white mb-2" id="endTitle">The End</h1>
-            <p class="text-gray-400 mb-6" id="endDesc">Your journey has concluded.</p>
-            
-            <!-- Life Tier Banner -->
-            <div id="lifeTierBanner" class="mb-6 py-4 px-6 rounded-xl border-2">
-                <div class="text-sm uppercase tracking-widest mb-1 opacity-75" id="lifeTierLabel">Life Assessment</div>
-                <div class="text-3xl font-bold" id="lifeTierTitle">--</div>
-                <div class="text-sm mt-1 opacity-75" id="lifeTierSubtitle">--</div>
-            </div>
-            
-            <!-- Obituary -->
-            <div class="bg-gray-900/50 rounded-xl p-6 mb-6 text-left">
-                <div class="text-center mb-4">
-                    <div class="text-lg font-serif italic text-gray-300" id="obituaryHeader">In Memoriam</div>
-                </div>
-                <p id="obituaryText" class="text-gray-300 leading-relaxed text-center font-serif">--</p>
-            </div>
-            
-            <!-- Stats Summary -->
-            <div class="bg-gray-900/50 rounded-xl p-6 mb-6 text-left space-y-2">
-                <div class="text-xs uppercase text-gray-500 mb-3">Final Statistics</div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex justify-between"><span class="text-gray-500">Age:</span><span id="finalAge" class="text-white">--</span></div>
-                    <div class="flex justify-between"><span class="text-gray-500">Career:</span><span id="finalCareer" class="text-yellow-400">--</span></div>
-                <div class="flex justify-between"><span class="text-gray-500">Net Worth:</span><span id="finalWealth" class="text-green-400">--</span></div>
-                <div class="flex justify-between"><span class="text-gray-500">Family:</span><span id="finalFamily" class="text-purple-400">--</span></div>
-                </div>
-                <hr class="border-gray-800 my-3">
-                <div class="text-xs uppercase text-gray-500 mb-2">Legacy & Achievements</div>
-                <p id="finalEpitaph" class="text-gray-300 text-sm">--</p>
-            </div>
-            
-            <button onclick="location.reload()" class="px-8 py-3 bg-white/10 hover:bg-white/20 rounded-lg transition">
-                Live Again
-            </button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
 </body>
 </html>
