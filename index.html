@@ -900,6 +900,43 @@
     .policy-card.entitlement-card { border-left: 4px solid var(--success); }
     .methodology-card.tax-methodology { border-left: 4px solid #5d4037; }
 
+    /* Effective Impact Display */
+    .effective-impact {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--rule);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+
+    .effective-impact.hidden {
+      display: none;
+    }
+
+    .effective-label {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 9px;
+      letter-spacing: 0.5px;
+    }
+
+    .effective-value {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--success);
+    }
+
+    .effective-value.negative {
+      color: var(--accent);
+    }
+
+    .effective-breakdown {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
     .threshold-row {
       margin-top: 12px;
       padding-top: 12px;
@@ -1535,7 +1572,7 @@
 
     <div class="fiscal-strip">
       <div class="fiscal-item">
-        <div class="fiscal-label">Spending</div>
+        <div class="fiscal-label">Policy Spend</div>
         <div class="fiscal-value" id="total-spending">$0B</div>
       </div>
       <div class="fiscal-item">
@@ -1543,8 +1580,13 @@
         <div class="fiscal-value positive" id="total-offsets">$0B</div>
       </div>
       <div class="fiscal-item">
-        <div class="fiscal-label">Net</div>
+        <div class="fiscal-label">Policy Net</div>
         <div class="fiscal-value" id="net-impact">$0B</div>
+      </div>
+      <div class="fiscal-item" style="border-left: 1px solid rgba(255,255,255,0.2); padding-left: 12px;">
+        <div class="fiscal-label">Total Deficit</div>
+        <div class="fiscal-value negative" id="total-deficit">$1,900B</div>
+        <div class="fiscal-sublabel" id="deficit-breakdown" style="font-size: 9px; opacity: 0.7;">CBO baseline</div>
       </div>
       <div class="fiscal-item gdp-projection" id="gdp-container">
         <div class="fiscal-label">GDP 2075</div>
@@ -1571,6 +1613,10 @@
                 <span>Tax drag effect</span>
                 <span id="gdp-tax-drag-val">−$0T</span>
               </div>
+              <div class="gdp-breakdown-row" id="gdp-inflation-row" style="display: none;">
+                <span>Inflation drag</span>
+                <span id="gdp-inflation-val" style="color: #c62828;">−$0T</span>
+              </div>
               <div class="gdp-breakdown-row pop-row">
                 <span>Population effect</span>
                 <span id="gdp-pop-val">+$0T</span>
@@ -1586,8 +1632,9 @@
             </div>
             <p><strong>Fiscal effect:</strong> Entitlement reform reduces debt burden (+growth); deficits crowd out investment (−growth). ~0.03% annual boost per $100B savings.</p>
             <p><strong>Tax drag:</strong> Each 0.01 TFR drag ≈ 0.1% lower annual growth, compounded over 50 years.</p>
+            <p><strong>Inflation drag:</strong> Persistent inflation from fiscal dominance reduces growth through investment uncertainty, menu costs, and capital misallocation. ~0.05-0.2% lower annual growth per 1pp inflation.</p>
             <p><strong>Population:</strong> Higher TFR → larger workforce. Each +1.0 TFR ≈ +0.5% annual growth (phases in year 20-30).</p>
-            <p><strong>Sources:</strong> CBO long-term projections; Maestas et al. (2016); Elmendorf & Sheiner (2017) on fiscal sustainability.</p>
+            <p style="font-size: 10px; color: #666;"><strong>Sources:</strong> CBO long-term projections; Maestas et al. (2016); Elmendorf & Sheiner (2017); Fischer (1993), Barro (1995), Bruno & Easterly (1998) on inflation-growth.</p>
           </div>
         </div>
       </div>
@@ -1606,16 +1653,48 @@
             <button class="penalty-back-button">← Back</button>
           </div>
           <div class="penalty-methodology-content">
-            <p><strong>Mechanism:</strong> Unfunded spending increases money supply, driving inflation. Young families spend more on inflation-sensitive categories (housing, childcare, food).</p>
-            <p><strong>Penalty tiers:</strong></p>
+            <p><strong>Two-stage elasticity chain:</strong></p>
+            
+            <p style="margin-top: 8px;"><strong>Stage 1: Deficit → Inflation</strong></p>
             <table class="penalty-math-table">
-              <tr><td>$0-200B deficit</td><td>−0.03 TFR per $100B</td></tr>
-              <tr><td>$200-500B</td><td>−0.05 TFR per $100B</td></tr>
-              <tr><td>$500-800B</td><td>−0.08 TFR per $100B</td></tr>
-              <tr><td>>$800B</td><td>−0.12 TFR per $100B</td></tr>
+              <tr><td>Central estimate</td><td>0.30% inflation per 1% GDP</td></tr>
+              <tr><td>With slack</td><td>0.15-0.20% per 1% GDP</td></tr>
+              <tr><td>Near full employment</td><td>0.25-0.40% per 1% GDP</td></tr>
+              <tr><td>Supply constrained</td><td>0.50-1.0% per 1% GDP</td></tr>
             </table>
-            <p><strong>Sources:</strong> Adsera (2004) inflation-fertility relationship; Schaller (2016) recession timing effects; 1970s stagflation family formation data.</p>
-            <p><strong>Key assumption:</strong> Economy at full employment—no slack to absorb spending without price pressure.</p>
+            <p style="font-size: 10px; color: #666; margin-top: 4px;">
+              <em>Sources: SF Fed (Jordà 2022), NY Fed (di Giovanni 2023), Bernanke-Blanchard (2023)</em>
+            </p>
+            
+            <p style="margin-top: 10px;"><strong>Stage 2: Inflation → TFR</strong></p>
+            <table class="penalty-math-table">
+              <tr><td>Direct effect</td><td>−0.3 to −0.4% TFR per 1% CPI</td></tr>
+              <tr><td>Uncertainty channel</td><td>−0.2 to −0.3% additional</td></tr>
+              <tr><td>Total short-run</td><td>−0.5 to −0.8% per 1% inflation</td></tr>
+            </table>
+            <p style="font-size: 10px; color: #666; margin-top: 4px;">
+              <em>Sources: Pacific Islands panel (2021), Comolli (2017), Adsera & Menendez (2011)</em>
+            </p>
+            
+            <p style="margin-top: 10px; color: #8b0000;"><strong>⚠ Fiscal Dominance Multipliers</strong></p>
+            <p style="font-size: 11px;">At high deficit/GDP, central banks lose ability to fight inflation (rate hikes explode debt service). Elasticity multipliers increase nonlinearly:</p>
+            <table class="penalty-math-table">
+              <tr style="background: #e8f5e9;"><td>&lt;6% deficit/GDP</td><td>1.0× (standard)</td></tr>
+              <tr style="background: #fff3e0;"><td>6-8% deficit/GDP</td><td>1.0-1.5× (elevated)</td></tr>
+              <tr style="background: #ffebee;"><td>8-10% deficit/GDP</td><td>1.5-2.5× (fiscal stress)</td></tr>
+              <tr style="background: #ffcdd2;"><td>&gt;10% deficit/GDP</td><td>2.5-4.0× (fiscal dominance)</td></tr>
+            </table>
+            <p style="font-size: 10px; color: #666; margin-top: 4px;">
+              <em>Sources: Cochrane/Leeper/Sims (FTPL): ~1:1 under dominance; BIS Papers No. 65; Boston Fed (2025); Mercatus (2023): doom loop above 100% debt/GDP</em>
+            </p>
+            
+            <p style="margin-top: 10px;"><strong>Current calculation:</strong></p>
+            <div id="inflation-calc-breakdown" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: #f5f5f5; padding: 8px; margin-top: 4px;">
+              $0B deficit → 0.0% GDP → 0.0pp inflation → −0.00 TFR
+            </div>
+            <div id="fiscal-stress-indicator" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; margin-top: 4px; padding: 4px 8px; background: #e8f5e9; display: none;">
+              Fiscal stress: Normal (1.0× multiplier)
+            </div>
           </div>
         </div>
       </div>
@@ -1649,20 +1728,63 @@
       <div class="modal-content">
         <div class="modal-header">
           <span class="modal-icon">⚠️</span>
-          <h3>Deficit Warning</h3>
+          <h3>Deficit → Inflation → Fertility</h3>
         </div>
         <div class="modal-body">
-          <p>Unfunded spending creates inflationary pressure that hurts young families through higher housing, childcare, and food costs—partially offsetting fertility gains.</p>
+          <p>Unfunded spending under tight labor markets creates inflationary pressure that hurts young families through higher housing, childcare, and food costs.</p>
+          
           <div class="modal-math">
-            <div class="modal-math-title">Penalty (scales with deficit)</div>
-            <div class="modal-tier"><span>$0-200B:</span> −0.03 TFR per $100B</div>
-            <div class="modal-tier"><span>$200-500B:</span> −0.05 TFR per $100B</div>
-            <div class="modal-tier"><span>$500B+:</span> −0.08-0.12 TFR per $100B</div>
+            <div class="modal-math-title">Empirical Elasticity Chain</div>
+            <div class="modal-tier"><span>Deficit → Inflation:</span> 0.30% per 1% GDP*</div>
+            <div class="modal-tier"><span>Inflation → TFR:</span> −0.5 to −0.8% per 1%</div>
+            <div class="modal-tier"><span>Combined:</span> ~0.01 TFR per $500B deficit</div>
           </div>
-          <p class="modal-sources"><strong>Sources:</strong> Adsera (2004) inflation-fertility; Schaller (2016) recession timing effects.</p>
-          <p class="modal-assumption"><strong>Assumption:</strong> Economy at full employment—no slack to absorb spending without price pressure.</p>
+          
+          <p class="modal-sources"><strong>Sources:</strong></p>
+          <p class="modal-sources" style="font-size: 10px;">
+            <em>Deficit→Inflation:</em> SF Fed (Jordà 2022), NY Fed (di Giovanni 2023), Bernanke-Blanchard NBER (2023)<br>
+            <em>Inflation→TFR:</em> Pacific Islands panel (2021), Comolli (2017), Adsera & Menendez (2011)
+          </p>
+          
+          <p class="modal-assumption"><strong>*Note:</strong> Elasticity varies by economic slack. Near full employment assumed. Adjust in Model Parameters to simulate different conditions.</p>
         </div>
         <button class="modal-close-btn" id="close-deficit-modal">Got it</button>
+      </div>
+    </div>
+    
+    <!-- Fiscal Crisis Warning Modal -->
+    <div class="modal-overlay" id="fiscal-crisis-modal">
+      <div class="modal-content" style="border-left: 4px solid #c62828;">
+        <div class="modal-header" style="background: #ffebee;">
+          <span class="modal-icon">🚨</span>
+          <h3 style="color: #c62828;">Fiscal Dominance Warning</h3>
+        </div>
+        <div class="modal-body">
+          <p><strong>Your policy package pushes total deficit above 8% of GDP.</strong></p>
+          
+          <p>At this level, the US enters "fiscal dominance" territory where the Federal Reserve loses its ability to control inflation through interest rate policy. Rate hikes sufficient to fight inflation would explode debt service costs, forcing either:</p>
+          
+          <ul style="margin: 12px 0; padding-left: 20px; font-size: 13px;">
+            <li>Fiscal austerity severe enough to crash the economy, or</li>
+            <li>Monetization of the deficit, creating the inflation you're trying to fight</li>
+          </ul>
+          
+          <div class="modal-math" style="background: #ffebee; border-color: #c62828;">
+            <div class="modal-math-title" style="color: #c62828;">Nonlinear Multipliers Kick In</div>
+            <div class="modal-tier"><span>8-10% deficit/GDP:</span> 1.5-2.5× inflation elasticity</div>
+            <div class="modal-tier"><span>&gt;10% deficit/GDP:</span> 2.5-4.0× (approaching FTPL 1:1)</div>
+          </div>
+          
+          <p class="modal-sources"><strong>Why this matters for fertility:</strong></p>
+          <p style="font-size: 12px;">Unanchored inflation expectations create uncertainty that delays family formation. Turkey's TFR collapsed from 2.38 to 1.48 under persistent fiscal stress. Eastern Europe lost 30-40% of fertility during 1989-95 transition crisis.</p>
+          
+          <p class="modal-sources" style="font-size: 10px; margin-top: 12px;">
+            <em>Sources: Cochrane/Leeper/Sims (Fiscal Theory of Price Level); BIS Papers No. 65 "Threat of fiscal dominance?"; Boston Fed (2025) "Household Beliefs about Fiscal Dominance"; Mercatus (2023)</em>
+          </p>
+          
+          <p class="modal-assumption"><strong>Recommendation:</strong> Consider adding offsets (entitlement reform or taxes) to bring net deficit impact below $500B, or accept significantly reduced fertility gains from your package.</p>
+        </div>
+        <button class="modal-close-btn" id="close-fiscal-crisis-modal">I understand the tradeoff</button>
       </div>
     </div>
 
@@ -2218,21 +2340,117 @@
       }
     ];
 
-    const modelParams = { interactionDiscount: 25, contextAdjustment: 10, implementationRate: 90 };
+    const modelParams = { 
+      interactionDiscount: 25, 
+      contextAdjustment: 10, 
+      implementationRate: 90,
+      // Inflation elasticity parameters (from empirical literature)
+      deficitToInflation: 0.30,      // % inflation per 1% GDP deficit (range: 0.20-0.40)
+      inflationToTFR: 0.65,          // % TFR decline per 1% inflation (midpoint of -0.5 to -0.8)
+      economicSlack: 'near-full',    // 'slack', 'near-full', 'constrained'
+      currentGDP: 28000,             // $28T in billions
+      // CBO baseline deficit (FY2025 projection: $1.9T, 6.2% of GDP)
+      baselineDeficit: 1900,         // $1.9T baseline deficit from CBO Jan 2025
+      includeBaselineInPenalty: false // Whether inflation penalty applies to baseline or just incremental
+    };
 
     function calculateInflationPenalty(deficit) {
-      if (deficit <= 0) return 0;
-      let penalty = 0;
-      if (deficit <= 200) {
-        penalty = deficit * 0.0003;
-      } else if (deficit <= 500) {
-        penalty = 200 * 0.0003 + (deficit - 200) * 0.0005;
-      } else if (deficit <= 800) {
-        penalty = 200 * 0.0003 + 300 * 0.0005 + (deficit - 500) * 0.0008;
+      // Determine which deficit to use for the penalty calculation
+      const policyDeficit = deficit > 0 ? deficit : 0;
+      const totalDeficit = modelParams.baselineDeficit + policyDeficit;
+      
+      // Use incremental or total based on setting
+      const effectiveDeficit = modelParams.includeBaselineInPenalty 
+        ? totalDeficit 
+        : policyDeficit;
+      
+      if (effectiveDeficit <= 0) return 0;
+      
+      // Calculate deficit as % of GDP
+      const deficitPctGDP = (totalDeficit / modelParams.currentGDP) * 100;
+      
+      // NONLINEAR FISCAL DOMINANCE ADJUSTMENT
+      // Based on: BIS Papers No. 65, Boston Fed (2025), Mercatus Center research
+      // Key insight: At high debt/GDP (>100%), central bank loses ability to fight inflation
+      // because rate hikes explode debt service costs, creating a doom loop
+      //
+      // Thresholds calibrated to US context:
+      // - <6% deficit/GDP: Standard elasticity (current baseline ~6.2%)
+      // - 6-8% deficit/GDP: Elevated risk (1.5x multiplier)
+      // - 8-10% deficit/GDP: Fiscal stress (2.5x multiplier)  
+      // - >10% deficit/GDP: Fiscal dominance (4x multiplier, approaching FTPL 1:1)
+      //
+      // Citations:
+      // - Cochrane, Leeper, Sims (FTPL): elasticities approach 1:1 under fiscal dominance
+      // - Boston Fed (2025): households expecting fiscal dominance revise inflation up
+      // - Mercatus (2023): debt/GDP >100% creates doom loop with rate hikes
+      // - BIS (2012): "threat of fiscal dominance" when debt constrains monetary policy
+      
+      let fiscalDominanceMultiplier = 1.0;
+      let fiscalStressLevel = 'normal';
+      
+      if (deficitPctGDP < 6) {
+        fiscalDominanceMultiplier = 1.0;
+        fiscalStressLevel = 'normal';
+      } else if (deficitPctGDP < 8) {
+        // Linear interpolation from 1.0 at 6% to 1.5 at 8%
+        fiscalDominanceMultiplier = 1.0 + (deficitPctGDP - 6) * 0.25;
+        fiscalStressLevel = 'elevated';
+      } else if (deficitPctGDP < 10) {
+        // Linear interpolation from 1.5 at 8% to 2.5 at 10%
+        fiscalDominanceMultiplier = 1.5 + (deficitPctGDP - 8) * 0.5;
+        fiscalStressLevel = 'high';
       } else {
-        penalty = 200 * 0.0003 + 300 * 0.0005 + 300 * 0.0008 + (deficit - 800) * 0.0012;
+        // Above 10%: accelerating toward fiscal dominance
+        // Caps at 4x to avoid completely unrealistic penalties
+        fiscalDominanceMultiplier = Math.min(4.0, 2.5 + (deficitPctGDP - 10) * 0.3);
+        fiscalStressLevel = 'crisis';
       }
-      return penalty;
+      
+      // Store for display
+      window.lastFiscalStress = { 
+        level: fiscalStressLevel, 
+        multiplier: fiscalDominanceMultiplier,
+        deficitPctGDP: deficitPctGDP,
+        totalDeficit: totalDeficit
+      };
+      
+      // Economic condition multiplier for deficit→inflation elasticity
+      const slackMultiplier = {
+        'slack': 0.5,           // Significant economic slack: 0.15-0.20%
+        'near-full': 1.0,       // Near full employment: 0.25-0.40%
+        'constrained': 1.75     // At/above capacity + supply constraints: 0.50-1.0%
+      }[modelParams.economicSlack] || 1.0;
+      
+      // Stage 1: Deficit → Inflation (with fiscal dominance adjustment)
+      const deficitForCalc = modelParams.includeBaselineInPenalty ? totalDeficit : policyDeficit;
+      const deficitPctForCalc = (deficitForCalc / modelParams.currentGDP) * 100;
+      const baseInflation = deficitPctForCalc * modelParams.deficitToInflation * slackMultiplier;
+      const inflationIncrease = baseInflation * fiscalDominanceMultiplier;
+      
+      // Stage 2: Inflation → TFR decline
+      const tfrDeclinePct = inflationIncrease * modelParams.inflationToTFR;
+      
+      // Convert % TFR decline to absolute TFR points
+      const baseTFR = 1.62;
+      const tfrPenalty = (tfrDeclinePct / 100) * baseTFR;
+      
+      return tfrPenalty;
+    }
+    
+    // Helper to get inflation estimate for display
+    function calculateInflationEstimate(deficit) {
+      const effectiveDeficit = modelParams.includeBaselineInPenalty 
+        ? modelParams.baselineDeficit + deficit 
+        : deficit;
+      if (effectiveDeficit <= 0) return 0;
+      const slackMultiplier = {
+        'slack': 0.5,
+        'near-full': 1.0,
+        'constrained': 1.75
+      }[modelParams.economicSlack] || 1.0;
+      const deficitPctGDP = (effectiveDeficit / modelParams.currentGDP) * 100;
+      return deficitPctGDP * modelParams.deficitToInflation * slackMultiplier;
     }
 
     // TFR drag from tax policies (separate from GDP drag)
@@ -2257,6 +2475,7 @@
       // - Tax drag: reduces annual growth rate (already in GDP growth points)
       // - Entitlement reform: reduces debt burden, boosts growth
       // - Deficit: crowds out investment, reduces growth
+      // - Inflation drag: fiscal dominance creates persistent inflation that reduces growth
       
       const currentGDP = 28; // $28T
       const years = 50; // 2025 to 2075
@@ -2275,6 +2494,63 @@
       // $100B deficit → ~0.02% lower growth from crowding out
       const deficitDrag = (deficit / 100) * 0.0002;
       
+      // INFLATION DRAG FROM FISCAL DOMINANCE
+      // High inflation reduces growth through:
+      // - Investment uncertainty and capital misallocation
+      // - Menu costs and price signal distortion  
+      // - Potential monetary tightening causing recessions
+      // - Currency effects and capital flight risk
+      //
+      // Literature estimates (Fischer 1993, Barro 1995, Bruno & Easterly 1998):
+      // - Below 5% inflation: minimal growth impact
+      // - 5-10% inflation: ~0.1-0.2% lower growth per inflation point
+      // - Above 10%: nonlinear drag, potentially 0.3-0.5% per point
+      //
+      // Calculate implied inflation from deficit
+      const policyDeficit = deficit > 0 ? deficit : 0;
+      const totalDeficit = modelParams.baselineDeficit + policyDeficit;
+      const deficitPctGDP = (totalDeficit / modelParams.currentGDP) * 100;
+      
+      // Get fiscal dominance multiplier (same logic as inflation penalty)
+      let fiscalDominanceMultiplier = 1.0;
+      if (deficitPctGDP < 6) {
+        fiscalDominanceMultiplier = 1.0;
+      } else if (deficitPctGDP < 8) {
+        fiscalDominanceMultiplier = 1.0 + (deficitPctGDP - 6) * 0.25;
+      } else if (deficitPctGDP < 10) {
+        fiscalDominanceMultiplier = 1.5 + (deficitPctGDP - 8) * 0.5;
+      } else {
+        fiscalDominanceMultiplier = Math.min(4.0, 2.5 + (deficitPctGDP - 10) * 0.3);
+      }
+      
+      // Calculate implied annual inflation from deficit
+      const slackMultiplier = {
+        'slack': 0.5,
+        'near-full': 1.0,
+        'constrained': 1.75
+      }[modelParams.economicSlack] || 1.0;
+      
+      // Only count incremental policy deficit for inflation drag on growth
+      // (baseline inflation is already in the 2% baseline growth assumption)
+      const incrementalDeficitPct = (policyDeficit / modelParams.currentGDP) * 100;
+      const baseInflation = incrementalDeficitPct * modelParams.deficitToInflation * slackMultiplier;
+      const impliedInflation = baseInflation * fiscalDominanceMultiplier;
+      
+      // Inflation drag on growth (phases in over time as inflation persists)
+      // Conservative: 0.05% lower growth per 1pp inflation above 2% target
+      // This compounds significantly over 50 years
+      let inflationGrowthDrag = 0;
+      if (impliedInflation > 0) {
+        // Nonlinear: higher inflation has disproportionate growth impact
+        if (impliedInflation <= 3) {
+          inflationGrowthDrag = impliedInflation * 0.0005; // 0.05% per pp
+        } else if (impliedInflation <= 6) {
+          inflationGrowthDrag = 3 * 0.0005 + (impliedInflation - 3) * 0.001; // 0.1% per pp above 3
+        } else {
+          inflationGrowthDrag = 3 * 0.0005 + 3 * 0.001 + (impliedInflation - 6) * 0.002; // 0.2% per pp above 6
+        }
+      }
+      
       // Population growth effect on GDP
       // Higher TFR → larger working-age population in 20-50 years
       // Rule of thumb: 0.1 TFR increase → 0.05% higher annual growth after 20 years
@@ -2282,10 +2558,26 @@
       const tfrDelta = tfr - 1.62; // Change from baseline
       const populationGrowthBoost = tfrDelta * 0.005; // 0.5% per 1.0 TFR
       
+      // Store for display
+      window.lastGDPCalc = {
+        impliedInflation: impliedInflation,
+        inflationGrowthDrag: inflationGrowthDrag,
+        fiscalDominanceMultiplier: fiscalDominanceMultiplier,
+        deficitPctGDP: deficitPctGDP
+      };
+      
       // Phased effects
       let gdp = currentGDP;
       for (let year = 1; year <= years; year++) {
         let annualGrowth = baselineGrowth - taxDragOnGrowth + entitlementBoost - deficitDrag;
+        
+        // Inflation drag phases in over first 10 years (takes time to become persistent)
+        if (year <= 10) {
+          const phaseIn = year / 10;
+          annualGrowth -= inflationGrowthDrag * phaseIn;
+        } else {
+          annualGrowth -= inflationGrowthDrag;
+        }
         
         // Population effect phases in after year 20
         if (year > 20) {
@@ -2386,19 +2678,100 @@
       const netEl = document.getElementById('net-impact');
       if (fiscal.net <= 0) {
         // Surplus: offsets exceed spending
-        netEl.textContent = `+$${Math.abs(Math.round(fiscal.net))}B surplus`;
+        netEl.textContent = `+$${Math.abs(Math.round(fiscal.net))}B`;
         netEl.className = 'fiscal-value positive';
       } else {
         // Deficit: spending exceeds offsets
-        netEl.textContent = `−$${Math.round(fiscal.net)}B deficit`;
+        netEl.textContent = `−$${Math.round(fiscal.net)}B`;
         netEl.className = 'fiscal-value negative';
+      }
+      
+      // Update total deficit (CBO baseline + policy net)
+      const totalDeficit = modelParams.baselineDeficit + fiscal.net;
+      const totalDeficitEl = document.getElementById('total-deficit');
+      const deficitBreakdownEl = document.getElementById('deficit-breakdown');
+      
+      totalDeficitEl.textContent = `$${Math.round(totalDeficit).toLocaleString()}B`;
+      
+      // Color code based on fiscal stress level
+      const deficitPctGDP = (totalDeficit / modelParams.currentGDP) * 100;
+      if (deficitPctGDP >= 10) {
+        totalDeficitEl.className = 'fiscal-value';
+        totalDeficitEl.style.color = '#c62828'; // Crisis red
+      } else if (deficitPctGDP >= 8) {
+        totalDeficitEl.className = 'fiscal-value';
+        totalDeficitEl.style.color = '#e65100'; // High stress orange
+      } else if (deficitPctGDP >= 6) {
+        totalDeficitEl.className = 'fiscal-value';
+        totalDeficitEl.style.color = '#ef6c00'; // Elevated orange
+      } else {
+        totalDeficitEl.className = 'fiscal-value negative';
+        totalDeficitEl.style.color = ''; // Default
+      }
+      
+      if (fiscal.net === 0) {
+        deficitBreakdownEl.textContent = `${deficitPctGDP.toFixed(1)}% GDP (baseline)`;
+      } else if (fiscal.net > 0) {
+        deficitBreakdownEl.textContent = `${deficitPctGDP.toFixed(1)}% GDP (+$${Math.round(fiscal.net)}B)`;
+      } else {
+        deficitBreakdownEl.textContent = `${deficitPctGDP.toFixed(1)}% GDP (−$${Math.abs(Math.round(fiscal.net))}B)`;
       }
 
       const inflationContainer = document.getElementById('inflation-container');
       const growthContainer = document.getElementById('growth-container');
 
-      inflationContainer.classList.toggle('visible', tfr.inflationPenalty > 0);
-      if (tfr.inflationPenalty > 0) document.getElementById('inflation-penalty-val').textContent = `-${tfr.inflationPenalty.toFixed(2)}`;
+      inflationContainer.classList.toggle('visible', tfr.inflationPenalty > 0.001);
+      if (tfr.inflationPenalty > 0.001) {
+        document.getElementById('inflation-penalty-val').textContent = `-${tfr.inflationPenalty.toFixed(2)}`;
+        
+        // Update calculation breakdown display
+        const inflationBreakdown = document.getElementById('inflation-calc-breakdown');
+        const fiscalStressIndicator = document.getElementById('fiscal-stress-indicator');
+        
+        if (inflationBreakdown && window.lastFiscalStress) {
+          const fs = window.lastFiscalStress;
+          const slackMultiplier = {
+            'slack': 0.5,
+            'near-full': 1.0,
+            'constrained': 1.75
+          }[modelParams.economicSlack] || 1.0;
+          
+          const deficitForCalc = modelParams.includeBaselineInPenalty ? fs.totalDeficit : tfr.deficit;
+          const deficitPctForCalc = (deficitForCalc / modelParams.currentGDP) * 100;
+          const baseInflationPp = deficitPctForCalc * modelParams.deficitToInflation * slackMultiplier;
+          const adjustedInflationPp = baseInflationPp * fs.multiplier;
+          
+          const deficitLabel = `$${Math.round(fs.totalDeficit).toLocaleString()}B (${fs.deficitPctGDP.toFixed(1)}% GDP)`;
+          inflationBreakdown.innerHTML = `Total: ${deficitLabel}<br>→ Base: ${baseInflationPp.toFixed(2)}pp × ${fs.multiplier.toFixed(1)}× = ${adjustedInflationPp.toFixed(2)}pp inflation<br>→ TFR impact: −${tfr.inflationPenalty.toFixed(3)}`;
+          
+          // Update fiscal stress indicator
+          if (fiscalStressIndicator) {
+            fiscalStressIndicator.style.display = 'block';
+            const stressColors = {
+              'normal': { bg: '#e8f5e9', text: '#2e7d32' },
+              'elevated': { bg: '#fff3e0', text: '#ef6c00' },
+              'high': { bg: '#ffebee', text: '#c62828' },
+              'crisis': { bg: '#c62828', text: '#ffffff' }
+            };
+            const stressLabels = {
+              'normal': 'Normal',
+              'elevated': 'Elevated Risk',
+              'high': 'Fiscal Stress',
+              'crisis': '⚠ FISCAL DOMINANCE'
+            };
+            const colors = stressColors[fs.level] || stressColors.normal;
+            fiscalStressIndicator.style.background = colors.bg;
+            fiscalStressIndicator.style.color = colors.text;
+            fiscalStressIndicator.textContent = `${stressLabels[fs.level]} (${fs.multiplier.toFixed(1)}× multiplier at ${fs.deficitPctGDP.toFixed(1)}% deficit/GDP)`;
+          }
+          
+          // Trigger fiscal crisis modal when entering high stress
+          if ((fs.level === 'high' || fs.level === 'crisis') && !window.fiscalCrisisWarningShown) {
+            window.fiscalCrisisWarningShown = true;
+            document.getElementById('fiscal-crisis-modal').classList.add('visible');
+          }
+        }
+      }
 
       growthContainer.classList.toggle('visible', tfr.tfrDrag > 0);
       if (tfr.tfrDrag > 0) document.getElementById('growth-penalty-val').textContent = `-${tfr.tfrDrag.toFixed(2)}`;
@@ -2435,9 +2808,17 @@
       // Clean additive decomposition: each effect computed holding others at baseline
       document.getElementById('gdp-baseline-val').textContent = `$${baselineGDP2075.toFixed(0)}T`;
       
-      // Fiscal effect only (entitlement savings + deficit drag)
-      const gdpFiscalOnly = calculateGDP2075(1.62, 0, entitlementSavings, deficit);
-      const fiscalEffect = gdpFiscalOnly - baselineGDP2075;
+      // Fiscal effect only (entitlement savings + deficit crowding out, but NOT inflation)
+      // We need to temporarily disable baseline deficit for this calculation
+      const savedBaseline = modelParams.baselineDeficit;
+      modelParams.baselineDeficit = 0; // Temporarily zero out for decomposition
+      const gdpFiscalOnly = calculateGDP2075(1.62, 0, entitlementSavings, 0); // No deficit = no inflation drag
+      modelParams.baselineDeficit = savedBaseline; // Restore
+      
+      // Simple crowding out effect (linear, without inflation)
+      const crowdingOutDrag = (deficit / 100) * 0.0002; // Same as in the function
+      const crowdingOutGDP = 28 * Math.pow(1 + (0.02 - crowdingOutDrag), 50);
+      const fiscalEffect = (gdpFiscalOnly - baselineGDP2075) + (crowdingOutGDP - baselineGDP2075);
       document.getElementById('gdp-fiscal-val').textContent = fiscalEffect >= 0 ? `+$${fiscalEffect.toFixed(0)}T` : `−$${Math.abs(fiscalEffect).toFixed(0)}T`;
       
       // Tax drag effect only
@@ -2445,13 +2826,30 @@
       const taxEffect = gdpTaxOnly - baselineGDP2075;
       document.getElementById('gdp-tax-drag-val').textContent = taxEffect >= 0 ? `+$${taxEffect.toFixed(0)}T` : `−$${Math.abs(taxEffect).toFixed(0)}T`;
       
+      // Inflation drag effect (from fiscal dominance)
+      const inflationRow = document.getElementById('gdp-inflation-row');
+      const inflationVal = document.getElementById('gdp-inflation-val');
+      if (window.lastGDPCalc && window.lastGDPCalc.inflationGrowthDrag > 0.0001) {
+        inflationRow.style.display = 'flex';
+        // Calculate GDP loss from inflation drag over 50 years
+        const dragPerYear = window.lastGDPCalc.inflationGrowthDrag;
+        const gdpWithoutInflationDrag = 28 * Math.pow(1.02, 50);
+        const gdpWithInflationDrag = 28 * Math.pow(1.02 - dragPerYear, 50);
+        const inflationEffect = gdpWithInflationDrag - gdpWithoutInflationDrag;
+        inflationVal.textContent = `−$${Math.abs(inflationEffect).toFixed(0)}T`;
+        inflationVal.title = `${(window.lastGDPCalc.impliedInflation).toFixed(1)}pp inflation → ${(dragPerYear * 100).toFixed(2)}% lower annual growth`;
+      } else {
+        inflationRow.style.display = 'none';
+      }
+      
       // Population effect only
       const gdpPopOnly = calculateGDP2075(tfr.mid, 0, 0, 0);
       const popEffect = gdpPopOnly - baselineGDP2075;
       document.getElementById('gdp-pop-val').textContent = popEffect >= 0 ? `+$${popEffect.toFixed(0)}T` : `−$${Math.abs(popEffect).toFixed(0)}T`;
       
       // Interaction residual (total - sum of individual effects)
-      const sumOfEffects = fiscalEffect + taxEffect + popEffect;
+      const inflationEffect = window.lastGDPCalc ? -(28 * Math.pow(1.02, 50) - 28 * Math.pow(1.02 - window.lastGDPCalc.inflationGrowthDrag, 50)) : 0;
+      const sumOfEffects = fiscalEffect + taxEffect + popEffect + (inflationEffect < 0 ? inflationEffect : 0);
       const interactionResidual = gdpDelta - sumOfEffects;
       document.getElementById('gdp-interaction-val').textContent = interactionResidual >= 0 ? `+$${interactionResidual.toFixed(0)}T` : `−$${Math.abs(interactionResidual).toFixed(0)}T`;
       
@@ -2460,6 +2858,64 @@
       document.getElementById('count-policies').textContent = [...liberalPolicies, ...illiberalPolicies].filter(p => p.enabled).length;
       document.getElementById('count-entitlements').textContent = entitlementReforms.filter(r => r.enabled).length;
       document.getElementById('count-taxes').textContent = taxIncreases.filter(t => t.enabled).length;
+      
+      // Update effective impact on each policy card
+      updateEffectiveImpacts(tfr, fiscal);
+    }
+
+    function updateEffectiveImpacts(tfr, fiscal) {
+      const enabledPolicies = [...liberalPolicies, ...illiberalPolicies].filter(p => p.enabled);
+      const enabledCount = enabledPolicies.length;
+      
+      // Calculate the discount factors
+      const interactionFactor = enabledCount > 1 ? (1 - modelParams.interactionDiscount/100) : 1;
+      const contextFactor = (1 - modelParams.contextAdjustment/100);
+      const implementationFactor = (modelParams.implementationRate/100);
+      const totalFactor = interactionFactor * contextFactor * implementationFactor;
+      
+      // Calculate per-policy share of inflation penalty
+      const inflationPenaltyPerPolicy = enabledCount > 0 ? tfr.inflationPenalty / enabledCount : 0;
+      
+      // Update each enabled policy card
+      [...liberalPolicies, ...illiberalPolicies].forEach(policy => {
+        const card = document.querySelector(`[data-policy-id="${policy.id}"]`);
+        if (!card) return;
+        
+        const effectiveDiv = card.querySelector('.effective-impact');
+        const effectiveValue = card.querySelector('.effective-value');
+        const effectiveBreakdown = card.querySelector('.effective-breakdown');
+        
+        if (!effectiveDiv) return;
+        
+        if (policy.enabled) {
+          effectiveDiv.classList.remove('hidden');
+          
+          // Calculate this policy's effective contribution
+          const grossTfr = (policy.tfrLow + policy.tfrHigh) / 2;
+          const afterDiscounts = grossTfr * totalFactor;
+          const effectiveTfr = afterDiscounts - inflationPenaltyPerPolicy;
+          
+          effectiveValue.textContent = effectiveTfr >= 0 ? `+${effectiveTfr.toFixed(2)} TFR` : `${effectiveTfr.toFixed(2)} TFR`;
+          effectiveValue.classList.toggle('negative', effectiveTfr < 0);
+          
+          // Build breakdown text
+          let breakdownParts = [];
+          breakdownParts.push(`Base: +${grossTfr.toFixed(2)}`);
+          
+          if (totalFactor < 1) {
+            const discountPct = Math.round((1 - totalFactor) * 100);
+            breakdownParts.push(`Discounts: −${discountPct}%`);
+          }
+          
+          if (inflationPenaltyPerPolicy > 0.001) {
+            breakdownParts.push(`Inflation: −${inflationPenaltyPerPolicy.toFixed(2)}`);
+          }
+          
+          effectiveBreakdown.textContent = breakdownParts.join(' → ');
+        } else {
+          effectiveDiv.classList.add('hidden');
+        }
+      });
     }
 
     function renderPolicyCard(policy, container, isIlliberal = false) {
@@ -2505,7 +2961,7 @@
       cardContainer.innerHTML = `
         <div class="card-flipper">
           <div class="card-front">
-            <div class="policy-card${isIlliberal ? ' illiberal' : ''}">
+            <div class="policy-card${isIlliberal ? ' illiberal' : ''}" data-policy-id="${policy.id}">
               <div class="policy-header">
                 <span class="policy-title" data-flip="true">${policy.name}</span>
                 <div class="policy-stats">
@@ -2522,6 +2978,11 @@
               <div class="slider-row hidden">
                 <div class="slider-header"><span class="slider-label">${sc.label}</span><span class="slider-value">${sc.format(sliderValue)}</span></div>
                 <input type="range" min="${sc.min}" max="${sc.max}" value="${sliderValue}">
+              </div>
+              <div class="effective-impact hidden">
+                <span class="effective-label">Effective impact:</span>
+                <span class="effective-value">+0.00 TFR</span>
+                <span class="effective-breakdown"></span>
               </div>
             </div>
           </div>
@@ -2972,15 +3433,16 @@
     }
 
     function renderModelParams(container) {
+      // Existing TFR model parameters
       [
-        { key: 'interactionDiscount', name: 'Interaction Discount', desc: 'Overlapping benefits reduce effects (20-30%)', min: 10, max: 40 },
-        { key: 'contextAdjustment', name: 'US Context Adjustment', desc: 'European elasticities may not transfer', min: 0, max: 30 },
-        { key: 'implementationRate', name: 'Implementation Rate', desc: 'Admin capacity and execution risk', min: 70, max: 100 }
+        { key: 'interactionDiscount', name: 'Interaction Discount', desc: 'Overlapping benefits reduce effects (20-30%)', min: 10, max: 40, format: v => `${v}%` },
+        { key: 'contextAdjustment', name: 'US Context Adjustment', desc: 'European elasticities may not transfer', min: 0, max: 30, format: v => `${v}%` },
+        { key: 'implementationRate', name: 'Implementation Rate', desc: 'Admin capacity and execution risk', min: 70, max: 100, format: v => `${v}%` }
       ].forEach(p => {
         const card = document.createElement('div');
         card.className = 'params-card';
         card.innerHTML = `
-          <div class="slider-header"><span class="params-title">${p.name}</span><span class="slider-value">${modelParams[p.key]}%</span></div>
+          <div class="slider-header"><span class="params-title">${p.name}</span><span class="slider-value">${p.format(modelParams[p.key])}</span></div>
           <input type="range" min="${p.min}" max="${p.max}" value="${modelParams[p.key]}">
           <p class="params-description">${p.desc}</p>
         `;
@@ -2988,11 +3450,151 @@
         const value = card.querySelector('.slider-value');
         slider.addEventListener('input', () => {
           modelParams[p.key] = parseInt(slider.value);
-          value.textContent = `${modelParams[p.key]}%`;
+          value.textContent = p.format(modelParams[p.key]);
           updateDisplay();
         });
         container.appendChild(card);
       });
+      
+      // Inflation Elasticity Section Header
+      const sectionHeader = document.createElement('div');
+      sectionHeader.className = 'params-section-header';
+      sectionHeader.innerHTML = `
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #8b0000; margin: 20px 0 8px 0; padding-top: 12px; border-top: 1px solid #ccc;">
+          Inflation Elasticities
+          <span style="font-size: 9px; color: #666; text-transform: none; display: block; margin-top: 4px;">
+            From empirical literature review. Tap ⓘ on Inflation badge above for citations.
+          </span>
+        </div>
+      `;
+      container.appendChild(sectionHeader);
+      
+      // Economic Slack selector (dropdown)
+      const slackCard = document.createElement('div');
+      slackCard.className = 'params-card';
+      slackCard.innerHTML = `
+        <div class="slider-header">
+          <span class="params-title">Economic Conditions</span>
+          <select id="economic-slack-select" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 8px; border: 1px solid #ccc; background: white;">
+            <option value="slack" ${modelParams.economicSlack === 'slack' ? 'selected' : ''}>Significant Slack</option>
+            <option value="near-full" ${modelParams.economicSlack === 'near-full' ? 'selected' : ''}>Near Full Employment</option>
+            <option value="constrained" ${modelParams.economicSlack === 'constrained' ? 'selected' : ''}>Supply Constrained</option>
+          </select>
+        </div>
+        <p class="params-description" id="slack-desc">Affects deficit→inflation elasticity (0.15-1.0% per 1% GDP)</p>
+      `;
+      const slackSelect = slackCard.querySelector('select');
+      const slackDesc = slackCard.querySelector('#slack-desc');
+      const slackDescriptions = {
+        'slack': 'Low inflation sensitivity: 0.15-0.20% per 1% GDP deficit',
+        'near-full': 'Moderate sensitivity: 0.25-0.40% per 1% GDP deficit',
+        'constrained': 'High sensitivity: 0.50-1.0% per 1% GDP deficit (2021-23 conditions)'
+      };
+      slackDesc.textContent = slackDescriptions[modelParams.economicSlack];
+      slackSelect.addEventListener('change', () => {
+        modelParams.economicSlack = slackSelect.value;
+        slackDesc.textContent = slackDescriptions[modelParams.economicSlack];
+        updateDisplay();
+      });
+      container.appendChild(slackCard);
+      
+      // Deficit→Inflation elasticity slider
+      const defInflCard = document.createElement('div');
+      defInflCard.className = 'params-card';
+      defInflCard.innerHTML = `
+        <div class="slider-header">
+          <span class="params-title">Deficit → Inflation</span>
+          <span class="slider-value">${modelParams.deficitToInflation.toFixed(2)}% per 1% GDP</span>
+        </div>
+        <input type="range" min="10" max="60" value="${modelParams.deficitToInflation * 100}">
+        <p class="params-description">Central: 0.30% (SF Fed, NY Fed, Bernanke-Blanchard)</p>
+      `;
+      const defInflSlider = defInflCard.querySelector('input');
+      const defInflValue = defInflCard.querySelector('.slider-value');
+      defInflSlider.addEventListener('input', () => {
+        modelParams.deficitToInflation = parseInt(defInflSlider.value) / 100;
+        defInflValue.textContent = `${modelParams.deficitToInflation.toFixed(2)}% per 1% GDP`;
+        updateDisplay();
+      });
+      container.appendChild(defInflCard);
+      
+      // Inflation→TFR elasticity slider
+      const inflTfrCard = document.createElement('div');
+      inflTfrCard.className = 'params-card';
+      inflTfrCard.innerHTML = `
+        <div class="slider-header">
+          <span class="params-title">Inflation → TFR</span>
+          <span class="slider-value">${modelParams.inflationToTFR.toFixed(2)}% decline per 1% CPI</span>
+        </div>
+        <input type="range" min="30" max="100" value="${modelParams.inflationToTFR * 100}">
+        <p class="params-description">Range: 0.5-0.8% (Pacific Islands, Comolli, Adsera-Menendez)</p>
+      `;
+      const inflTfrSlider = inflTfrCard.querySelector('input');
+      const inflTfrValue = inflTfrCard.querySelector('.slider-value');
+      inflTfrSlider.addEventListener('input', () => {
+        modelParams.inflationToTFR = parseInt(inflTfrSlider.value) / 100;
+        inflTfrValue.textContent = `${modelParams.inflationToTFR.toFixed(2)}% decline per 1% CPI`;
+        updateDisplay();
+      });
+      container.appendChild(inflTfrCard);
+      
+      // Baseline Deficit Section Header
+      const baselineHeader = document.createElement('div');
+      baselineHeader.innerHTML = `
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #5d4037; margin: 20px 0 8px 0; padding-top: 12px; border-top: 1px solid #ccc;">
+          Fiscal Baseline
+          <span style="font-size: 9px; color: #666; text-transform: none; display: block; margin-top: 4px;">
+            CBO January 2025 projection. Adjust to model different scenarios.
+          </span>
+        </div>
+      `;
+      container.appendChild(baselineHeader);
+      
+      // Baseline deficit slider
+      const baselineCard = document.createElement('div');
+      baselineCard.className = 'params-card';
+      baselineCard.innerHTML = `
+        <div class="slider-header">
+          <span class="params-title">CBO Baseline Deficit</span>
+          <span class="slider-value">$${modelParams.baselineDeficit.toLocaleString()}B/yr</span>
+        </div>
+        <input type="range" min="0" max="3000" step="100" value="${modelParams.baselineDeficit}">
+        <p class="params-description">FY2025: $1.9T (6.2% GDP). Set to 0 to model incremental only.</p>
+      `;
+      const baselineSlider = baselineCard.querySelector('input');
+      const baselineValue = baselineCard.querySelector('.slider-value');
+      baselineSlider.addEventListener('input', () => {
+        modelParams.baselineDeficit = parseInt(baselineSlider.value);
+        baselineValue.textContent = `$${modelParams.baselineDeficit.toLocaleString()}B/yr`;
+        updateDisplay();
+      });
+      container.appendChild(baselineCard);
+      
+      // Toggle for including baseline in inflation penalty
+      const penaltyToggleCard = document.createElement('div');
+      penaltyToggleCard.className = 'params-card';
+      penaltyToggleCard.innerHTML = `
+        <div class="slider-header">
+          <span class="params-title">Inflation Penalty Scope</span>
+          <select id="penalty-scope-select" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 8px; border: 1px solid #ccc; background: white;">
+            <option value="incremental" ${!modelParams.includeBaselineInPenalty ? 'selected' : ''}>Incremental Only</option>
+            <option value="total" ${modelParams.includeBaselineInPenalty ? 'selected' : ''}>Total Deficit</option>
+          </select>
+        </div>
+        <p class="params-description" id="penalty-scope-desc">Incremental: penalty on new policy spending only (baseline already priced in)</p>
+      `;
+      const penaltyScopeSelect = penaltyToggleCard.querySelector('select');
+      const penaltyScopeDesc = penaltyToggleCard.querySelector('#penalty-scope-desc');
+      const scopeDescriptions = {
+        'incremental': 'Incremental: penalty on new policy spending only (baseline already priced in)',
+        'total': 'Total: penalty on full deficit (assumes markets haven\'t priced in baseline)'
+      };
+      penaltyScopeSelect.addEventListener('change', () => {
+        modelParams.includeBaselineInPenalty = penaltyScopeSelect.value === 'total';
+        penaltyScopeDesc.textContent = scopeDescriptions[penaltyScopeSelect.value];
+        updateDisplay();
+      });
+      container.appendChild(penaltyToggleCard);
     }
 
     function initTabs() {
@@ -3066,6 +3668,7 @@
 
     function initDeficitModal() {
       window.deficitWarningShown = false;
+      window.fiscalCrisisWarningShown = false;
       
       const modal = document.getElementById('deficit-modal');
       const closeBtn = document.getElementById('close-deficit-modal');
@@ -3078,6 +3681,20 @@
       modal.addEventListener('click', (e) => {
         if (e.target === modal) {
           modal.classList.remove('visible');
+        }
+      });
+      
+      // Fiscal crisis modal
+      const crisisModal = document.getElementById('fiscal-crisis-modal');
+      const closeCrisisBtn = document.getElementById('close-fiscal-crisis-modal');
+      
+      closeCrisisBtn.addEventListener('click', () => {
+        crisisModal.classList.remove('visible');
+      });
+      
+      crisisModal.addEventListener('click', (e) => {
+        if (e.target === crisisModal) {
+          crisisModal.classList.remove('visible');
         }
       });
     }
