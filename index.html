@@ -232,6 +232,10 @@
       color: var(--accent);
     }
 
+    .gdp-breakdown-row.fiscal-row span:last-child {
+      color: var(--success);
+    }
+
     .gdp-breakdown-row.pop-row span:last-child {
       color: var(--success);
     }
@@ -1126,6 +1130,10 @@
                 <span>Baseline GDP 2075</span>
                 <span id="gdp-baseline-val">$75T</span>
               </div>
+              <div class="gdp-breakdown-row fiscal-row">
+                <span>Fiscal effect</span>
+                <span id="gdp-fiscal-val">+$0T</span>
+              </div>
               <div class="gdp-breakdown-row tax-drag-row">
                 <span>Tax drag effect</span>
                 <span id="gdp-tax-drag-val">−$0T</span>
@@ -1139,9 +1147,10 @@
                 <span id="gdp-total-val">$75T</span>
               </div>
             </div>
+            <p><strong>Fiscal effect:</strong> Entitlement reform reduces debt burden (+growth); deficits crowd out investment (−growth). ~0.03% annual boost per $100B savings.</p>
             <p><strong>Tax drag:</strong> Each 0.01 TFR drag ≈ 0.1% lower annual growth, compounded over 50 years.</p>
-            <p><strong>Population effect:</strong> Higher TFR → larger workforce in 20-50 years. Each +1.0 TFR ≈ +0.5% annual growth (phases in after year 20).</p>
-            <p><strong>Sources:</strong> CBO long-term projections; Maestas et al. (2016) on population-GDP; Jones (2022) on demographic drag.</p>
+            <p><strong>Population:</strong> Higher TFR → larger workforce. Each +1.0 TFR ≈ +0.5% annual growth (phases in year 20-30).</p>
+            <p><strong>Sources:</strong> CBO long-term projections; Maestas et al. (2016); Elmendorf & Sheiner (2017) on fiscal sustainability.</p>
           </div>
         </div>
       </div>
@@ -1731,12 +1740,18 @@
       return taxIncreases.filter(t => t.enabled && t.growthDrag).reduce((sum, t) => sum + t.growthDrag, 0);
     }
 
-    function calculateGDP2075(tfr, growthDrag) {
+    function calculateEntitlementSavings() {
+      return entitlementReforms.filter(r => r.enabled).reduce((sum, r) => sum + (r.savingsLow + r.savingsHigh) / 2, 0);
+    }
+
+    function calculateGDP2075(tfr, growthDrag, entitlementSavings = 0, deficit = 0) {
       // Baseline assumptions:
       // - Current US GDP: ~$28T (2024)
       // - Baseline real growth: 2.0% per year
       // - Population effect: higher TFR increases labor force in ~20 years
       // - Tax drag: reduces annual growth rate
+      // - Entitlement reform: reduces debt burden, boosts growth
+      // - Deficit: crowds out investment, reduces growth
       
       const currentGDP = 28; // $28T
       const years = 50; // 2025 to 2075
@@ -1747,6 +1762,16 @@
       // So growthDrag of 0.05 TFR ≈ 0.5% annual GDP drag
       const taxDragOnGrowth = growthDrag * 0.1; // Convert TFR drag to GDP growth drag
       
+      // Entitlement reform boost on annual growth
+      // Reduced future obligations = lower debt burden = more private investment
+      // CBO estimates: $100B annual deficit reduction → ~0.02-0.05% higher growth long-term
+      // Conservative estimate: $100B savings → 0.03% annual growth boost
+      const entitlementBoost = (entitlementSavings / 100) * 0.0003;
+      
+      // Deficit drag on growth (crowding out effect)
+      // $100B deficit → ~0.02% lower growth from crowding out
+      const deficitDrag = (deficit / 100) * 0.0002;
+      
       // Population growth effect on GDP
       // Higher TFR → larger working-age population in 20-50 years
       // Rule of thumb: 0.1 TFR increase → 0.05% higher annual growth after 20 years
@@ -1754,13 +1779,10 @@
       const tfrDelta = tfr - 1.62; // Change from baseline
       const populationGrowthBoost = tfrDelta * 0.005; // 0.5% per 1.0 TFR
       
-      // Phased population effect (kicks in after ~20 years)
-      // First 20 years: only tax drag
-      // Years 20-50: population boost phases in
-      
+      // Phased effects
       let gdp = currentGDP;
       for (let year = 1; year <= years; year++) {
-        let annualGrowth = baselineGrowth - taxDragOnGrowth;
+        let annualGrowth = baselineGrowth - taxDragOnGrowth + entitlementBoost - deficitDrag;
         
         // Population effect phases in after year 20
         if (year > 20) {
@@ -1775,7 +1797,7 @@
     }
 
     // Baseline GDP for comparison (no policy changes)
-    const baselineGDP2075 = calculateGDP2075(1.62, 0);
+    const baselineGDP2075 = calculateGDP2075(1.62, 0, 0, 0);
 
     function calculateFiscal() {
       let spending = 0, offsets = 0;
@@ -1872,7 +1894,9 @@
       }
 
       // GDP 2075 projection
-      const gdp2075 = calculateGDP2075(tfr.mid, tfr.growthDrag);
+      const entitlementSavings = calculateEntitlementSavings();
+      const deficit = tfr.deficit;
+      const gdp2075 = calculateGDP2075(tfr.mid, tfr.growthDrag, entitlementSavings, deficit);
       const gdpEl = document.getElementById('gdp-projection');
       const gdpChangeEl = document.getElementById('gdp-change');
       
@@ -1896,14 +1920,21 @@
       document.getElementById('gdp-baseline-val').textContent = `$${baselineGDP2075.toFixed(0)}T`;
       
       // Calculate tax drag effect on GDP
-      const gdpWithoutTaxDrag = calculateGDP2075(tfr.mid, 0);
+      const gdpWithoutTaxDrag = calculateGDP2075(tfr.mid, 0, entitlementSavings, deficit);
       const taxDragEffect = gdp2075 - gdpWithoutTaxDrag;
       document.getElementById('gdp-tax-drag-val').textContent = taxDragEffect >= 0 ? `+$${taxDragEffect.toFixed(0)}T` : `−$${Math.abs(taxDragEffect).toFixed(0)}T`;
       
       // Calculate population effect on GDP
-      const gdpWithoutPopEffect = calculateGDP2075(1.62, tfr.growthDrag);
+      const gdpWithoutPopEffect = calculateGDP2075(1.62, tfr.growthDrag, entitlementSavings, deficit);
       const popEffect = gdp2075 - gdpWithoutPopEffect;
       document.getElementById('gdp-pop-val').textContent = popEffect >= 0 ? `+$${popEffect.toFixed(0)}T` : `−$${Math.abs(popEffect).toFixed(0)}T`;
+      
+      // Calculate fiscal effect (entitlement savings + deficit impact)
+      const gdpWithoutFiscal = calculateGDP2075(tfr.mid, tfr.growthDrag, 0, 0);
+      const fiscalEffect = gdp2075 - gdpWithoutFiscal + taxDragEffect - popEffect; // isolate fiscal from tax/pop
+      const gdpWithOnlyFiscal = calculateGDP2075(1.62, 0, entitlementSavings, deficit);
+      const pureFiscalEffect = gdpWithOnlyFiscal - baselineGDP2075;
+      document.getElementById('gdp-fiscal-val').textContent = pureFiscalEffect >= 0 ? `+$${pureFiscalEffect.toFixed(0)}T` : `−$${Math.abs(pureFiscalEffect).toFixed(0)}T`;
       
       document.getElementById('gdp-total-val').textContent = `$${gdp2075.toFixed(0)}T`;
 
