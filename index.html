@@ -240,6 +240,15 @@
       color: var(--success);
     }
 
+    .gdp-breakdown-row.interaction-row {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    .gdp-breakdown-row.interaction-row span:last-child {
+      color: var(--muted);
+    }
+
     .gdp-breakdown-row.total-row {
       border-top: 1px solid var(--rule);
       margin-top: 4px;
@@ -858,7 +867,9 @@
       top: 0;
       left: 0;
       right: 0;
+      bottom: 0;
       transform: rotateY(180deg);
+      overflow: hidden;
     }
 
     /* Policy Cards */
@@ -912,8 +923,8 @@
     }
 
     .policy-title::after {
-      content: '↻';
-      font-size: 0.75rem;
+      content: 'ⓘ';
+      font-size: 0.7rem;
       opacity: 0.4;
       transition: opacity 0.2s ease;
     }
@@ -1049,6 +1060,8 @@
       padding: 16px;
       background: white;
       box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      max-height: 100%;
+      overflow-y: auto;
     }
 
     .methodology-card.illiberal { border-left: 4px solid var(--accent); }
@@ -1246,9 +1259,253 @@
       .fiscal-strip { gap: 8px; }
       .fiscal-value { font-size: 0.85rem; }
     }
+
+    /* Splash Page */
+    .splash-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--ink);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .splash-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .splash-content {
+      max-width: 540px;
+      width: 100%;
+      color: var(--paper);
+    }
+
+    .splash-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .splash-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .splash-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .splash-title em {
+      color: var(--accent);
+      font-style: italic;
+      background: var(--paper);
+      padding: 0 8px;
+    }
+
+    .splash-subtitle {
+      font-size: 1rem;
+      color: rgba(248, 246, 241, 0.8);
+      line-height: 1.5;
+    }
+
+    .splash-challenge {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .splash-goal-centered {
+      background: rgba(255,255,255,0.08);
+      padding: 20px 48px;
+      text-align: center;
+    }
+
+    .splash-goal, .splash-constraint {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .splash-goal-label, .splash-constraint-label {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(248, 246, 241, 0.5);
+      margin-bottom: 6px;
+    }
+
+    .splash-goal-value {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--success);
+      background: #e8f5e9;
+      padding: 2px 8px;
+    }
+
+    .splash-constraint-value {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: #ffebee;
+      padding: 2px 8px;
+    }
+
+    .splash-caveats {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      margin-bottom: 28px;
+      border-left: 3px solid rgba(248, 246, 241, 0.3);
+    }
+
+    .splash-caveats-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(248, 246, 241, 0.7);
+      margin-bottom: 12px;
+    }
+
+    .splash-caveats-list {
+      list-style: none;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: rgba(248, 246, 241, 0.8);
+    }
+
+    .splash-caveats-list li {
+      margin-bottom: 10px;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .splash-caveats-list li:before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: rgba(248, 246, 241, 0.4);
+    }
+
+    .splash-caveats-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .splash-caveats-list strong {
+      color: var(--paper);
+    }
+
+    .splash-footer {
+      text-align: center;
+    }
+
+    .splash-start-btn {
+      background: var(--paper);
+      color: var(--ink);
+      border: none;
+      padding: 16px 48px;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s ease;
+      margin-bottom: 16px;
+    }
+
+    .splash-start-btn:hover {
+      background: var(--accent);
+      color: var(--paper);
+      transform: scale(1.02);
+    }
+
+    .splash-arrow {
+      transition: transform 0.2s ease;
+    }
+
+    .splash-start-btn:hover .splash-arrow {
+      transform: translateX(4px);
+    }
+
+    .splash-credits {
+      font-size: 0.75rem;
+      color: rgba(248, 246, 241, 0.5);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 500px) {
+      .splash-title { font-size: 1.5rem; }
+      .splash-subtitle { font-size: 0.9rem; }
+      .splash-challenge { flex-direction: column; gap: 12px; }
+      .splash-goal-value, .splash-constraint-value { font-size: 1.1rem; }
+      .splash-caveats { padding: 16px; }
+      .splash-caveats-list { font-size: 0.8rem; }
+      .splash-start-btn { padding: 14px 36px; font-size: 1rem; }
+    }
   </style>
 </head>
 <body>
+  <!-- Splash Page -->
+  <div class="splash-overlay" id="splash-overlay">
+    <div class="splash-content">
+      <div class="splash-header">
+        <div class="splash-icon">👶</div>
+        <h1 class="splash-title">Can <em>YOU</em> Solve the Fertility Crisis?</h1>
+        <p class="splash-subtitle">America's fertility rate has fallen to 1.62—far below the 2.1 needed for population replacement. You're the policy czar. Fix it.</p>
+      </div>
+
+      <div class="splash-challenge">
+        <div class="splash-goal-centered">
+          <span class="splash-goal-label">Your Mission</span>
+          <span class="splash-goal-value">Reach TFR 2.1</span>
+        </div>
+      </div>
+
+      <div class="splash-caveats">
+        <div class="splash-caveats-title">⚠️ Before You Begin</div>
+        <ul class="splash-caveats-list">
+          <li><strong>This is a thought experiment, not a forecast.</strong> Fertility behavior is notoriously hard to predict.</li>
+          <li><strong>Estimates borrow from international studies</strong> (Nordic countries, Hungary, etc.) that may not transfer to the US context.</li>
+          <li><strong>Policy interactions are uncertain.</strong> We discount stacked effects, but the true interaction could be larger or smaller.</li>
+          <li><strong>Implementation matters enormously.</strong> The same policy can succeed or fail based on execution.</li>
+          <li><strong>Culture eats policy for breakfast.</strong> No spending package can fully override deep shifts in preferences about family size.</li>
+        </ul>
+      </div>
+
+      <div class="splash-footer">
+        <button class="splash-start-btn" id="splash-start-btn">
+          <span>Start Building</span>
+          <span class="splash-arrow">→</span>
+        </button>
+        <p class="splash-credits">Built for exploration and debate, not prediction.<br>Click any policy title to see methodology and sources.</p>
+      </div>
+    </div>
+  </div>
+
   <header class="header">
     <div class="header-top">
       <span class="header-title">Fertility Policy Simulator</span>
@@ -1307,6 +1564,10 @@
               <div class="gdp-breakdown-row pop-row">
                 <span>Population effect</span>
                 <span id="gdp-pop-val">+$0T</span>
+              </div>
+              <div class="gdp-breakdown-row interaction-row">
+                <span>Interaction</span>
+                <span id="gdp-interaction-val">$0T</span>
               </div>
               <div class="gdp-breakdown-row total-row">
                 <span>Projected GDP</span>
@@ -1786,11 +2047,12 @@
         thresholdMin: 250,
         thresholdMax: 1000,
         thresholdLabel: 'Income threshold ($k)',
-        growthDrag: 0.01, 
+        gdpDrag: 0.002, // 0.2% annual GDP drag
+        tfrDrag: 0.01, // TFR penalty from reduced wages/uncertainty
         dragRationale: 'Labor supply elasticity ~0.1-0.3 for high earners; reduced work effort and tax avoidance',
         confidence: 'medium',
         methodology: {
-          derivation: 'Growth drag based on labor supply elasticity literature. Keane (2011) meta-analysis: compensated elasticity ~0.3 for high earners. At 45% rate on >$500k: behavioral response reduces ~5% of revenue; growth drag ~0.2% GDP annually. TFR impact derived from Becker fertility-income relationship: 1% GDP reduction → ~0.005 TFR reduction.',
+          derivation: 'GDP drag: ~0.2% annually from labor supply response. TFR drag: reduced high-income wages + uncertainty. Keane (2011): compensated elasticity ~0.3 for high earners.',
           sources: [
             { cite: 'Keane (2011)', finding: 'Meta-analysis of labor supply elasticities', elasticity: '~0.3 compensated' },
             { cite: 'Saez et al. (2012)', finding: 'Top income elasticity to tax rates', elasticity: '~0.5' },
@@ -1809,11 +2071,12 @@
         thresholdMin: 25,
         thresholdMax: 35,
         thresholdLabel: 'Corporate rate (%)',
-        growthDrag: 0.04, 
+        gdpDrag: 0.01, // 1% annual GDP drag (7pp × 0.15%)
+        tfrDrag: 0.04, // Higher TFR impact via wage channel
         dragRationale: 'Reduces business investment; CBO estimates 0.1-0.2% GDP per percentage point',
         confidence: 'medium-high',
         methodology: {
-          derivation: 'Corporate tax incidence falls partially on workers through reduced wages. CBO (2017): each 1pp increase reduces GDP ~0.1-0.2% over 10 years via reduced investment. 28% rate (vs 21% current) = 7pp increase → ~1% GDP reduction long-term. TFR drag: ~0.005 per 1% GDP × adjustment for wage channel.',
+          derivation: 'GDP drag: CBO estimates ~0.15% GDP per 1pp. At 28% (vs 21%), 7pp increase → ~1% GDP drag. TFR drag higher due to wage incidence (20-50% falls on workers).',
           sources: [
             { cite: 'CBO (2017)', finding: 'Corporate tax and GDP relationship', elasticity: '~0.15% GDP per 1pp' },
             { cite: 'Gravelle (2014)', finding: 'Corporate tax incidence on wages', elasticity: '20-50% on workers' },
@@ -1832,11 +2095,12 @@
         thresholdMin: 400,
         thresholdMax: 5000,
         thresholdLabel: 'Income threshold ($k)',
-        growthDrag: 0.05, 
+        gdpDrag: 0.003, // 0.3% annual GDP drag from capital misallocation
+        tfrDrag: 0.05, // Higher TFR impact: entrepreneurship, wealth building
         dragRationale: 'Strong lock-in effect; reduces capital reallocation efficiency',
         confidence: 'medium',
         methodology: {
-          derivation: 'Capital gains taxation creates lock-in effect—investors hold assets longer to defer taxes, reducing capital mobility. Dai et al. (2008): elasticity of realizations ~-0.5 to -0.7. At parity with ordinary income (~37% vs current 20%), realizations drop 30-40%, partially offsetting revenue. Growth drag from misallocated capital: ~0.3% GDP annually.',
+          derivation: 'GDP drag: ~0.3% annually from lock-in effect reducing capital mobility. TFR drag higher: reduced entrepreneurship, wealth building for family formation. Dai et al. (2008): realization elasticity ~-0.5 to -0.7.',
           sources: [
             { cite: 'Dai et al. (2008)', finding: 'Elasticity of capital gains realizations', elasticity: '-0.5 to -0.7' },
             { cite: 'Auerbach (1988)', finding: 'Lock-in effect magnitude', elasticity: 'Significant above 25% rate' },
@@ -1855,11 +2119,12 @@
         thresholdMin: 5,
         thresholdMax: 50,
         thresholdLabel: 'Rate (basis points)',
-        growthDrag: 0.02, 
+        gdpDrag: 0.002, // 0.2% annual GDP drag
+        tfrDrag: 0.02, // Modest TFR impact
         dragRationale: 'Reduces market liquidity; widens bid-ask spreads',
         confidence: 'low',
         methodology: {
-          derivation: 'FTT reduces trading volume and market liquidity. Swedish experience (1984-91): 50% reduction in trading volume at 0.5% rate. UK stamp duty at 0.5% shows more modest effects on highly liquid markets. Growth drag from increased cost of capital: ~0.1-0.2% GDP at 0.1% rate.',
+          derivation: 'GDP drag: ~0.1-0.2% annually from increased cost of capital. TFR drag modest: primarily affects financial sector, less direct impact on families. Swedish FTT (1984-91) reduced trading 50%.',
           sources: [
             { cite: 'Umlauf (1993)', finding: 'Swedish FTT reduced trading 50%', elasticity: 'High volume elasticity' },
             { cite: 'Matheson (2011)', finding: 'IMF review of FTT experiences', elasticity: 'Varied by market depth' },
@@ -1878,11 +2143,12 @@
         thresholdMin: 1000,
         thresholdMax: 7000,
         thresholdLabel: 'Exemption ($k)',
-        growthDrag: 0.01, 
+        gdpDrag: 0.001, // Minimal GDP drag
+        tfrDrag: 0.01, // Modest TFR impact
         dragRationale: 'Minimal growth impact; affects intergenerational transfers',
         confidence: 'medium',
         methodology: {
-          derivation: 'Estate tax has minimal growth drag—most economic activity unaffected. Primary distortion: complex avoidance strategies. Kopczuk (2013): elasticity of reported estates ~0.1-0.2. At $3.5M exemption (vs current $13M), ~5x more estates taxable. Fertility effect ambiguous: reduces bequests but also reduces "Carnegie effect" of inherited wealth reducing work.',
+          derivation: 'GDP drag minimal—most economic activity unaffected. TFR effect ambiguous: reduces bequests but also reduces "Carnegie effect". Kopczuk (2013): estate elasticity ~0.1-0.2.',
           sources: [
             { cite: 'Kopczuk (2013)', finding: 'Elasticity of reported estates', elasticity: '~0.1-0.2' },
             { cite: 'Gale & Slemrod (2001)', finding: 'Estate tax and savings behavior', elasticity: 'Small effect' },
@@ -1901,11 +2167,12 @@
         thresholdMin: 25,
         thresholdMax: 150,
         thresholdLabel: 'Price per ton ($)',
-        growthDrag: 0.025, 
+        gdpDrag: 0.005, // 0.5% GDP drag (disputed - could be 0.2-1%)
+        tfrDrag: 0.025, // Higher TFR impact due to regressivity
         dragRationale: 'Energy price increases hit young families hardest; regressive burden 2-4x higher on low-income households',
         confidence: 'medium',
         methodology: {
-          derivation: 'Revenue: ~$100-150B/yr at $50/ton. GDP impact disputed: CGE models (Goulder & Hafstead) estimate 0.5-1% GDP reduction over 20 years. Heritage/NERA estimate larger impacts ($1,400-1,900/yr per family of four). Regressivity well-documented: NBER finds burden 2-4x higher on low-income households as share of income. Growth drag set at 0.025 TFR reflecting regressive burden on young families even with partial revenue recycling.',
+          derivation: 'GDP drag disputed: 0.2-1% depending on model. TFR drag higher due to regressivity—NBER finds burden 2-4x higher on low-income as share of income. Young families disproportionately affected.',
           sources: [
             { cite: 'Goulder & Hafstead (2013)', finding: '$10/ton rising 5%/yr → 0.6% lower GDP at year 20', elasticity: 'Moderate' },
             { cite: 'NERA/NAM (2013)', finding: '$20/ton → $350/household by year 20; 80% reduction → 3.4% GDP loss', elasticity: 'High' },
@@ -1925,11 +2192,12 @@
         thresholdMin: 5,
         thresholdMax: 20,
         thresholdLabel: 'VAT rate (%)',
-        growthDrag: 0.02, 
+        gdpDrag: 0.001, // Minimal GDP drag - least distortionary
+        tfrDrag: 0.02, // Modest TFR impact with exemptions
         dragRationale: 'Consumption reduction; regressive before exemptions',
         confidence: 'medium-high',
         methodology: {
-          derivation: 'VAT is least distortionary broad-based tax. At 10% with necessity exemptions: ~$500B revenue, ~5% reduction in non-exempt consumption. Growth drag lower than income taxes due to not taxing savings/investment. Fertility impact via reduced consumption capacity for young families.',
+          derivation: 'GDP drag minimal—VAT is least distortionary broad-based tax. TFR drag from reduced consumption capacity, partially offset by exemptions for necessities.',
           sources: [
             { cite: 'Mankiw et al. (2009)', finding: 'Optimal tax theory favors consumption taxes', elasticity: 'Lower deadweight loss' },
             { cite: 'OECD (2020)', finding: 'VAT revenue potential in US', elasticity: '~$50B per 1% rate' },
@@ -1957,20 +2225,26 @@
       return penalty;
     }
 
-    function calculateGrowthDrag() {
-      return taxIncreases.filter(t => t.enabled && t.growthDrag).reduce((sum, t) => sum + t.growthDrag, 0);
+    // TFR drag from tax policies (separate from GDP drag)
+    function calculateTfrDrag() {
+      return taxIncreases.filter(t => t.enabled && t.tfrDrag).reduce((sum, t) => sum + t.tfrDrag, 0);
+    }
+
+    // GDP drag from tax policies (in annual GDP growth points)
+    function calculateGdpDrag() {
+      return taxIncreases.filter(t => t.enabled && t.gdpDrag).reduce((sum, t) => sum + t.gdpDrag, 0);
     }
 
     function calculateEntitlementSavings() {
       return entitlementReforms.filter(r => r.enabled).reduce((sum, r) => sum + (r.savingsLow + r.savingsHigh) / 2, 0);
     }
 
-    function calculateGDP2075(tfr, growthDrag, entitlementSavings = 0, deficit = 0) {
+    function calculateGDP2075(tfr, gdpDrag, entitlementSavings = 0, deficit = 0) {
       // Baseline assumptions:
       // - Current US GDP: ~$28T (2024)
       // - Baseline real growth: 2.0% per year
       // - Population effect: higher TFR increases labor force in ~20 years
-      // - Tax drag: reduces annual growth rate
+      // - Tax drag: reduces annual growth rate (already in GDP growth points)
       // - Entitlement reform: reduces debt burden, boosts growth
       // - Deficit: crowds out investment, reduces growth
       
@@ -1978,10 +2252,8 @@
       const years = 50; // 2025 to 2075
       const baselineGrowth = 0.02; // 2% real growth
       
-      // Tax policy drag on annual growth (direct effect)
-      // Growth drag in TFR terms ≈ 0.01 TFR per 0.1% GDP drag
-      // So growthDrag of 0.05 TFR ≈ 0.5% annual GDP drag
-      const taxDragOnGrowth = growthDrag * 0.1; // Convert TFR drag to GDP growth drag
+      // Tax policy drag on annual growth (gdpDrag is already in annual GDP growth points)
+      const taxDragOnGrowth = gdpDrag;
       
       // Entitlement reform boost on annual growth
       // Reduced future obligations = lower debt burden = more private investment
@@ -2054,11 +2326,12 @@
       netLow -= inflationPenalty;
       netHigh -= inflationPenalty;
 
-      const growthDrag = calculateGrowthDrag();
-      netLow -= growthDrag;
-      netHigh -= growthDrag;
+      const tfrDrag = calculateTfrDrag();
+      const gdpDrag = calculateGdpDrag();
+      netLow -= tfrDrag;
+      netHigh -= tfrDrag;
 
-      return { low: baseTFR + netLow, mid: baseTFR + (netLow + netHigh) / 2, high: baseTFR + netHigh, inflationPenalty, growthDrag, deficit };
+      return { low: baseTFR + netLow, mid: baseTFR + (netLow + netHigh) / 2, high: baseTFR + netHigh, inflationPenalty, tfrDrag, gdpDrag, deficit };
     }
 
     function updateDisplay() {
@@ -2092,10 +2365,12 @@
       
       const netEl = document.getElementById('net-impact');
       if (fiscal.net <= 0) {
-        netEl.textContent = `−$${Math.abs(Math.round(fiscal.net))}B`;
+        // Surplus: offsets exceed spending
+        netEl.textContent = `+$${Math.abs(Math.round(fiscal.net))}B surplus`;
         netEl.className = 'fiscal-value positive';
       } else {
-        netEl.textContent = `+$${Math.round(fiscal.net)}B`;
+        // Deficit: spending exceeds offsets
+        netEl.textContent = `−$${Math.round(fiscal.net)}B deficit`;
         netEl.className = 'fiscal-value negative';
       }
 
@@ -2105,8 +2380,8 @@
       inflationContainer.classList.toggle('visible', tfr.inflationPenalty > 0);
       if (tfr.inflationPenalty > 0) document.getElementById('inflation-penalty-val').textContent = `-${tfr.inflationPenalty.toFixed(2)}`;
 
-      growthContainer.classList.toggle('visible', tfr.growthDrag > 0);
-      if (tfr.growthDrag > 0) document.getElementById('growth-penalty-val').textContent = `-${tfr.growthDrag.toFixed(2)}`;
+      growthContainer.classList.toggle('visible', tfr.tfrDrag > 0);
+      if (tfr.tfrDrag > 0) document.getElementById('growth-penalty-val').textContent = `-${tfr.tfrDrag.toFixed(2)}`;
       
       // Show deficit warning modal on first deficit
       if (tfr.deficit > 0 && !window.deficitWarningShown) {
@@ -2114,10 +2389,10 @@
         document.getElementById('deficit-modal').classList.add('visible');
       }
 
-      // GDP 2075 projection
+      // GDP 2075 projection with clean additive decomposition
       const entitlementSavings = calculateEntitlementSavings();
       const deficit = tfr.deficit;
-      const gdp2075 = calculateGDP2075(tfr.mid, tfr.growthDrag, entitlementSavings, deficit);
+      const gdp2075 = calculateGDP2075(tfr.mid, tfr.gdpDrag, entitlementSavings, deficit);
       const gdpEl = document.getElementById('gdp-projection');
       const gdpChangeEl = document.getElementById('gdp-change');
       
@@ -2137,25 +2412,28 @@
         gdpChangeEl.className = 'fiscal-sublabel negative';
       }
 
-      // Update GDP breakdown panel
+      // Clean additive decomposition: each effect computed holding others at baseline
       document.getElementById('gdp-baseline-val').textContent = `$${baselineGDP2075.toFixed(0)}T`;
       
-      // Calculate tax drag effect on GDP
-      const gdpWithoutTaxDrag = calculateGDP2075(tfr.mid, 0, entitlementSavings, deficit);
-      const taxDragEffect = gdp2075 - gdpWithoutTaxDrag;
-      document.getElementById('gdp-tax-drag-val').textContent = taxDragEffect >= 0 ? `+$${taxDragEffect.toFixed(0)}T` : `−$${Math.abs(taxDragEffect).toFixed(0)}T`;
+      // Fiscal effect only (entitlement savings + deficit drag)
+      const gdpFiscalOnly = calculateGDP2075(1.62, 0, entitlementSavings, deficit);
+      const fiscalEffect = gdpFiscalOnly - baselineGDP2075;
+      document.getElementById('gdp-fiscal-val').textContent = fiscalEffect >= 0 ? `+$${fiscalEffect.toFixed(0)}T` : `−$${Math.abs(fiscalEffect).toFixed(0)}T`;
       
-      // Calculate population effect on GDP
-      const gdpWithoutPopEffect = calculateGDP2075(1.62, tfr.growthDrag, entitlementSavings, deficit);
-      const popEffect = gdp2075 - gdpWithoutPopEffect;
+      // Tax drag effect only
+      const gdpTaxOnly = calculateGDP2075(1.62, tfr.gdpDrag, 0, 0);
+      const taxEffect = gdpTaxOnly - baselineGDP2075;
+      document.getElementById('gdp-tax-drag-val').textContent = taxEffect >= 0 ? `+$${taxEffect.toFixed(0)}T` : `−$${Math.abs(taxEffect).toFixed(0)}T`;
+      
+      // Population effect only
+      const gdpPopOnly = calculateGDP2075(tfr.mid, 0, 0, 0);
+      const popEffect = gdpPopOnly - baselineGDP2075;
       document.getElementById('gdp-pop-val').textContent = popEffect >= 0 ? `+$${popEffect.toFixed(0)}T` : `−$${Math.abs(popEffect).toFixed(0)}T`;
       
-      // Calculate fiscal effect (entitlement savings + deficit impact)
-      const gdpWithoutFiscal = calculateGDP2075(tfr.mid, tfr.growthDrag, 0, 0);
-      const fiscalEffect = gdp2075 - gdpWithoutFiscal + taxDragEffect - popEffect; // isolate fiscal from tax/pop
-      const gdpWithOnlyFiscal = calculateGDP2075(1.62, 0, entitlementSavings, deficit);
-      const pureFiscalEffect = gdpWithOnlyFiscal - baselineGDP2075;
-      document.getElementById('gdp-fiscal-val').textContent = pureFiscalEffect >= 0 ? `+$${pureFiscalEffect.toFixed(0)}T` : `−$${Math.abs(pureFiscalEffect).toFixed(0)}T`;
+      // Interaction residual (total - sum of individual effects)
+      const sumOfEffects = fiscalEffect + taxEffect + popEffect;
+      const interactionResidual = gdpDelta - sumOfEffects;
+      document.getElementById('gdp-interaction-val').textContent = interactionResidual >= 0 ? `+$${interactionResidual.toFixed(0)}T` : `−$${Math.abs(interactionResidual).toFixed(0)}T`;
       
       document.getElementById('gdp-total-val').textContent = `$${gdp2075.toFixed(0)}T`;
 
@@ -2294,14 +2572,21 @@
         sliderValueEl.textContent = sc.format(val);
         
         // Calculate intensity as ratio to default
-        let ratio = val / sc.default;
+        let ratio;
         
-        // For inverted sliders (like childcare cost), lower = better
         if (sc.invert) {
-          // $0/day = max effect, $20/day = min effect
-          // At $5 default: ratio = 1. At $0: ratio = 1.25. At $20: ratio = 0.25
-          ratio = 1 + ((sc.default - val) / sc.default) * 0.5;
+          // For inverted sliders (like childcare cost), lower value = higher effect
+          // Map [min, max] to [maxRatio, minRatio] linearly
+          const minRatio = 0.25;  // At max value ($20/day), effect is 25% of default
+          const maxRatio = 1.25;  // At min value ($0/day), effect is 125% of default
+          const t = (val - sc.min) / (sc.max - sc.min); // 0 to 1
+          ratio = maxRatio + (minRatio - maxRatio) * t;
+        } else {
+          ratio = val / sc.default;
         }
+        
+        // Clamp ratio to reasonable bounds
+        ratio = Math.max(0.1, Math.min(2.5, ratio));
         
         policy.intensity = ratio * 100;
         
@@ -2394,28 +2679,31 @@
           
           if (reform.id === 'medicare-age') {
             // 65 (current) to slider value, each year = ~$40-50B
-            ratio = (val - 65) / (sc.default - 65);
+            const denom = sc.default - 65;
+            ratio = denom !== 0 ? (val - 65) / denom : 1;
           } else if (reform.id === 'ss-means-test') {
             // Lower threshold = more savings (more people affected)
-            ratio = sc.default / val;
+            ratio = val > 0 ? sc.default / val : 2.5;
           } else if (reform.id === 'ss-cola') {
             // Higher reduction = more savings
-            ratio = val / sc.default;
+            ratio = sc.default > 0 ? val / sc.default : 1;
           } else if (reform.id === 'medicare-drugs') {
             // More drugs = more savings
-            ratio = val / sc.default;
+            ratio = sc.default > 0 ? val / sc.default : 1;
           } else if (reform.id === 'ss-retirement-70') {
             // 67 (current) to slider value
-            ratio = (val - 67) / (sc.default - 67);
+            const denom = sc.default - 67;
+            ratio = denom !== 0 ? (val - 67) / denom : 1;
           } else if (reform.id === 'ss-cap') {
             // Lower cap = more savings
-            ratio = sc.default / val;
+            ratio = val > 0 ? sc.default / val : 2.5;
           } else if (reform.id === 'medicare-premiums') {
             // Lower threshold = more savings
-            ratio = sc.default / val;
+            ratio = val > 0 ? sc.default / val : 2.5;
           }
           
-          // Clamp ratio to reasonable bounds
+          // Clamp ratio to reasonable bounds and handle NaN/Infinity
+          if (!isFinite(ratio) || isNaN(ratio)) ratio = 1;
           ratio = Math.max(0.25, Math.min(2.5, ratio));
           
           reform.savingsLow = Math.round(baseSavingsLow * ratio);
@@ -2481,12 +2769,12 @@
       cardContainer.innerHTML = `
         <div class="card-flipper">
           <div class="card-front">
-            <div class="policy-card tax-card">
+            <div class="policy-card tax-card" data-tax-id="${tax.id}">
               <div class="policy-header">
                 <span class="policy-title" data-flip="true">${tax.name}</span>
                 <div class="policy-stats">
                   <span class="policy-stat cost tax-cost">$${savingsMid}B/yr</span>
-                  <span class="policy-stat drag tax-drag">−${tax.growthDrag.toFixed(2)} TFR</span>
+                  <span class="policy-stat drag tax-drag">−${tax.tfrDrag.toFixed(2)} TFR</span>
                 </div>
               </div>
               <p class="policy-description">${tax.description} <em style="color:#5d4037;">(${tax.dragRationale})</em></p>
@@ -2514,7 +2802,7 @@
                 <span class="confidence-badge ${confidenceClass}">${tax.confidence || 'Unknown'}</span>
               </div>
               <div class="methodology-section">
-                <div class="methodology-section-title">Growth Drag Derivation</div>
+                <div class="methodology-section-title">Impact Derivation</div>
                 <div class="methodology-content">${tax.methodology ? tax.methodology.derivation : 'No methodology available.'}</div>
               </div>
               <div class="methodology-section">
@@ -2587,14 +2875,23 @@
                               tax.id === 'carbon-tax' ? 120 :
                               tax.id === 'vat' ? 600 : 75;
 
-      // Base growth drags (at default threshold)
-      const baseDrag = tax.id === 'income-tax-top' ? 0.01 :
+      // Base TFR drags (at default threshold)
+      const baseTfrDrag = tax.id === 'income-tax-top' ? 0.01 :
                        tax.id === 'corporate-tax' ? 0.04 :
                        tax.id === 'capital-gains' ? 0.05 :
                        tax.id === 'financial-transaction' ? 0.02 :
                        tax.id === 'estate-tax' ? 0.01 :
-                       tax.id === 'carbon-tax' ? 0.02 :
+                       tax.id === 'carbon-tax' ? 0.025 :
                        tax.id === 'vat' ? 0.02 : 0.01;
+
+      // Base GDP drags (at default threshold)
+      const baseGdpDrag = tax.id === 'income-tax-top' ? 0.002 :
+                       tax.id === 'corporate-tax' ? 0.01 :
+                       tax.id === 'capital-gains' ? 0.003 :
+                       tax.id === 'financial-transaction' ? 0.002 :
+                       tax.id === 'estate-tax' ? 0.001 :
+                       tax.id === 'carbon-tax' ? 0.005 :
+                       tax.id === 'vat' ? 0.001 : 0.001;
 
       // Calculate multiplier based on threshold vs default
       let multiplier = 1;
@@ -2619,7 +2916,7 @@
         // Higher rate = more revenue but diminishing returns due to reduced trading
         // 10bp is base
         const rateRatio = tax.threshold / 10;
-        multiplier = rateRatio * (1 - (tax.threshold - 10) * 0.005); // Diminishing returns
+        multiplier = rateRatio * Math.max(0.2, 1 - (tax.threshold - 10) * 0.003); // Diminishing returns, clamped
         dragMultiplier = rateRatio;
       } else if (tax.id === 'estate-tax') {
         // Lower exemption = more revenue
@@ -2638,13 +2935,20 @@
         dragMultiplier = multiplier;
       }
 
+      // Clamp multipliers to prevent negative/NaN values
+      multiplier = Math.max(0.1, Math.min(5, multiplier));
+      dragMultiplier = Math.max(0.1, Math.min(5, dragMultiplier));
+      if (!isFinite(multiplier)) multiplier = 1;
+      if (!isFinite(dragMultiplier)) dragMultiplier = 1;
+
       tax.savingsLow = Math.round(baseRevenueLow * multiplier);
       tax.savingsHigh = Math.round(baseRevenueHigh * multiplier);
-      tax.growthDrag = baseDrag * dragMultiplier;
+      tax.tfrDrag = baseTfrDrag * dragMultiplier;
+      tax.gdpDrag = baseGdpDrag * dragMultiplier;
 
       // Update the displayed stats
       if (costStat) costStat.textContent = `$${Math.round((tax.savingsLow + tax.savingsHigh) / 2)}B/yr`;
-      if (dragStat) dragStat.textContent = `−${tax.growthDrag.toFixed(2)} TFR`;
+      if (dragStat) dragStat.textContent = `−${tax.tfrDrag.toFixed(2)} TFR`;
     }
 
     function renderModelParams(container) {
@@ -2863,10 +3167,18 @@
         const tfr = calculateTFR();
         const type = document.getElementById('share-type-title').textContent;
         const text = `Fertility Policy Simulator: I'm "${type}" with TFR ${tfr.mid.toFixed(2)}. Try it: https://joshfkon.github.io/LifeAppGame/`;
-        navigator.clipboard.writeText(text).then(() => {
-          copiedMsg.classList.add('visible');
-          setTimeout(() => copiedMsg.classList.remove('visible'), 2000);
-        });
+        
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(() => {
+            copiedMsg.classList.add('visible');
+            setTimeout(() => copiedMsg.classList.remove('visible'), 2000);
+          }).catch(() => {
+            prompt('Copy this link:', text);
+          });
+        } else {
+          // Fallback for non-secure contexts
+          prompt('Copy this link:', text);
+        }
       });
     }
 
@@ -2874,7 +3186,7 @@
       const tfr = calculateTFR();
       const fiscal = calculateFiscal();
       const entitlementSavings = calculateEntitlementSavings();
-      const gdp2075 = calculateGDP2075(tfr.mid, tfr.growthDrag, entitlementSavings, tfr.deficit);
+      const gdp2075 = calculateGDP2075(tfr.mid, tfr.gdpDrag, entitlementSavings, tfr.deficit);
 
       const enabledPolicies = [...liberalPolicies].filter(p => p.enabled);
       const enabledIlliberal = [...illiberalPolicies].filter(p => p.enabled);
@@ -2902,10 +3214,10 @@
       
       const fiscalEl = document.getElementById('share-fiscal');
       if (fiscal.net <= 0) {
-        fiscalEl.textContent = `−$${Math.abs(Math.round(fiscal.net))}B`;
+        fiscalEl.textContent = `+$${Math.abs(Math.round(fiscal.net))}B surplus`;
         fiscalEl.style.color = 'var(--success)';
       } else {
-        fiscalEl.textContent = `+$${Math.round(fiscal.net)}B`;
+        fiscalEl.textContent = `−$${Math.round(fiscal.net)}B deficit`;
         fiscalEl.style.color = 'var(--accent)';
       }
 
@@ -2927,7 +3239,33 @@
       }
     }
 
+    function initSplash() {
+      const splash = document.getElementById('splash-overlay');
+      const startBtn = document.getElementById('splash-start-btn');
+      
+      // Check if user has seen splash before (this session)
+      if (sessionStorage.getItem('splashSeen')) {
+        splash.classList.add('hidden');
+        return;
+      }
+      
+      startBtn.addEventListener('click', () => {
+        splash.classList.add('hidden');
+        sessionStorage.setItem('splashSeen', 'true');
+      });
+      
+      // Also allow pressing Enter or Space to start
+      document.addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && !splash.classList.contains('hidden')) {
+          e.preventDefault();
+          splash.classList.add('hidden');
+          sessionStorage.setItem('splashSeen', 'true');
+        }
+      });
+    }
+
     function init() {
+      initSplash();
       liberalPolicies.forEach(p => renderPolicyCard(p, document.getElementById('liberal-policies')));
       illiberalPolicies.forEach(p => renderPolicyCard(p, document.getElementById('illiberal-policies'), true));
       entitlementReforms.forEach(r => renderReformCard(r, document.getElementById('entitlement-reforms'), false));
