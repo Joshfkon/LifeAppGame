@@ -1677,15 +1677,15 @@
             </p>
             
             <p style="margin-top: 10px; color: #8b0000;"><strong>⚠ Fiscal Dominance Multipliers</strong></p>
-            <p style="font-size: 11px;">At high deficit/GDP, central banks lose ability to fight inflation (rate hikes explode debt service). Elasticity multipliers increase nonlinearly:</p>
+            <p style="font-size: 11px;">At high deficit/GDP, central banks lose ability to fight inflation. Elasticity multipliers increase nonlinearly, and <strong>above 8% deficit/GDP the model switches to TOTAL deficit</strong> (not just incremental) because markets price in full unsustainability:</p>
             <table class="penalty-math-table">
-              <tr style="background: #e8f5e9;"><td>&lt;6% deficit/GDP</td><td>1.0× (standard)</td></tr>
-              <tr style="background: #fff3e0;"><td>6-8% deficit/GDP</td><td>1.0-1.5× (elevated)</td></tr>
-              <tr style="background: #ffebee;"><td>8-10% deficit/GDP</td><td>1.5-2.5× (fiscal stress)</td></tr>
-              <tr style="background: #ffcdd2;"><td>&gt;10% deficit/GDP</td><td>2.5-4.0× (fiscal dominance)</td></tr>
+              <tr style="background: #e8f5e9;"><td>&lt;6% deficit/GDP</td><td>1.0× (incremental)</td></tr>
+              <tr style="background: #fff3e0;"><td>6-8% deficit/GDP</td><td>1.0-1.75× (incremental)</td></tr>
+              <tr style="background: #ffebee;"><td>8-10% deficit/GDP</td><td>1.75-3.5× (TOTAL deficit)</td></tr>
+              <tr style="background: #ffcdd2;"><td>&gt;10% deficit/GDP</td><td>3.5-6.0× (TOTAL, FTPL regime)</td></tr>
             </table>
             <p style="font-size: 10px; color: #666; margin-top: 4px;">
-              <em>Sources: Cochrane/Leeper/Sims (FTPL): ~1:1 under dominance; BIS Papers No. 65; Boston Fed (2025); Mercatus (2023): doom loop above 100% debt/GDP</em>
+              <em>Sources: Cochrane/Leeper/Sims (FTPL): ~1:1 under dominance; Sargent & Wallace (1981) "unpleasant monetarist arithmetic"; BIS Papers No. 65; Boston Fed (2025)</em>
             </p>
             
             <p style="margin-top: 10px;"><strong>Current calculation:</strong></p>
@@ -2351,7 +2351,10 @@
       currentGDP: 28000,             // $28T in billions
       // CBO baseline deficit (FY2025 projection: $1.9T, 6.2% of GDP)
       baselineDeficit: 1900,         // $1.9T baseline deficit from CBO Jan 2025
-      includeBaselineInPenalty: false // Whether inflation penalty applies to baseline or just incremental
+      includeBaselineInPenalty: false, // Whether inflation penalty applies to baseline or just incremental
+      // Current inflation baseline (BLS Nov 2025: 2.7% CPI, Fed target: 2.0%)
+      baselineInflation: 0.7,        // Current inflation above 2% target (pp)
+      fedTarget: 2.0                 // Fed's inflation target (%)
     };
 
     function calculateInflationPenalty(deficit) {
@@ -2359,61 +2362,54 @@
       const policyDeficit = deficit > 0 ? deficit : 0;
       const totalDeficit = modelParams.baselineDeficit + policyDeficit;
       
-      // Use incremental or total based on setting
-      const effectiveDeficit = modelParams.includeBaselineInPenalty 
-        ? totalDeficit 
-        : policyDeficit;
-      
-      if (effectiveDeficit <= 0) return 0;
-      
-      // Calculate deficit as % of GDP
+      // Calculate deficit as % of GDP (always use total for threshold determination)
       const deficitPctGDP = (totalDeficit / modelParams.currentGDP) * 100;
       
       // NONLINEAR FISCAL DOMINANCE ADJUSTMENT
-      // Based on: BIS Papers No. 65, Boston Fed (2025), Mercatus Center research
+      // Based on: BIS Papers No. 65, Boston Fed (2025), Mercatus Center research, FTPL
       // Key insight: At high debt/GDP (>100%), central bank loses ability to fight inflation
       // because rate hikes explode debt service costs, creating a doom loop
       //
-      // Thresholds calibrated to US context:
-      // - <6% deficit/GDP: Standard elasticity (current baseline ~6.2%)
-      // - 6-8% deficit/GDP: Elevated risk (1.5x multiplier)
-      // - 8-10% deficit/GDP: Fiscal stress (2.5x multiplier)  
-      // - >10% deficit/GDP: Fiscal dominance (4x multiplier, approaching FTPL 1:1)
+      // CRITICAL: Under fiscal dominance, inflation is driven by TOTAL deficit expectations,
+      // not just incremental policy. Markets price in the full unsustainability.
+      //
+      // Thresholds calibrated to US context (currently at ~100% debt/GDP):
+      // - <6% deficit/GDP: Standard elasticity, incremental calculation OK
+      // - 6-8% deficit/GDP: Elevated risk, still incremental (1.5x multiplier)
+      // - 8-10% deficit/GDP: Fiscal stress - switch to TOTAL deficit calculation (2.5x)
+      // - >10% deficit/GDP: Fiscal dominance - TOTAL deficit, FTPL-approaching elasticities (4-6x)
       //
       // Citations:
       // - Cochrane, Leeper, Sims (FTPL): elasticities approach 1:1 under fiscal dominance
       // - Boston Fed (2025): households expecting fiscal dominance revise inflation up
       // - Mercatus (2023): debt/GDP >100% creates doom loop with rate hikes
       // - BIS (2012): "threat of fiscal dominance" when debt constrains monetary policy
+      // - Sargent & Wallace (1981): "unpleasant monetarist arithmetic"
       
       let fiscalDominanceMultiplier = 1.0;
       let fiscalStressLevel = 'normal';
+      let useFullDeficit = modelParams.includeBaselineInPenalty; // User setting as baseline
       
       if (deficitPctGDP < 6) {
         fiscalDominanceMultiplier = 1.0;
         fiscalStressLevel = 'normal';
       } else if (deficitPctGDP < 8) {
-        // Linear interpolation from 1.0 at 6% to 1.5 at 8%
-        fiscalDominanceMultiplier = 1.0 + (deficitPctGDP - 6) * 0.25;
+        // Linear interpolation from 1.0 at 6% to 1.75 at 8%
+        fiscalDominanceMultiplier = 1.0 + (deficitPctGDP - 6) * 0.375;
         fiscalStressLevel = 'elevated';
       } else if (deficitPctGDP < 10) {
-        // Linear interpolation from 1.5 at 8% to 2.5 at 10%
-        fiscalDominanceMultiplier = 1.5 + (deficitPctGDP - 8) * 0.5;
+        // Fiscal stress: switch to total deficit calculation
+        // Linear interpolation from 1.75 at 8% to 3.5 at 10%
+        fiscalDominanceMultiplier = 1.75 + (deficitPctGDP - 8) * 0.875;
         fiscalStressLevel = 'high';
+        useFullDeficit = true; // Force total deficit in fiscal stress
       } else {
-        // Above 10%: accelerating toward fiscal dominance
-        // Caps at 4x to avoid completely unrealistic penalties
-        fiscalDominanceMultiplier = Math.min(4.0, 2.5 + (deficitPctGDP - 10) * 0.3);
+        // Fiscal dominance: approaching FTPL predictions
+        // At 10%: 3.5x, accelerating toward 6x at 15%
+        fiscalDominanceMultiplier = Math.min(6.0, 3.5 + (deficitPctGDP - 10) * 0.5);
         fiscalStressLevel = 'crisis';
+        useFullDeficit = true; // Force total deficit in crisis
       }
-      
-      // Store for display
-      window.lastFiscalStress = { 
-        level: fiscalStressLevel, 
-        multiplier: fiscalDominanceMultiplier,
-        deficitPctGDP: deficitPctGDP,
-        totalDeficit: totalDeficit
-      };
       
       // Economic condition multiplier for deficit→inflation elasticity
       const slackMultiplier = {
@@ -2422,14 +2418,58 @@
         'constrained': 1.75     // At/above capacity + supply constraints: 0.50-1.0%
       }[modelParams.economicSlack] || 1.0;
       
-      // Stage 1: Deficit → Inflation (with fiscal dominance adjustment)
-      const deficitForCalc = modelParams.includeBaselineInPenalty ? totalDeficit : policyDeficit;
+      // CRITICAL CHANGE: In fiscal stress/crisis, use TOTAL deficit for penalty
+      // This reflects that markets price in full unsustainability, not just marginal changes
+      const deficitForCalc = useFullDeficit ? totalDeficit : policyDeficit;
+      
+      // Calculate deficit-induced inflation
       const deficitPctForCalc = (deficitForCalc / modelParams.currentGDP) * 100;
-      const baseInflation = deficitPctForCalc * modelParams.deficitToInflation * slackMultiplier;
-      const inflationIncrease = baseInflation * fiscalDominanceMultiplier;
+      const deficitInducedInflation = deficitPctForCalc * modelParams.deficitToInflation * slackMultiplier * fiscalDominanceMultiplier;
+      
+      // INFLATION PENALTY LOGIC:
+      // - In NORMAL/ELEVATED: Only policy-induced inflation creates NEW penalty
+      //   (baseline inflation is already reflected in current TFR of 1.62)
+      // - In HIGH/CRISIS: The TOTAL inflation stack matters because Fed loses control
+      //   and baseline inflation can no longer be managed separately
+      //
+      // This reflects the fiscal dominance dynamic: in normal times, the Fed can
+      // offset deficit-driven inflation, but in fiscal stress they cannot.
+      let inflationForPenalty;
+      if (fiscalStressLevel === 'high' || fiscalStressLevel === 'crisis') {
+        // Fiscal dominance: the entire inflation situation becomes destabilizing
+        // Markets lose confidence that Fed can manage even baseline inflation
+        inflationForPenalty = modelParams.baselineInflation + deficitInducedInflation;
+      } else {
+        // Normal/elevated: only additional policy-induced inflation matters
+        // Fed can still manage baseline, so it's already "priced into" TFR 1.62
+        inflationForPenalty = deficitInducedInflation;
+      }
+      
+      // Store for display
+      window.lastFiscalStress = { 
+        level: fiscalStressLevel, 
+        multiplier: fiscalDominanceMultiplier,
+        deficitPctGDP: deficitPctGDP,
+        totalDeficit: totalDeficit,
+        useFullDeficit: useFullDeficit,
+        baselineInflation: modelParams.baselineInflation,
+        deficitInducedInflation: deficitInducedInflation,
+        totalInflation: modelParams.baselineInflation + deficitInducedInflation,
+        inflationForPenalty: inflationForPenalty,
+        includesBaseline: (fiscalStressLevel === 'high' || fiscalStressLevel === 'crisis')
+      };
+      
+      if (inflationForPenalty <= 0) return 0;
       
       // Stage 2: Inflation → TFR decline
-      const tfrDeclinePct = inflationIncrease * modelParams.inflationToTFR;
+      // Under fiscal dominance, use higher elasticity (uncertainty effect amplified)
+      let inflationToTFR = modelParams.inflationToTFR;
+      if (fiscalStressLevel === 'crisis') {
+        // In crisis, uncertainty effect increases the fertility impact
+        inflationToTFR = Math.min(1.2, inflationToTFR * 1.5);
+      }
+      
+      const tfrDeclinePct = inflationForPenalty * inflationToTFR;
       
       // Convert % TFR decline to absolute TFR points
       const baseTFR = 1.62;
@@ -2530,24 +2570,40 @@
         'constrained': 1.75
       }[modelParams.economicSlack] || 1.0;
       
-      // Only count incremental policy deficit for inflation drag on growth
-      // (baseline inflation is already in the 2% baseline growth assumption)
-      const incrementalDeficitPct = (policyDeficit / modelParams.currentGDP) * 100;
-      const baseInflation = incrementalDeficitPct * modelParams.deficitToInflation * slackMultiplier;
-      const impliedInflation = baseInflation * fiscalDominanceMultiplier;
+      // CRITICAL: In fiscal stress/crisis, use TOTAL deficit for inflation calculation
+      // This matches the TFR penalty logic - markets price in full unsustainability
+      let useFullDeficitForGDP = false;
+      if (deficitPctGDP >= 8) {
+        useFullDeficitForGDP = true;
+      }
+      
+      const deficitForInflation = useFullDeficitForGDP ? totalDeficit : policyDeficit;
+      const deficitPctForInflation = (deficitForInflation / modelParams.currentGDP) * 100;
+      const deficitInducedInflation = deficitPctForInflation * modelParams.deficitToInflation * slackMultiplier * fiscalDominanceMultiplier;
+      
+      // TOTAL IMPLIED INFLATION = baseline (above target) + deficit-induced
+      // Baseline inflation already drags on growth; deficit adds to it
+      const totalImpliedInflation = modelParams.baselineInflation + deficitInducedInflation;
       
       // Inflation drag on growth (phases in over time as inflation persists)
-      // Conservative: 0.05% lower growth per 1pp inflation above 2% target
-      // This compounds significantly over 50 years
+      // Literature: Fischer (1993), Barro (1995), Bruno & Easterly (1998)
+      // - Below 2% above target: minimal growth impact
+      // - 2-5% above target: ~0.1% lower growth per inflation point
+      // - Above 5%: nonlinear drag, potentially 0.2-0.3% per point
       let inflationGrowthDrag = 0;
-      if (impliedInflation > 0) {
+      if (totalImpliedInflation > 0) {
         // Nonlinear: higher inflation has disproportionate growth impact
-        if (impliedInflation <= 3) {
-          inflationGrowthDrag = impliedInflation * 0.0005; // 0.05% per pp
-        } else if (impliedInflation <= 6) {
-          inflationGrowthDrag = 3 * 0.0005 + (impliedInflation - 3) * 0.001; // 0.1% per pp above 3
+        if (totalImpliedInflation <= 2) {
+          inflationGrowthDrag = totalImpliedInflation * 0.0003; // 0.03% per pp (mild)
+        } else if (totalImpliedInflation <= 4) {
+          inflationGrowthDrag = 2 * 0.0003 + (totalImpliedInflation - 2) * 0.0007; // 0.07% per pp
+        } else if (totalImpliedInflation <= 7) {
+          inflationGrowthDrag = 2 * 0.0003 + 2 * 0.0007 + (totalImpliedInflation - 4) * 0.0015; // 0.15% per pp
+        } else if (totalImpliedInflation <= 10) {
+          inflationGrowthDrag = 2 * 0.0003 + 2 * 0.0007 + 3 * 0.0015 + (totalImpliedInflation - 7) * 0.002; // 0.2% per pp
         } else {
-          inflationGrowthDrag = 3 * 0.0005 + 3 * 0.001 + (impliedInflation - 6) * 0.002; // 0.2% per pp above 6
+          // Above 10% inflation: severe growth drag (0.3% per pp)
+          inflationGrowthDrag = 2 * 0.0003 + 2 * 0.0007 + 3 * 0.0015 + 3 * 0.002 + (totalImpliedInflation - 10) * 0.003;
         }
       }
       
@@ -2560,10 +2616,13 @@
       
       // Store for display
       window.lastGDPCalc = {
-        impliedInflation: impliedInflation,
+        baselineInflation: modelParams.baselineInflation,
+        deficitInducedInflation: deficitInducedInflation,
+        impliedInflation: totalImpliedInflation,
         inflationGrowthDrag: inflationGrowthDrag,
         fiscalDominanceMultiplier: fiscalDominanceMultiplier,
-        deficitPctGDP: deficitPctGDP
+        deficitPctGDP: deficitPctGDP,
+        useFullDeficit: useFullDeficitForGDP
       };
       
       // Phased effects
@@ -2720,8 +2779,8 @@
       const inflationContainer = document.getElementById('inflation-container');
       const growthContainer = document.getElementById('growth-container');
 
-      inflationContainer.classList.toggle('visible', tfr.inflationPenalty > 0.001);
-      if (tfr.inflationPenalty > 0.001) {
+      inflationContainer.classList.toggle('visible', tfr.inflationPenalty > 0.005);
+      if (tfr.inflationPenalty > 0.005) {
         document.getElementById('inflation-penalty-val').textContent = `-${tfr.inflationPenalty.toFixed(2)}`;
         
         // Update calculation breakdown display
@@ -2730,19 +2789,35 @@
         
         if (inflationBreakdown && window.lastFiscalStress) {
           const fs = window.lastFiscalStress;
-          const slackMultiplier = {
-            'slack': 0.5,
-            'near-full': 1.0,
-            'constrained': 1.75
-          }[modelParams.economicSlack] || 1.0;
           
-          const deficitForCalc = modelParams.includeBaselineInPenalty ? fs.totalDeficit : tfr.deficit;
-          const deficitPctForCalc = (deficitForCalc / modelParams.currentGDP) * 100;
-          const baseInflationPp = deficitPctForCalc * modelParams.deficitToInflation * slackMultiplier;
-          const adjustedInflationPp = baseInflationPp * fs.multiplier;
+          // Build detailed breakdown
+          let breakdownHtml = '';
           
-          const deficitLabel = `$${Math.round(fs.totalDeficit).toLocaleString()}B (${fs.deficitPctGDP.toFixed(1)}% GDP)`;
-          inflationBreakdown.innerHTML = `Total: ${deficitLabel}<br>→ Base: ${baseInflationPp.toFixed(2)}pp × ${fs.multiplier.toFixed(1)}× = ${adjustedInflationPp.toFixed(2)}pp inflation<br>→ TFR impact: −${tfr.inflationPenalty.toFixed(3)}`;
+          if (fs.includesBaseline) {
+            // In fiscal stress/crisis: show full stack
+            breakdownHtml += `<span style="color: #c62828;"><strong>⚠ Fiscal dominance:</strong> baseline inflation now counts</span><br>`;
+            breakdownHtml += `Baseline: ${fs.baselineInflation.toFixed(1)}pp above target<br>`;
+            if (fs.deficitInducedInflation > 0.01) {
+              const deficitMode = fs.useFullDeficit ? 'TOTAL' : 'incremental';
+              const deficitUsed = fs.useFullDeficit ? fs.totalDeficit : tfr.deficit;
+              breakdownHtml += `+ Deficit ($${Math.round(deficitUsed).toLocaleString()}B ${deficitMode}) × ${fs.multiplier.toFixed(1)}×: +${fs.deficitInducedInflation.toFixed(1)}pp<br>`;
+            }
+            breakdownHtml += `<strong>= Penalized inflation: ${fs.inflationForPenalty.toFixed(1)}pp → −${tfr.inflationPenalty.toFixed(2)} TFR</strong>`;
+          } else {
+            // Normal/elevated: only policy-induced
+            if (fs.deficitInducedInflation > 0.01) {
+              const deficitMode = fs.useFullDeficit ? 'TOTAL' : 'incremental';
+              const deficitUsed = fs.useFullDeficit ? fs.totalDeficit : tfr.deficit;
+              breakdownHtml += `Baseline: ${fs.baselineInflation.toFixed(1)}pp (already in TFR 1.62)<br>`;
+              breakdownHtml += `<strong>+ Policy deficit:</strong> $${Math.round(deficitUsed).toLocaleString()}B × ${fs.multiplier.toFixed(1)}× = +${fs.deficitInducedInflation.toFixed(1)}pp<br>`;
+              breakdownHtml += `<strong>= New penalty: −${tfr.inflationPenalty.toFixed(2)} TFR</strong>`;
+            } else {
+              breakdownHtml += `Baseline: ${fs.baselineInflation.toFixed(1)}pp above target<br>`;
+              breakdownHtml += `<em>No policy deficit → no additional penalty</em>`;
+            }
+          }
+          
+          inflationBreakdown.innerHTML = breakdownHtml;
           
           // Update fiscal stress indicator
           if (fiscalStressIndicator) {
@@ -2756,13 +2831,19 @@
             const stressLabels = {
               'normal': 'Normal',
               'elevated': 'Elevated Risk',
-              'high': 'Fiscal Stress',
-              'crisis': '⚠ FISCAL DOMINANCE'
+              'high': '⚠ Fiscal Stress',
+              'crisis': '🚨 FISCAL DOMINANCE'
             };
             const colors = stressColors[fs.level] || stressColors.normal;
             fiscalStressIndicator.style.background = colors.bg;
             fiscalStressIndicator.style.color = colors.text;
-            fiscalStressIndicator.textContent = `${stressLabels[fs.level]} (${fs.multiplier.toFixed(1)}× multiplier at ${fs.deficitPctGDP.toFixed(1)}% deficit/GDP)`;
+            
+            // Show that we switched to total deficit calculation
+            let modeNote = '';
+            if (fs.useFullDeficit && (fs.level === 'high' || fs.level === 'crisis')) {
+              modeNote = ' — using TOTAL deficit (markets price unsustainability)';
+            }
+            fiscalStressIndicator.textContent = `${stressLabels[fs.level]} (${fs.multiplier.toFixed(1)}× @ ${fs.deficitPctGDP.toFixed(1)}% GDP)${modeNote}`;
           }
           
           // Trigger fiscal crisis modal when entering high stress
@@ -3542,13 +3623,35 @@
       const baselineHeader = document.createElement('div');
       baselineHeader.innerHTML = `
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #5d4037; margin: 20px 0 8px 0; padding-top: 12px; border-top: 1px solid #ccc;">
-          Fiscal Baseline
+          Fiscal & Inflation Baseline
           <span style="font-size: 9px; color: #666; text-transform: none; display: block; margin-top: 4px;">
-            CBO January 2025 projection. Adjust to model different scenarios.
+            Current conditions as of Jan 2025. Adjust to model different scenarios.
           </span>
         </div>
       `;
       container.appendChild(baselineHeader);
+      
+      // Current inflation slider
+      const inflationCard = document.createElement('div');
+      inflationCard.className = 'params-card';
+      inflationCard.innerHTML = `
+        <div class="slider-header">
+          <span class="params-title">Current Inflation</span>
+          <span class="slider-value">${(modelParams.fedTarget + modelParams.baselineInflation).toFixed(1)}% (${modelParams.baselineInflation > 0 ? '+' : ''}${modelParams.baselineInflation.toFixed(1)}pp above target)</span>
+        </div>
+        <input type="range" min="0" max="40" step="1" value="${modelParams.baselineInflation * 10}">
+        <p class="params-description">BLS Nov 2025: 2.7% CPI. Fed target: 2.0%. Set to 0 to model from neutral baseline.</p>
+      `;
+      const inflationSlider = inflationCard.querySelector('input');
+      const inflationValue = inflationCard.querySelector('.slider-value');
+      inflationSlider.addEventListener('input', () => {
+        modelParams.baselineInflation = parseInt(inflationSlider.value) / 10;
+        const total = modelParams.fedTarget + modelParams.baselineInflation;
+        const delta = modelParams.baselineInflation > 0 ? `+${modelParams.baselineInflation.toFixed(1)}pp above target` : 'at target';
+        inflationValue.textContent = `${total.toFixed(1)}% (${delta})`;
+        updateDisplay();
+      });
+      container.appendChild(inflationCard);
       
       // Baseline deficit slider
       const baselineCard = document.createElement('div');
