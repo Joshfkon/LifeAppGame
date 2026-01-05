@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>The Fertility Equation | Interactive Policy Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a1a1a;
+      --paper: #f8f6f1;
+      --paper-dark: #e8e4db;
+      --accent: #8b0000;
+      --success: #2d5016;
+      --muted: #666;
+      --rule: #ccc;
+    }
+
+```
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 16px 20px;
+  flex-shrink: 0;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.header-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.tfr-compact {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tfr-number-large {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+.tfr-number-large.at-replacement { color: #7cb342; }
+.tfr-number-large.below { color: #ffb74d; }
+.tfr-number-large.critical { color: #ef5350; }
+
+.tfr-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: right;
+}
+
+.tfr-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.tfr-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  background: rgba(255,255,255,0.1);
+}
+
+.tfr-progress {
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.tfr-progress-fill {
+  height: 100%;
+  background: var(--paper);
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.tfr-progress-fill.at-replacement { background: #7cb342; }
+
+.tfr-progress-marker {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  background: var(--accent);
+  left: 70%;
+}
+
+.tfr-progress-marker::after {
+  content: '2.1';
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--accent);
+}
+
+.fiscal-strip {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.fiscal-item { text-align: center; flex: 1; }
+
+.fiscal-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.fiscal-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.fiscal-value.positive { color: #7cb342; }
+.fiscal-value.negative { color: #ef5350; }
+
+.penalties {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.penalty-badge {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+}
+
+.penalty-badge.visible { display: flex; }
+.penalty-badge.inflation { background: var(--accent); }
+.penalty-badge.growth { background: #5d4037; }
+
+/* Tab Navigation */
+.tab-nav {
+  display: flex;
+  background: var(--paper-dark);
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 14px 12px;
+  background: none;
+  border: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ink);
+}
+
+.tab-btn .tab-count {
+  display: inline-block;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 9px;
+  font-size: 9px;
+  margin-left: 6px;
+}
+
+.tab-btn.active .tab-count { background: var(--accent); }
+
+/* Tab Content */
+.tab-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.tab-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  padding: 20px;
+  -webkit-overflow-scrolling: touch;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease;
+}
+
+.tab-panel.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Policy Cards */
+.policy-card {
+  border: 1px solid var(--rule);
+  padding: 16px;
+  margin-bottom: 12px;
+  background: var(--paper);
+  transition: all 0.2s ease;
+}
+
+.policy-card.enabled {
+  border-color: var(--ink);
+  background: white;
+}
+
+.policy-card.illiberal { border-left: 4px solid var(--accent); }
+
+.policy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.policy-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.policy-stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.policy-stat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--paper-dark);
+}
+
+.policy-stat.tfr { color: var(--success); }
+.policy-stat.cost { color: var(--muted); }
+.policy-stat.drag { color: #5d4037; background: rgba(93,64,55,0.1); }
+
+.policy-description {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggle input { opacity: 0; width: 0; height: 0; }
+
+.toggle-track {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--paper-dark);
+  border: 1px solid var(--rule);
+  transition: all 0.3s ease;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  background: var(--muted);
+  transition: all 0.3s ease;
+}
+
+.toggle input:checked + .toggle-track {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.toggle input:checked + .toggle-track .toggle-thumb {
+  transform: translateX(20px);
+  background: var(--paper);
+}
+
+.toggle-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.slider-row {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--paper-dark);
+}
+
+.slider-row.hidden { display: none; }
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.slider-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.slider-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--paper-dark);
+  border: 1px solid var(--rule);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--ink);
+  cursor: pointer;
+}
+
+.section-header {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.section-intro {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.subsection { margin-top: 24px; }
+
+.subsection-header {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.subsection-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.callout {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-left: 3px solid var(--accent);
+  background: linear-gradient(90deg, rgba(139,0,0,0.05) 0%, var(--paper) 100%);
+  font-size: 0.85rem;
+}
+
+.callout-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.historical-note {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--muted);
+  padding: 10px 12px;
+  background: var(--paper-dark);
+  margin-top: 10px;
+}
+
+.params-card {
+  border: 1px solid var(--rule);
+  padding: 16px;
+  margin-bottom: 12px;
+  background: var(--paper);
+}
+
+.params-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.params-description {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+@media (max-width: 400px) {
+  .tfr-number-large { font-size: 2rem; }
+  .fiscal-strip { gap: 8px; }
+  .fiscal-value { font-size: 0.85rem; }
+}
+```
+
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-top">
+      <span class="header-title">Fertility Policy Simulator</span>
+      <div class="tfr-compact">
+        <div class="tfr-meta">
+          <span class="tfr-label">Projected TFR</span>
+          <span class="tfr-status" id="tfr-status">BELOW REPLACEMENT</span>
+        </div>
+        <span class="tfr-number-large" id="tfr-number">1.62</span>
+      </div>
+    </div>
+
+```
+<div class="tfr-progress">
+  <div class="tfr-progress-fill" id="tfr-progress"></div>
+  <div class="tfr-progress-marker"></div>
+</div>
+
+<div class="fiscal-strip">
+  <div class="fiscal-item">
+    <div class="fiscal-label">Spending</div>
+    <div class="fiscal-value" id="total-spending">$0B</div>
+  </div>
+  <div class="fiscal-item">
+    <div class="fiscal-label">Offsets</div>
+    <div class="fiscal-value positive" id="total-offsets">$0B</div>
+  </div>
+  <div class="fiscal-item">
+    <div class="fiscal-label">Net</div>
+    <div class="fiscal-value" id="net-impact">$0B</div>
+  </div>
+</div>
+
+<div class="penalties">
+  <div class="penalty-badge inflation" id="penalty-inflation">
+    <span>⚠</span>
+    <span>Inflation: <span id="inflation-penalty-val">-0.00</span> TFR</span>
+  </div>
+  <div class="penalty-badge growth" id="penalty-growth">
+    <span>📉</span>
+    <span>Growth Drag: <span id="growth-penalty-val">-0.00</span> TFR</span>
+  </div>
+</div>
+```
+
+  </header>
+
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="0">
+      Policies<span class="tab-count" id="count-policies">0</span>
+    </button>
+    <button class="tab-btn" data-tab="1">
+      Entitlements<span class="tab-count" id="count-entitlements">0</span>
+    </button>
+    <button class="tab-btn" data-tab="2">
+      Taxes<span class="tab-count" id="count-taxes">0</span>
+    </button>
+  </nav>
+
+  <div class="tab-container">
+    <div class="tab-panel active" id="panel-0">
+      <h2 class="section-header">Fertility Policies</h2>
+      <p class="section-intro">Enable the full package with entitlement offsets to reach replacement (TFR 2.1). Deficit spending triggers inflation penalties.</p>
+      <div id="liberal-policies"></div>
+      <div class="subsection">
+        <div class="subsection-header">Illiberal Policies</div>
+        <div class="callout">
+          <div class="callout-title">Ethical Warning</div>
+          These policies restrict reproductive autonomy. Included for analytical completeness.
+        </div>
+        <div id="illiberal-policies"></div>
+      </div>
+      <div class="subsection">
+        <div class="subsection-header">Model Parameters</div>
+        <div id="model-params"></div>
+      </div>
+    </div>
+
+```
+<div class="tab-panel" id="panel-1">
+  <h2 class="section-header">Entitlement Reform</h2>
+  <p class="section-intro">Intergenerational rebalancing. These offsets have no growth penalty—the only "free" funding source.</p>
+  <div id="entitlement-reforms"></div>
+</div>
+
+<div class="tab-panel" id="panel-2">
+  <h2 class="section-header">Tax Increases</h2>
+  <p class="section-intro">Alternative funding. Distortionary taxes create growth drag that partially offsets fertility gains.</p>
+  <div id="tax-increases"></div>
+</div>
+```
+
+  </div>
+
+  <script>
+    const liberalPolicies = [
+      { id: 'child-allowance', name: 'Universal Child Allowance', description: '$500/mo ages 0-6, $300/mo ages 7-17. No phaseout.', costLow: 250, costHigh: 300, tfrLow: 0.15, tfrHigh: 0.20, enabled: false, intensity: 100 },
+      { id: 'third-child-bonus', name: '3+ Child Tax Bonus', description: '100% federal tax return per 3rd+ child, ages 0-6.', costLow: 100, costHigh: 150, tfrLow: 0.10, tfrHigh: 0.15, enabled: false, intensity: 100 },
+      { id: 'childcare', name: 'Universal Childcare ($5/day)', description: 'Quebec model. Ages 0-5.', costLow: 80, costHigh: 100, tfrLow: 0.10, tfrHigh: 0.15, enabled: false, intensity: 100 },
+      { id: 'parental-leave', name: 'Paid Parental Leave (12 mo)', description: '80% salary, job-protected. ~1% payroll tax.', costLow: 60, costHigh: 100, tfrLow: 0.08, tfrHigh: 0.12, enabled: false, intensity: 100 },
+      { id: 'debt-relief', name: 'Marriage-Linked Debt Relief', description: 'Loans paused on marriage, forgiven on birth.', costLow: 60, costHigh: 80, tfrLow: 0.06, tfrHigh: 0.12, enabled: false, intensity: 100 },
+      { id: 'housing', name: 'Federal Housing Program', description: '750k-1M units/year. Singapore HDB model.', costLow: 150, costHigh: 200, tfrLow: 0.12, tfrHigh: 0.20, enabled: false, intensity: 100 },
+      { id: 'fertility-coverage', name: 'Universal Fertility Coverage', description: 'IVF, IUI, egg freezing. No limits.', costLow: 15, costHigh: 25, tfrLow: 0.02, tfrHigh: 0.05, enabled: false, intensity: 100 },
+      { id: 'baby-bonds', name: 'Baby Bonds', description: '$10k at birth, accessible at 18.', costLow: 40, costHigh: 50, tfrLow: 0.03, tfrHigh: 0.06, enabled: false, intensity: 100 }
+    ];
+
+    const illiberalPolicies = [
+      { id: 'abortion-ban', name: 'Complete Abortion Ban', description: 'Total prohibition, criminal penalties.', costLow: 5, costHigh: 15, tfrLow: 0.15, tfrHigh: 0.35, enabled: false, intensity: 100, historical: 'Romania 1966: TFR 1.9→3.7 in one year. ~10,000 women died.' },
+      { id: 'contraception-ban', name: 'Contraception Restrictions', description: 'Ban hormonal contraception and IUDs.', costLow: 2, costHigh: 8, tfrLow: 0.25, tfrHigh: 0.50, enabled: false, intensity: 100, historical: 'Pre-Pill US TFR ~3.5 vs ~1.8 post-Pill.' },
+      { id: 'celibacy-tax', name: 'Childlessness Tax', description: '5-15% tax on childless adults over 25.', costLow: -50, costHigh: -30, tfrLow: 0.05, tfrHigh: 0.12, enabled: false, intensity: 100, revenue: true, historical: 'USSR 1941-1990: 6% tax. High compliance, unclear impact.' },
+      { id: 'divorce-restrictions', name: 'Divorce Restrictions', description: 'Eliminate no-fault divorce.', costLow: 0, costHigh: 5, tfrLow: 0.02, tfrHigh: 0.08, enabled: false, intensity: 100, historical: 'Pre-1970 US: higher stability, minimal fertility evidence.' },
+      { id: 'mandatory-marriage', name: 'Marriage Mandates', description: 'Benefits/housing tied to married status.', costLow: 5, costHigh: 15, tfrLow: 0.06, tfrHigh: 0.15, enabled: false, intensity: 100, historical: 'Singapore: Housing priority for married couples.' }
+    ];
+
+    const entitlementReforms = [
+      { id: 'medicare-age', name: 'Medicare to 67', savingsLow: 80, savingsHigh: 100, description: 'Phase in over 12 years', enabled: false },
+      { id: 'ss-means-test', name: 'SS Means-Test (>$100k)', savingsLow: 120, savingsHigh: 150, description: '50% clawback', enabled: false },
+      { id: 'ss-cola', name: 'SS COLA Adjustment', savingsLow: 80, savingsHigh: 100, description: 'Chained CPI -0.5%', enabled: false },
+      { id: 'medicare-drugs', name: 'Medicare Drug Negotiation', savingsLow: 50, savingsHigh: 80, description: 'Expand to 100 drugs', enabled: false },
+      { id: 'ss-retirement-70', name: 'SS Retirement to 70', savingsLow: 100, savingsHigh: 150, description: 'Phase in over 18 years', enabled: false },
+      { id: 'ss-cap', name: 'Cap SS at $3,200/mo', savingsLow: 60, savingsHigh: 80, description: '150% of median', enabled: false },
+      { id: 'medicare-premiums', name: 'Medicare Premiums', savingsLow: 40, savingsHigh: 60, description: 'Income-relating', enabled: false }
+    ];
+
+    const taxIncreases = [
+      { id: 'income-tax-top', name: 'Top Rate to 45%', savingsLow: 80, savingsHigh: 120, description: '>$500k bracket', enabled: false, growthDrag: 0.01, dragRationale: 'Labor supply effect' },
+      { id: 'corporate-tax', name: 'Corporate Tax to 28%', savingsLow: 100, savingsHigh: 150, description: 'Pre-TCJA level', enabled: false, growthDrag: 0.04, dragRationale: 'Reduces investment' },
+      { id: 'capital-gains', name: 'Capital Gains Parity', savingsLow: 150, savingsHigh: 200, description: 'Ordinary income >$1M', enabled: false, growthDrag: 0.05, dragRationale: 'Lock-in effects' },
+      { id: 'financial-transaction', name: 'Transaction Tax', savingsLow: 60, savingsHigh: 100, description: '0.1% on trades', enabled: false, growthDrag: 0.02, dragRationale: 'Liquidity reduction' },
+      { id: 'estate-tax', name: 'Estate Tax Reform', savingsLow: 40, savingsHigh: 70, description: '$3.5M exemption', enabled: false, growthDrag: 0.01, dragRationale: 'Minimal impact' },
+      { id: 'carbon-tax', name: 'Carbon Tax ($50/ton)', savingsLow: 80, savingsHigh: 120, description: 'Phased 5 years', enabled: false, growthDrag: 0.02, dragRationale: 'Transition costs' },
+      { id: 'vat', name: 'Federal VAT (10%)', savingsLow: 400, savingsHigh: 600, description: 'Necessity exemptions', enabled: false, growthDrag: 0.02, dragRationale: 'Consumption reduction' }
+    ];
+
+    const modelParams = { interactionDiscount: 25, contextAdjustment: 10, implementationRate: 90 };
+
+    // Progressive inflation penalty: accelerates as deficit grows
+    // Base: 0.03 TFR per $100B, but stacks progressively
+    function calculateInflationPenalty(deficit) {
+      if (deficit <= 0) return 0;
+      
+      // Tiered penalty structure:
+      // First $200B: 0.03 per $100B (baseline)
+      // $200B-$500B: 0.05 per $100B (moderate pressure)
+      // $500B-$800B: 0.08 per $100B (high pressure)
+      // >$800B: 0.12 per $100B (severe - crowding out, rate spikes)
+      
+      let penalty = 0;
+      
+      if (deficit <= 200) {
+        penalty = deficit * 0.0003; // 0.03 per $100B
+      } else if (deficit <= 500) {
+        penalty = 200 * 0.0003 + (deficit - 200) * 0.0005;
+      } else if (deficit <= 800) {
+        penalty = 200 * 0.0003 + 300 * 0.0005 + (deficit - 500) * 0.0008;
+      } else {
+        penalty = 200 * 0.0003 + 300 * 0.0005 + 300 * 0.0008 + (deficit - 800) * 0.0012;
+      }
+      
+      return penalty;
+    }
+
+    function calculateGrowthDrag() {
+      return taxIncreases.filter(t => t.enabled && t.growthDrag).reduce((sum, t) => sum + t.growthDrag, 0);
+    }
+
+    function calculateFiscal() {
+      let spending = 0, offsets = 0;
+      [...liberalPolicies, ...illiberalPolicies].forEach(p => {
+        if (p.enabled) {
+          const i = p.intensity / 100;
+          if (p.revenue) offsets += ((Math.abs(p.costLow) + Math.abs(p.costHigh)) / 2) * i;
+          else spending += ((p.costLow + p.costHigh) / 2) * i;
+        }
+      });
+      entitlementReforms.forEach(r => { if (r.enabled) offsets += (r.savingsLow + r.savingsHigh) / 2; });
+      taxIncreases.forEach(t => { if (t.enabled) offsets += (t.savingsLow + t.savingsHigh) / 2; });
+      return { spending, offsets, net: spending - offsets };
+    }
+
+    function calculateTFR() {
+      const baseTFR = 1.62;
+      let grossLow = 0, grossHigh = 0;
+      [...liberalPolicies, ...illiberalPolicies].forEach(p => {
+        if (p.enabled) {
+          const i = p.intensity / 100;
+          grossLow += p.tfrLow * i;
+          grossHigh += p.tfrHigh * i;
+        }
+      });
+
+      const factor = (1 - modelParams.interactionDiscount/100) * (1 - modelParams.contextAdjustment/100) * (modelParams.implementationRate/100);
+      let netLow = grossLow * factor, netHigh = grossHigh * factor;
+
+      const fiscal = calculateFiscal();
+      const deficit = fiscal.net > 0 ? fiscal.net : 0;
+      const inflationPenalty = calculateInflationPenalty(deficit);
+      netLow -= inflationPenalty;
+      netHigh -= inflationPenalty;
+
+      const growthDrag = calculateGrowthDrag();
+      netLow -= growthDrag;
+      netHigh -= growthDrag;
+
+      return { low: baseTFR + netLow, mid: baseTFR + (netLow + netHigh) / 2, high: baseTFR + netHigh, inflationPenalty, growthDrag, deficit };
+    }
+
+    function updateDisplay() {
+      const tfr = calculateTFR();
+      const fiscal = calculateFiscal();
+
+      const tfrEl = document.getElementById('tfr-number');
+      const statusEl = document.getElementById('tfr-status');
+      const progressEl = document.getElementById('tfr-progress');
+
+      tfrEl.textContent = tfr.mid.toFixed(2);
+      tfrEl.className = 'tfr-number-large';
+      progressEl.className = 'tfr-progress-fill';
+      
+      if (tfr.mid >= 2.1) {
+        statusEl.textContent = 'AT REPLACEMENT ✓';
+        tfrEl.classList.add('at-replacement');
+        progressEl.classList.add('at-replacement');
+      } else if (tfr.mid >= 1.8) {
+        statusEl.textContent = 'BELOW REPLACEMENT';
+        tfrEl.classList.add('below');
+      } else {
+        statusEl.textContent = 'CRITICALLY LOW';
+        tfrEl.classList.add('critical');
+      }
+
+      progressEl.style.width = `${Math.min(100, (tfr.mid / 3) * 100)}%`;
+
+      document.getElementById('total-spending').textContent = `$${Math.round(fiscal.spending)}B`;
+      document.getElementById('total-offsets').textContent = `$${Math.round(fiscal.offsets)}B`;
+      
+      const netEl = document.getElementById('net-impact');
+      if (fiscal.net <= 0) {
+        netEl.textContent = `−$${Math.abs(Math.round(fiscal.net))}B`;
+        netEl.className = 'fiscal-value positive';
+      } else {
+        netEl.textContent = `+$${Math.round(fiscal.net)}B`;
+        netEl.className = 'fiscal-value negative';
+      }
+
+      const inflationBadge = document.getElementById('penalty-inflation');
+      const growthBadge = document.getElementById('penalty-growth');
+
+      inflationBadge.classList.toggle('visible', tfr.inflationPenalty > 0);
+      if (tfr.inflationPenalty > 0) document.getElementById('inflation-penalty-val').textContent = `-${tfr.inflationPenalty.toFixed(2)}`;
+
+      growthBadge.classList.toggle('visible', tfr.growthDrag > 0);
+      if (tfr.growthDrag > 0) document.getElementById('growth-penalty-val').textContent = `-${tfr.growthDrag.toFixed(2)}`;
+
+      document.getElementById('count-policies').textContent = [...liberalPolicies, ...illiberalPolicies].filter(p => p.enabled).length;
+      document.getElementById('count-entitlements').textContent = entitlementReforms.filter(r => r.enabled).length;
+      document.getElementById('count-taxes').textContent = taxIncreases.filter(t => t.enabled).length;
+    }
+
+    function renderPolicyCard(policy, container, isIlliberal = false) {
+      const card = document.createElement('div');
+      card.className = `policy-card${isIlliberal ? ' illiberal' : ''}`;
+
+      const tfrMid = ((policy.tfrLow + policy.tfrHigh) / 2).toFixed(2);
+      const costMid = Math.round((policy.costLow + policy.costHigh) / 2);
+
+      card.innerHTML = `
+        <div class="policy-header">
+          <span class="policy-title">${policy.name}</span>
+          <div class="policy-stats">
+            <span class="policy-stat tfr">+${tfrMid} TFR</span>
+            <span class="policy-stat cost">${policy.revenue ? '−' : ''}$${Math.abs(costMid)}B</span>
+          </div>
+        </div>
+        <p class="policy-description">${policy.description}</p>
+        ${policy.historical ? `<div class="historical-note">${policy.historical}</div>` : ''}
+        <div class="toggle-row">
+          <span class="toggle-label">Disabled</span>
+          <label class="toggle"><input type="checkbox"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
+        </div>
+        <div class="slider-row hidden">
+          <div class="slider-header"><span class="slider-label">Intensity</span><span class="slider-value">100%</span></div>
+          <input type="range" min="25" max="100" value="100">
+        </div>
+      `;
+
+      const toggle = card.querySelector('input[type="checkbox"]');
+      const slider = card.querySelector('input[type="range"]');
+      const sliderRow = card.querySelector('.slider-row');
+      const sliderValue = card.querySelector('.slider-value');
+      const toggleLabel = card.querySelector('.toggle-label');
+
+      toggle.addEventListener('change', () => {
+        policy.enabled = toggle.checked;
+        card.classList.toggle('enabled', policy.enabled);
+        sliderRow.classList.toggle('hidden', !policy.enabled);
+        toggleLabel.textContent = policy.enabled ? 'Enabled' : 'Disabled';
+        updateDisplay();
+      });
+
+      slider.addEventListener('input', () => {
+        policy.intensity = parseInt(slider.value);
+        sliderValue.textContent = `${policy.intensity}%`;
+        updateDisplay();
+      });
+
+      container.appendChild(card);
+    }
+
+    function renderReformCard(reform, container) {
+      const card = document.createElement('div');
+      card.className = 'policy-card';
+
+      const savingsMid = Math.round((reform.savingsLow + reform.savingsHigh) / 2);
+      const hasDrag = reform.growthDrag > 0;
+
+      card.innerHTML = `
+        <div class="policy-header">
+          <span class="policy-title">${reform.name}</span>
+          <div class="policy-stats">
+            <span class="policy-stat cost">$${savingsMid}B/yr</span>
+            ${hasDrag ? `<span class="policy-stat drag">−${reform.growthDrag.toFixed(2)} TFR</span>` : ''}
+          </div>
+        </div>
+        <p class="policy-description">${reform.description}${hasDrag ? ` <em style="color:#5d4037;">(${reform.dragRationale})</em>` : ''}</p>
+        <div class="toggle-row">
+          <span class="toggle-label">Disabled</span>
+          <label class="toggle"><input type="checkbox"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
+        </div>
+      `;
+
+      const toggle = card.querySelector('input[type="checkbox"]');
+      const toggleLabel = card.querySelector('.toggle-label');
+
+      toggle.addEventListener('change', () => {
+        reform.enabled = toggle.checked;
+        card.classList.toggle('enabled', reform.enabled);
+        toggleLabel.textContent = reform.enabled ? 'Enabled' : 'Disabled';
+        updateDisplay();
+      });
+
+      container.appendChild(card);
+    }
+
+    function renderModelParams(container) {
+      [
+        { key: 'interactionDiscount', name: 'Interaction Discount', desc: 'Overlapping benefits reduce effects (20-30%)', min: 10, max: 40 },
+        { key: 'contextAdjustment', name: 'US Context Adjustment', desc: 'European elasticities may not transfer', min: 0, max: 30 },
+        { key: 'implementationRate', name: 'Implementation Rate', desc: 'Admin capacity and execution risk', min: 70, max: 100 }
+      ].forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'params-card';
+        card.innerHTML = `
+          <div class="slider-header"><span class="params-title">${p.name}</span><span class="slider-value">${modelParams[p.key]}%</span></div>
+          <input type="range" min="${p.min}" max="${p.max}" value="${modelParams[p.key]}">
+          <p class="params-description">${p.desc}</p>
+        `;
+        const slider = card.querySelector('input[type="range"]');
+        const value = card.querySelector('.slider-value');
+        slider.addEventListener('input', () => {
+          modelParams[p.key] = parseInt(slider.value);
+          value.textContent = `${modelParams[p.key]}%`;
+          updateDisplay();
+        });
+        container.appendChild(card);
+      });
+    }
+
+    // Tab navigation (tap only, no swipe)
+    function initTabs() {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tabIndex = btn.dataset.tab;
+          
+          // Update buttons
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          
+          // Update panels
+          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+          document.getElementById(`panel-${tabIndex}`).classList.add('active');
+        });
+      });
+    }
+
+    function init() {
+      liberalPolicies.forEach(p => renderPolicyCard(p, document.getElementById('liberal-policies')));
+      illiberalPolicies.forEach(p => renderPolicyCard(p, document.getElementById('illiberal-policies'), true));
+      entitlementReforms.forEach(r => renderReformCard(r, document.getElementById('entitlement-reforms')));
+      taxIncreases.forEach(t => renderReformCard(t, document.getElementById('tax-increases')));
+      renderModelParams(document.getElementById('model-params'));
+      initTabs();
+      updateDisplay();
+    }
+
+    init();
+  </script>
+
+</body>
+</html>
