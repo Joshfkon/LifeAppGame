@@ -132,7 +132,7 @@
       display: flex;
       gap: 16px;
       justify-content: space-between;
-      overflow-x: auto;
+      overflow: visible;
     }
 
     .fiscal-item { text-align: center; flex: 1; min-width: 0; }
@@ -185,11 +185,14 @@
       padding-left: 12px;
       position: relative;
       min-width: fit-content;
+      z-index: 10;
     }
 
     .gdp-clickable {
       cursor: pointer;
       transition: color 0.2s ease;
+      position: relative;
+      z-index: 10;
     }
 
     .gdp-clickable:hover {
@@ -204,15 +207,19 @@
 
     .gdp-methodology {
       display: none;
-      position: absolute;
-      bottom: calc(100% + 12px);
-      right: 0;
-      width: 300px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 340px;
+      max-width: 90vw;
       background: var(--paper);
       color: var(--ink);
       border: 1px solid var(--ink);
-      z-index: 1000;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      z-index: 2001;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+      max-height: 80vh;
+      overflow-y: auto;
     }
 
     .gdp-methodology.visible {
@@ -284,6 +291,8 @@
       gap: 12px;
       margin-top: 10px;
       flex-wrap: wrap;
+      position: relative;
+      z-index: 10;
     }
 
     .penalty-badge {
@@ -296,6 +305,9 @@
       color: var(--paper);
       border-radius: 4px;
       flex-shrink: 0;
+      position: relative;
+      cursor: pointer;
+      z-index: 10;
     }
 
     .penalty-badge.inflation { background: var(--accent); }
@@ -312,11 +324,6 @@
         justify-content: flex-start;
         width: fit-content;
       }
-    }
-
-    .penalty-badge {
-      position: relative;
-      cursor: pointer;
     }
 
     .penalty-tooltip {
@@ -396,10 +403,6 @@
       display: block;
     }
 
-    .penalty-badge {
-      cursor: pointer;
-    }
-
     .flip-hint {
       font-size: 11px;
       opacity: 0.7;
@@ -418,15 +421,19 @@
 
     .penalty-methodology {
       display: none;
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 0;
-      width: 320px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 360px;
+      max-width: 90vw;
       background: var(--paper);
       color: var(--ink);
       border: 1px solid var(--ink);
-      z-index: 1000;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      z-index: 2001;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+      max-height: 80vh;
+      overflow-y: auto;
     }
 
     .penalty-methodology.visible {
@@ -5498,14 +5505,11 @@
 
     function initPenaltyBadges() {
       const backdrop = document.getElementById('methodology-backdrop');
-      const isMobile = () => window.innerWidth <= 500;
       
       function showMethodology(el) {
         el.classList.add('visible');
-        if (isMobile()) {
-          backdrop.classList.add('visible');
-          document.body.classList.add('methodology-open');
-        }
+        backdrop.classList.add('visible');
+        document.body.classList.add('methodology-open');
       }
       
       function hideMethodology(el) {
@@ -5575,17 +5579,11 @@
       backdrop.addEventListener('click', () => {
         hideAllMethodologies();
       });
-
-      // Close methodologies when clicking outside (desktop)
-      document.addEventListener('click', (e) => {
-        if (!inflationBadge.contains(e.target) && !inflationMethodology.contains(e.target)) {
-          hideMethodology(inflationMethodology);
-        }
-        if (!growthBadge.contains(e.target) && !growthMethodology.contains(e.target)) {
-          hideMethodology(growthMethodology);
-        }
-        if (!gdpValue.contains(e.target) && !gdpMethodology.contains(e.target)) {
-          hideMethodology(gdpMethodology);
+      
+      // Also close with Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          hideAllMethodologies();
         }
       });
     }
