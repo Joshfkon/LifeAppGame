@@ -132,9 +132,26 @@
       display: flex;
       gap: 16px;
       justify-content: space-between;
+      overflow-x: auto;
     }
 
-    .fiscal-item { text-align: center; flex: 1; }
+    .fiscal-item { text-align: center; flex: 1; min-width: 0; }
+
+    @media (max-width: 400px) {
+      .fiscal-strip {
+        gap: 8px;
+      }
+      .fiscal-item {
+        min-width: 50px;
+        flex: none;
+      }
+      .fiscal-value {
+        font-size: 0.85rem;
+      }
+      .fiscal-label {
+        font-size: 8px;
+      }
+    }
 
     .fiscal-label {
       font-family: 'JetBrains Mono', monospace;
@@ -148,6 +165,7 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 1rem;
       font-weight: 500;
+      white-space: nowrap;
     }
 
     .fiscal-value.positive { color: #7cb342; }
@@ -166,6 +184,7 @@
       border-left: 1px solid rgba(255,255,255,0.2);
       padding-left: 12px;
       position: relative;
+      min-width: fit-content;
     }
 
     .gdp-clickable {
@@ -264,6 +283,21 @@
       .gdp-methodology {
         width: 280px;
         right: -10px;
+        max-width: calc(100vw - 40px);
+      }
+    }
+
+    @media (max-width: 360px) {
+      .gdp-methodology {
+        position: fixed;
+        left: 10px;
+        right: 10px;
+        bottom: auto;
+        top: 50%;
+        transform: translateY(-50%);
+        width: auto;
+        max-height: 70vh;
+        overflow-y: auto;
       }
     }
 
@@ -283,10 +317,24 @@
       font-size: 11px;
       color: var(--paper);
       border-radius: 4px;
+      flex-shrink: 0;
     }
 
     .penalty-badge.inflation { background: var(--accent); }
     .penalty-badge.growth { background: #5d4037; }
+
+    @media (max-width: 400px) {
+      .penalties {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .penalty-badge {
+        font-size: 10px;
+        padding: 6px 10px;
+        justify-content: flex-start;
+        width: fit-content;
+      }
+    }
 
     .penalty-badge {
       position: relative;
@@ -363,6 +411,7 @@
     .penalty-badge-container {
       display: none;
       position: relative;
+      flex-shrink: 0;
     }
 
     .penalty-badge-container.visible {
@@ -378,6 +427,7 @@
       opacity: 0.7;
       margin-left: 4px;
       transition: opacity 0.2s ease;
+      flex-shrink: 0;
     }
 
     .penalty-badge:hover .flip-hint {
@@ -590,7 +640,23 @@
     @media (max-width: 400px) {
       .penalty-methodology {
         width: 280px;
-        left: -20px;
+        left: 0;
+        right: auto;
+        max-width: calc(100vw - 40px);
+      }
+    }
+
+    @media (max-width: 360px) {
+      .penalty-methodology {
+        position: fixed;
+        left: 10px;
+        right: 10px;
+        bottom: auto;
+        top: 50%;
+        transform: translateY(-50%);
+        width: auto;
+        max-height: 80vh;
+        overflow-y: auto;
       }
     }
 
@@ -1649,51 +1715,51 @@
         </div>
         <div class="penalty-methodology" id="inflation-methodology">
           <div class="penalty-methodology-header">
-            <span class="penalty-methodology-title">Deficit → Inflation → Fertility</span>
+            <span class="penalty-methodology-title">Inflation Model v3</span>
             <button class="penalty-back-button">← Back</button>
           </div>
           <div class="penalty-methodology-content">
-            <p><strong>Two-stage elasticity chain:</strong></p>
-            
-            <p style="margin-top: 8px;"><strong>Stage 1: Deficit → Inflation</strong></p>
-            <table class="penalty-math-table">
-              <tr><td>Central estimate</td><td>0.30% inflation per 1% GDP</td></tr>
-              <tr><td>With slack</td><td>0.15-0.20% per 1% GDP</td></tr>
-              <tr><td>Near full employment</td><td>0.25-0.40% per 1% GDP</td></tr>
-              <tr><td>Supply constrained</td><td>0.50-1.0% per 1% GDP</td></tr>
-            </table>
-            <p style="font-size: 10px; color: #666; margin-top: 4px;">
-              <em>Sources: SF Fed (Jordà 2022), NY Fed (di Giovanni 2023), Bernanke-Blanchard (2023)</em>
+            <p style="background: #ffebee; padding: 6px; margin-bottom: 8px; font-size: 11px;">
+              <strong>v3 Fixes:</strong> Higher elasticity in crisis (2.5-4×), absolute CPI for TFR penalty, steeper TFR elasticities (1.5-10%/pp vs 0.5-1.2%)
             </p>
             
-            <p style="margin-top: 10px;"><strong>Stage 2: Inflation → TFR</strong></p>
+            <p style="border-left: 3px solid #1976d2; padding-left: 8px;"><strong>Stage 1: Deficit → Inflation</strong></p>
             <table class="penalty-math-table">
-              <tr><td>Direct effect</td><td>−0.3 to −0.4% TFR per 1% CPI</td></tr>
-              <tr><td>Uncertainty channel</td><td>−0.2 to −0.3% additional</td></tr>
-              <tr><td>Total short-run</td><td>−0.5 to −0.8% per 1% inflation</td></tr>
+              <tr><td>Normal/Elevated</td><td>Policy deficit × 0.30</td></tr>
+              <tr style="background: #fff3e0;"><td>Stressed</td><td>TOTAL deficit × <strong>0.50</strong></td></tr>
+              <tr style="background: #ffcdd2;"><td>Dominance</td><td>TOTAL deficit × <strong>0.75-1.2</strong></td></tr>
             </table>
-            <p style="font-size: 10px; color: #666; margin-top: 4px;">
-              <em>Sources: Pacific Islands panel (2021), Comolli (2017), Adsera & Menendez (2011)</em>
-            </p>
             
-            <p style="margin-top: 10px; color: #8b0000;"><strong>⚠ Fiscal Dominance Multipliers</strong></p>
-            <p style="font-size: 11px;">At high deficit/GDP, central banks lose ability to fight inflation. Elasticity multipliers increase nonlinearly, and <strong>above 8% deficit/GDP the model switches to TOTAL deficit</strong> (not just incremental) because markets price in full unsustainability:</p>
+            <p style="border-left: 3px solid #2e7d32; padding-left: 8px; margin-top: 8px;"><strong>Stage 2: CB Absorption</strong></p>
             <table class="penalty-math-table">
-              <tr style="background: #e8f5e9;"><td>&lt;6% deficit/GDP</td><td>1.0× (incremental)</td></tr>
-              <tr style="background: #fff3e0;"><td>6-8% deficit/GDP</td><td>1.0-1.75× (incremental)</td></tr>
-              <tr style="background: #ffebee;"><td>8-10% deficit/GDP</td><td>1.75-3.5× (TOTAL deficit)</td></tr>
-              <tr style="background: #ffcdd2;"><td>&gt;10% deficit/GDP</td><td>3.5-6.0× (TOTAL, FTPL regime)</td></tr>
+              <tr><td>&lt;6% GDP</td><td>75%</td></tr>
+              <tr><td>6-8%</td><td>50-75%</td></tr>
+              <tr><td>8-10%</td><td>20-50%</td></tr>
+              <tr style="background: #ffcdd2;"><td>&gt;10%</td><td>&lt;20%</td></tr>
             </table>
-            <p style="font-size: 10px; color: #666; margin-top: 4px;">
-              <em>Sources: Cochrane/Leeper/Sims (FTPL): ~1:1 under dominance; Sargent & Wallace (1981) "unpleasant monetarist arithmetic"; BIS Papers No. 65; Boston Fed (2025)</em>
+            
+            <p style="border-left: 3px solid #ef6c00; padding-left: 8px; margin-top: 8px;"><strong>Stage 3: Expectations</strong></p>
+            <p style="font-size: 11px;">Unanchor thresholds by regime: Normal 4%, Stressed 3.5%, Dominance 3%</p>
+            
+            <p style="border-left: 3px solid #7b1fa2; padding-left: 8px; margin-top: 8px;"><strong>Stage 4: CPI → TFR (STEEPER)</strong></p>
+            <table class="penalty-math-table">
+              <tr><td>0-2pp</td><td>−1.5% TFR/pp</td></tr>
+              <tr><td>2-5pp</td><td>−3.0% TFR/pp</td></tr>
+              <tr><td>5-10pp</td><td>−5.0% TFR/pp</td></tr>
+              <tr><td>10-20pp</td><td>−7.0% TFR/pp</td></tr>
+              <tr style="background: #ffcdd2;"><td>&gt;20pp</td><td>−10.0% TFR/pp</td></tr>
+              <tr style="background: #ffcdd2;"><td>Unanchored</td><td>×1.5</td></tr>
+            </table>
+            <p style="font-size: 10px; color: #c62828; margin-top: 4px;">
+              <strong>Crisis regime:</strong> Uses ABSOLUTE CPI (minus 2% floor), not policy-induced delta
             </p>
             
             <p style="margin-top: 10px;"><strong>Current calculation:</strong></p>
             <div id="inflation-calc-breakdown" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: #f5f5f5; padding: 8px; margin-top: 4px;">
-              $0B deficit → 0.0% GDP → 0.0pp inflation → −0.00 TFR
+              Loading...
             </div>
             <div id="fiscal-stress-indicator" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; margin-top: 4px; padding: 4px 8px; background: #e8f5e9; display: none;">
-              Fiscal stress: Normal (1.0× multiplier)
+              Fiscal regime: Normal
             </div>
           </div>
         </div>
@@ -2344,153 +2410,298 @@
       interactionDiscount: 25, 
       contextAdjustment: 10, 
       implementationRate: 90,
-      // Inflation elasticity parameters (from empirical literature)
-      deficitToInflation: 0.30,      // % inflation per 1% GDP deficit (range: 0.20-0.40)
-      inflationToTFR: 0.65,          // % TFR decline per 1% inflation (midpoint of -0.5 to -0.8)
+      
+      // === INFLATION MODEL PARAMETERS ===
+      // Starting conditions (BLS Nov 2025)
+      baselineCPI: 2.7,              // Current CPI inflation rate (%)
+      fedTarget: 2.0,                // Fed's inflation target (%)
+      
+      // Deficit → Inflation transmission
+      // Literature: Catao & Terrones (2005), Lin & Chu (2013)
+      // Range: 0.15-0.50pp inflation per 1% GDP deficit depending on conditions
+      deficitToInflationBase: 0.30,  // Base elasticity (near full employment)
+      
+      // Central bank parameters
+      cbCredibility: 85,             // 0-100 scale, affects inflation expectations anchoring
+      realRateFloor: -2.0,           // How negative can real rates go before crisis
+      
+      // Fiscal dominance thresholds
+      // Based on: BIS Papers No. 65, Mercatus (2023), Boston Fed (2025)
+      fiscalStressThreshold: 6.0,    // % GDP - CB starts losing effectiveness
+      fiscalDominanceThreshold: 10.0, // % GDP - CB fully accommodates fiscal
+      
+      // Inflation → TFR transmission
+      // Literature: Adsera (2004, 2011), Sobotka (2011), Kohler & Kohler (2002)
+      inflationToTFRBase: 0.50,      // % TFR decline per 1pp inflation (low inflation)
+      inflationToTFRHigh: 0.80,      // % TFR decline per 1pp (high inflation regime)
+      uncertaintyAmplifier: 1.5,     // Multiplier when expectations unanchor
+      
+      // Economic conditions
       economicSlack: 'near-full',    // 'slack', 'near-full', 'constrained'
       currentGDP: 28000,             // $28T in billions
-      // CBO baseline deficit (FY2025 projection: $1.9T, 6.2% of GDP)
-      baselineDeficit: 1900,         // $1.9T baseline deficit from CBO Jan 2025
-      includeBaselineInPenalty: false, // Whether inflation penalty applies to baseline or just incremental
-      // Current inflation baseline (BLS Nov 2025: 2.7% CPI, Fed target: 2.0%)
-      baselineInflation: 0.7,        // Current inflation above 2% target (pp)
-      fedTarget: 2.0                 // Fed's inflation target (%)
+      
+      // CBO baseline (Jan 2025)
+      baselineDeficit: 1900,         // $1.9T baseline deficit
     };
-
-    function calculateInflationPenalty(deficit) {
-      // Determine which deficit to use for the penalty calculation
-      const policyDeficit = deficit > 0 ? deficit : 0;
-      const totalDeficit = modelParams.baselineDeficit + policyDeficit;
-      
-      // Calculate deficit as % of GDP (always use total for threshold determination)
+    
+    // === INFLATION DYNAMICS MODEL v3 ===
+    // This models the transmission: Fiscal Policy → CB Response → Inflation → TFR
+    function calculateInflationDynamics(policyDeficit, policyOffsets) {
+      const netPolicyImpact = policyDeficit - policyOffsets;
+      const totalDeficit = modelParams.baselineDeficit + netPolicyImpact;
       const deficitPctGDP = (totalDeficit / modelParams.currentGDP) * 100;
+      const policyDeficitPctGDP = (netPolicyImpact / modelParams.currentGDP) * 100;
       
-      // NONLINEAR FISCAL DOMINANCE ADJUSTMENT
-      // Based on: BIS Papers No. 65, Boston Fed (2025), Mercatus Center research, FTPL
-      // Key insight: At high debt/GDP (>100%), central bank loses ability to fight inflation
-      // because rate hikes explode debt service costs, creating a doom loop
-      //
-      // CRITICAL: Under fiscal dominance, inflation is driven by TOTAL deficit expectations,
-      // not just incremental policy. Markets price in the full unsustainability.
-      //
-      // Thresholds calibrated to US context (currently at ~100% debt/GDP):
-      // - <6% deficit/GDP: Standard elasticity, incremental calculation OK
-      // - 6-8% deficit/GDP: Elevated risk, still incremental (1.5x multiplier)
-      // - 8-10% deficit/GDP: Fiscal stress - switch to TOTAL deficit calculation (2.5x)
-      // - >10% deficit/GDP: Fiscal dominance - TOTAL deficit, FTPL-approaching elasticities (4-6x)
-      //
-      // Citations:
-      // - Cochrane, Leeper, Sims (FTPL): elasticities approach 1:1 under fiscal dominance
-      // - Boston Fed (2025): households expecting fiscal dominance revise inflation up
-      // - Mercatus (2023): debt/GDP >100% creates doom loop with rate hikes
-      // - BIS (2012): "threat of fiscal dominance" when debt constrains monetary policy
-      // - Sargent & Wallace (1981): "unpleasant monetarist arithmetic"
-      
-      let fiscalDominanceMultiplier = 1.0;
-      let fiscalStressLevel = 'normal';
-      let useFullDeficit = modelParams.includeBaselineInPenalty; // User setting as baseline
-      
-      if (deficitPctGDP < 6) {
-        fiscalDominanceMultiplier = 1.0;
-        fiscalStressLevel = 'normal';
-      } else if (deficitPctGDP < 8) {
-        // Linear interpolation from 1.0 at 6% to 1.75 at 8%
-        fiscalDominanceMultiplier = 1.0 + (deficitPctGDP - 6) * 0.375;
-        fiscalStressLevel = 'elevated';
-      } else if (deficitPctGDP < 10) {
-        // Fiscal stress: switch to total deficit calculation
-        // Linear interpolation from 1.75 at 8% to 3.5 at 10%
-        fiscalDominanceMultiplier = 1.75 + (deficitPctGDP - 8) * 0.875;
-        fiscalStressLevel = 'high';
-        useFullDeficit = true; // Force total deficit in fiscal stress
-      } else {
-        // Fiscal dominance: approaching FTPL predictions
-        // At 10%: 3.5x, accelerating toward 6x at 15%
-        fiscalDominanceMultiplier = Math.min(6.0, 3.5 + (deficitPctGDP - 10) * 0.5);
-        fiscalStressLevel = 'crisis';
-        useFullDeficit = true; // Force total deficit in crisis
-      }
-      
-      // Economic condition multiplier for deficit→inflation elasticity
+      // Economic slack multiplier
       const slackMultiplier = {
-        'slack': 0.5,           // Significant economic slack: 0.15-0.20%
-        'near-full': 1.0,       // Near full employment: 0.25-0.40%
-        'constrained': 1.75     // At/above capacity + supply constraints: 0.50-1.0%
+        'slack': 0.5,
+        'near-full': 1.0,
+        'constrained': 1.5
       }[modelParams.economicSlack] || 1.0;
       
-      // CRITICAL CHANGE: In fiscal stress/crisis, use TOTAL deficit for penalty
-      // This reflects that markets price in full unsustainability, not just marginal changes
-      const deficitForCalc = useFullDeficit ? totalDeficit : policyDeficit;
+      // ========================================
+      // DETERMINE FISCAL REGIME FIRST
+      // ========================================
+      let cbAbsorptionRate;
+      let fiscalRegime;
       
-      // Calculate deficit-induced inflation
-      const deficitPctForCalc = (deficitForCalc / modelParams.currentGDP) * 100;
-      const deficitInducedInflation = deficitPctForCalc * modelParams.deficitToInflation * slackMultiplier * fiscalDominanceMultiplier;
-      
-      // INFLATION PENALTY LOGIC:
-      // - In NORMAL/ELEVATED: Only policy-induced inflation creates NEW penalty
-      //   (baseline inflation is already reflected in current TFR of 1.62)
-      // - In HIGH/CRISIS: The TOTAL inflation stack matters because Fed loses control
-      //   and baseline inflation can no longer be managed separately
-      //
-      // This reflects the fiscal dominance dynamic: in normal times, the Fed can
-      // offset deficit-driven inflation, but in fiscal stress they cannot.
-      let inflationForPenalty;
-      if (fiscalStressLevel === 'high' || fiscalStressLevel === 'crisis') {
-        // Fiscal dominance: the entire inflation situation becomes destabilizing
-        // Markets lose confidence that Fed can manage even baseline inflation
-        inflationForPenalty = modelParams.baselineInflation + deficitInducedInflation;
+      if (deficitPctGDP < modelParams.fiscalStressThreshold) {
+        cbAbsorptionRate = 0.75;
+        fiscalRegime = 'normal';
+      } else if (deficitPctGDP < 8) {
+        const stress = (deficitPctGDP - modelParams.fiscalStressThreshold) / 2;
+        cbAbsorptionRate = 0.75 - stress * 0.25;
+        fiscalRegime = 'elevated';
+      } else if (deficitPctGDP < modelParams.fiscalDominanceThreshold) {
+        const stress = (deficitPctGDP - 8) / 2;
+        cbAbsorptionRate = 0.50 - stress * 0.30;
+        fiscalRegime = 'stressed';
       } else {
-        // Normal/elevated: only additional policy-induced inflation matters
-        // Fed can still manage baseline, so it's already "priced into" TFR 1.62
-        inflationForPenalty = deficitInducedInflation;
+        cbAbsorptionRate = Math.max(0, 0.20 - (deficitPctGDP - 10) * 0.05);
+        fiscalRegime = 'dominance';
       }
       
-      // Store for display
-      window.lastFiscalStress = { 
-        level: fiscalStressLevel, 
-        multiplier: fiscalDominanceMultiplier,
-        deficitPctGDP: deficitPctGDP,
+      // ========================================
+      // STAGE 1: Deficit → Inflation Pressure
+      // ========================================
+      // FIX #1: REGIME-DEPENDENT ELASTICITY
+      // Normal: 0.30 (standard literature estimate)
+      // Stressed: 0.50 (markets pricing monetization risk)
+      // Dominance: 0.70-1.0+ (FTPL territory, expectations of monetization)
+      
+      let deficitToInflationElasticity = modelParams.deficitToInflationBase;
+      
+      if (fiscalRegime === 'stressed') {
+        deficitToInflationElasticity = modelParams.deficitToInflationBase * 1.7; // ~0.50
+      } else if (fiscalRegime === 'dominance') {
+        // In dominance, elasticity scales with how deep into crisis
+        const dominanceDepth = deficitPctGDP - modelParams.fiscalDominanceThreshold;
+        const dominanceMultiplier = 2.5 + dominanceDepth * 0.3; // 2.5× at threshold, higher as deficit grows
+        deficitToInflationElasticity = modelParams.deficitToInflationBase * Math.min(4.0, dominanceMultiplier);
+      }
+      
+      // Which deficit to use for pressure calculation
+      let deficitForPressure;
+      let deficitPctForPressure;
+      
+      if (fiscalRegime === 'normal' || fiscalRegime === 'elevated') {
+        deficitForPressure = Math.max(0, netPolicyImpact);
+        deficitPctForPressure = Math.max(0, policyDeficitPctGDP);
+      } else {
+        // REGIME SHIFT: TOTAL deficit becomes inflationary
+        deficitForPressure = totalDeficit;
+        deficitPctForPressure = deficitPctGDP;
+      }
+      
+      const rawPressure = deficitPctForPressure * deficitToInflationElasticity * slackMultiplier;
+      
+      // ========================================
+      // STAGE 2: Central Bank Absorption
+      // ========================================
+      const cbAbsorbed = rawPressure * cbAbsorptionRate;
+      const netPressure = rawPressure - cbAbsorbed;
+      
+      // ========================================
+      // STAGE 3: Inflation Expectations
+      // ========================================
+      const projectedCPI = modelParams.baselineCPI + netPressure;
+      
+      let expectationsMultiplier = 1.0;
+      let expectationsAnchored = true;
+      
+      // Regime-dependent thresholds (actual CPI level)
+      let unanchorThreshold = 4.0;
+      let crisisThreshold = 6.0;
+      
+      if (fiscalRegime === 'dominance') {
+        unanchorThreshold = 3.0;
+        crisisThreshold = 4.5;
+      } else if (fiscalRegime === 'stressed') {
+        unanchorThreshold = 3.5;
+        crisisThreshold = 5.0;
+      }
+      
+      if (projectedCPI > unanchorThreshold) {
+        const unanchoringPressure = (projectedCPI - unanchorThreshold) / (crisisThreshold - unanchorThreshold);
+        expectationsMultiplier = 1.0 + Math.min(1.0, unanchoringPressure) * 0.5;
+        expectationsAnchored = projectedCPI < crisisThreshold;
+      }
+      
+      if (!expectationsAnchored) {
+        // Fully unanchored: spiral effect scales with how far past crisis threshold
+        const spiralDepth = Math.min(2.0, (projectedCPI - crisisThreshold) / 3);
+        expectationsMultiplier *= (1.3 + spiralDepth * 0.35);
+      }
+      
+      // CB credibility affects anchoring
+      const credibilityFactor = modelParams.cbCredibility / 100;
+      expectationsMultiplier = 1 + (expectationsMultiplier - 1) * (1.5 - credibilityFactor);
+      
+      // ========================================
+      // STAGE 4: Final Inflation
+      // ========================================
+      const policyInducedInflation = netPressure * expectationsMultiplier;
+      const totalCPI = modelParams.baselineCPI + policyInducedInflation;
+      const totalInflationAboveTarget = totalCPI - modelParams.fedTarget;
+      
+      return {
+        policyDeficit: netPolicyImpact,
         totalDeficit: totalDeficit,
-        useFullDeficit: useFullDeficit,
-        baselineInflation: modelParams.baselineInflation,
-        deficitInducedInflation: deficitInducedInflation,
-        totalInflation: modelParams.baselineInflation + deficitInducedInflation,
-        inflationForPenalty: inflationForPenalty,
-        includesBaseline: (fiscalStressLevel === 'high' || fiscalStressLevel === 'crisis')
+        deficitPctGDP: deficitPctGDP,
+        policyDeficitPctGDP: policyDeficitPctGDP,
+        fiscalRegime: fiscalRegime,
+        deficitForPressure: deficitForPressure,
+        deficitPctForPressure: deficitPctForPressure,
+        deficitToInflationElasticity: deficitToInflationElasticity,
+        rawPressure: rawPressure,
+        slackMultiplier: slackMultiplier,
+        cbAbsorptionRate: cbAbsorptionRate,
+        cbAbsorbed: cbAbsorbed,
+        netPressure: netPressure,
+        expectationsMultiplier: expectationsMultiplier,
+        expectationsAnchored: expectationsAnchored,
+        unanchorThreshold: unanchorThreshold,
+        crisisThreshold: crisisThreshold,
+        baselineCPI: modelParams.baselineCPI,
+        policyInducedInflation: policyInducedInflation,
+        totalCPI: totalCPI,
+        totalInflationAboveTarget: totalInflationAboveTarget
       };
-      
-      if (inflationForPenalty <= 0) return 0;
-      
-      // Stage 2: Inflation → TFR decline
-      // Under fiscal dominance, use higher elasticity (uncertainty effect amplified)
-      let inflationToTFR = modelParams.inflationToTFR;
-      if (fiscalStressLevel === 'crisis') {
-        // In crisis, uncertainty effect increases the fertility impact
-        inflationToTFR = Math.min(1.2, inflationToTFR * 1.5);
-      }
-      
-      const tfrDeclinePct = inflationForPenalty * inflationToTFR;
-      
-      // Convert % TFR decline to absolute TFR points
-      const baseTFR = 1.62;
-      const tfrPenalty = (tfrDeclinePct / 100) * baseTFR;
-      
-      return tfrPenalty;
     }
     
-    // Helper to get inflation estimate for display
+    // === INFLATION → TFR PENALTY ===
+    function calculateInflationTFRPenalty(inflationDynamics) {
+      const inf = inflationDynamics;
+      
+      // ========================================
+      // FIX #2: USE ABSOLUTE CPI LEVEL IN CRISIS
+      // ========================================
+      // Normal/Elevated: Penalty on policy-induced inflation only
+      //   (baseline CPI already reflected in TFR 1.62)
+      // Stressed/Dominance: Penalty on ABSOLUTE CPI level
+      //   (entire inflation environment becomes destabilizing)
+      //
+      // Rationale: When you're at 8% CPI, fertility suffers from 8% inflation,
+      // not from "8% minus whatever baseline was." The lived experience is absolute.
+      
+      let inflationForPenalty;
+      let usingAbsoluteCPI = false;
+      
+      if (inf.fiscalRegime === 'normal' || inf.fiscalRegime === 'elevated') {
+        // Standard case: penalty on new inflation only
+        inflationForPenalty = inf.policyInducedInflation;
+      } else {
+        // CRISIS REGIME: Use absolute CPI level
+        // People experience the full CPI, not a delta from some baseline
+        usingAbsoluteCPI = true;
+        inflationForPenalty = inf.totalCPI;
+        
+        // But we don't penalize for "normal" 2% inflation
+        // Penalty kicks in above 2% (healthy inflation level)
+        inflationForPenalty = Math.max(0, inf.totalCPI - 2.0);
+      }
+      
+      if (inflationForPenalty <= 0) return { penalty: 0, details: inf, inflationForPenalty: 0, usingAbsoluteCPI };
+      
+      // ========================================
+      // FIX #3: STEEPER TFR ELASTICITIES
+      // ========================================
+      // Previous elasticities were way too mild
+      // Literature + Turkey/Russia calibration suggests:
+      // - Moderate inflation: 1-2% TFR decline per pp (not 0.5%)
+      // - High inflation: 3-5% TFR decline per pp
+      // - Crisis inflation: 5-10% TFR decline per pp
+      //
+      // Turkey 2018-2024: ~78% peak inflation, TFR dropped 2.0 → 1.48 (-26%)
+      // That's roughly -0.33% TFR per 1% inflation, but that's cumulative over years.
+      // Annual shock elasticity is higher.
+      
+      let tfrDeclinePct = 0;
+      
+      if (inflationForPenalty <= 2) {
+        // 0-2pp: mild (1.5% TFR decline per pp)
+        tfrDeclinePct = inflationForPenalty * 1.5;
+      } else if (inflationForPenalty <= 5) {
+        // 2-5pp: moderate (3% TFR decline per pp)
+        tfrDeclinePct = 2 * 1.5 + (inflationForPenalty - 2) * 3.0;
+      } else if (inflationForPenalty <= 10) {
+        // 5-10pp: severe (5% TFR decline per pp)
+        tfrDeclinePct = 2 * 1.5 + 3 * 3.0 + (inflationForPenalty - 5) * 5.0;
+      } else if (inflationForPenalty <= 20) {
+        // 10-20pp: crisis (7% TFR decline per pp)
+        tfrDeclinePct = 2 * 1.5 + 3 * 3.0 + 5 * 5.0 + (inflationForPenalty - 10) * 7.0;
+      } else {
+        // >20pp: collapse (10% TFR decline per pp)
+        tfrDeclinePct = 2 * 1.5 + 3 * 3.0 + 5 * 5.0 + 10 * 7.0 + (inflationForPenalty - 20) * 10.0;
+      }
+      
+      // Uncertainty amplification when expectations unanchor
+      if (!inf.expectationsAnchored) {
+        tfrDeclinePct *= modelParams.uncertaintyAmplifier;
+      }
+      
+      // Convert to absolute TFR penalty
+      const baseTFR = 1.62;
+      let penalty = (tfrDeclinePct / 100) * baseTFR;
+      
+      // Cap penalty at reasonable maximum (can't go below ~0.8 TFR historically)
+      penalty = Math.min(penalty, 0.82);
+      
+      return {
+        penalty: penalty,
+        inflationForPenalty: inflationForPenalty,
+        tfrDeclinePct: tfrDeclinePct,
+        usingAbsoluteCPI: usingAbsoluteCPI,
+        uncertaintyApplied: !inf.expectationsAnchored,
+        details: inf
+      };
+    }
+
+    function calculateInflationPenalty(deficit, offsets = 0) {
+      // Use the new inflation dynamics model
+      const inflationDynamics = calculateInflationDynamics(deficit, offsets);
+      const result = calculateInflationTFRPenalty(inflationDynamics);
+      
+      // Store for display
+      window.lastInflationModel = {
+        dynamics: inflationDynamics,
+        tfrResult: result
+      };
+      
+      return result.penalty;
+    }
+    
+    // Helper to get inflation estimate for display (deprecated - use calculateInflationDynamics)
     function calculateInflationEstimate(deficit) {
-      const effectiveDeficit = modelParams.includeBaselineInPenalty 
-        ? modelParams.baselineDeficit + deficit 
-        : deficit;
+      const effectiveDeficit = deficit;
       if (effectiveDeficit <= 0) return 0;
       const slackMultiplier = {
         'slack': 0.5,
         'near-full': 1.0,
-        'constrained': 1.75
+        'constrained': 1.5
       }[modelParams.economicSlack] || 1.0;
       const deficitPctGDP = (effectiveDeficit / modelParams.currentGDP) * 100;
-      return deficitPctGDP * modelParams.deficitToInflation * slackMultiplier;
+      return deficitPctGDP * modelParams.deficitToInflationBase * slackMultiplier;
     }
 
     // TFR drag from tax policies (separate from GDP drag)
@@ -2507,122 +2718,78 @@
       return entitlementReforms.filter(r => r.enabled).reduce((sum, r) => sum + (r.savingsLow + r.savingsHigh) / 2, 0);
     }
 
-    function calculateGDP2075(tfr, gdpDrag, entitlementSavings = 0, deficit = 0) {
-      // Baseline assumptions:
-      // - Current US GDP: ~$28T (2024)
-      // - Baseline real growth: 2.0% per year
-      // - Population effect: higher TFR increases labor force in ~20 years
-      // - Tax drag: reduces annual growth rate (already in GDP growth points)
-      // - Entitlement reform: reduces debt burden, boosts growth
-      // - Deficit: crowds out investment, reduces growth
-      // - Inflation drag: fiscal dominance creates persistent inflation that reduces growth
-      
+    function calculateGDP2075(tfr, gdpDrag, entitlementSavings = 0, deficit = 0, offsets = 0) {
       const currentGDP = 28; // $28T
       const years = 50; // 2025 to 2075
       const baselineGrowth = 0.02; // 2% real growth
       
-      // Tax policy drag on annual growth (gdpDrag is already in annual GDP growth points)
+      // Tax policy drag on annual growth
       const taxDragOnGrowth = gdpDrag;
       
       // Entitlement reform boost on annual growth
-      // Reduced future obligations = lower debt burden = more private investment
-      // CBO estimates: $100B annual deficit reduction → ~0.02-0.05% higher growth long-term
-      // Conservative estimate: $100B savings → 0.03% annual growth boost
       const entitlementBoost = (entitlementSavings / 100) * 0.0003;
       
       // Deficit drag on growth (crowding out effect)
-      // $100B deficit → ~0.02% lower growth from crowding out
-      const deficitDrag = (deficit / 100) * 0.0002;
+      const netDeficit = deficit - offsets;
+      const deficitDrag = Math.max(0, netDeficit / 100) * 0.0002;
       
-      // INFLATION DRAG FROM FISCAL DOMINANCE
-      // High inflation reduces growth through:
-      // - Investment uncertainty and capital misallocation
-      // - Menu costs and price signal distortion  
-      // - Potential monetary tightening causing recessions
-      // - Currency effects and capital flight risk
+      // USE NEW INFLATION MODEL FOR GDP DRAG
+      const inflationDynamics = calculateInflationDynamics(deficit, offsets);
+      
+      // CRITICAL FIX: Use ACTUAL CPI for growth drag, not "above target"
+      // High inflation hurts growth regardless of what the Fed's target is
+      // Historical: Fischer (1993), Barro (1995), Bruno & Easterly (1998)
       //
-      // Literature estimates (Fischer 1993, Barro 1995, Bruno & Easterly 1998):
-      // - Below 5% inflation: minimal growth impact
-      // - 5-10% inflation: ~0.1-0.2% lower growth per inflation point
-      // - Above 10%: nonlinear drag, potentially 0.3-0.5% per point
-      //
-      // Calculate implied inflation from deficit
-      const policyDeficit = deficit > 0 ? deficit : 0;
-      const totalDeficit = modelParams.baselineDeficit + policyDeficit;
-      const deficitPctGDP = (totalDeficit / modelParams.currentGDP) * 100;
+      // Also: STEEPER elasticities, especially at higher levels
+      const totalCPI = inflationDynamics.totalCPI;
       
-      // Get fiscal dominance multiplier (same logic as inflation penalty)
-      let fiscalDominanceMultiplier = 1.0;
-      if (deficitPctGDP < 6) {
-        fiscalDominanceMultiplier = 1.0;
-      } else if (deficitPctGDP < 8) {
-        fiscalDominanceMultiplier = 1.0 + (deficitPctGDP - 6) * 0.25;
-      } else if (deficitPctGDP < 10) {
-        fiscalDominanceMultiplier = 1.5 + (deficitPctGDP - 8) * 0.5;
-      } else {
-        fiscalDominanceMultiplier = Math.min(4.0, 2.5 + (deficitPctGDP - 10) * 0.3);
-      }
-      
-      // Calculate implied annual inflation from deficit
-      const slackMultiplier = {
-        'slack': 0.5,
-        'near-full': 1.0,
-        'constrained': 1.75
-      }[modelParams.economicSlack] || 1.0;
-      
-      // CRITICAL: In fiscal stress/crisis, use TOTAL deficit for inflation calculation
-      // This matches the TFR penalty logic - markets price in full unsustainability
-      let useFullDeficitForGDP = false;
-      if (deficitPctGDP >= 8) {
-        useFullDeficitForGDP = true;
-      }
-      
-      const deficitForInflation = useFullDeficitForGDP ? totalDeficit : policyDeficit;
-      const deficitPctForInflation = (deficitForInflation / modelParams.currentGDP) * 100;
-      const deficitInducedInflation = deficitPctForInflation * modelParams.deficitToInflation * slackMultiplier * fiscalDominanceMultiplier;
-      
-      // TOTAL IMPLIED INFLATION = baseline (above target) + deficit-induced
-      // Baseline inflation already drags on growth; deficit adds to it
-      const totalImpliedInflation = modelParams.baselineInflation + deficitInducedInflation;
-      
-      // Inflation drag on growth (phases in over time as inflation persists)
-      // Literature: Fischer (1993), Barro (1995), Bruno & Easterly (1998)
-      // - Below 2% above target: minimal growth impact
-      // - 2-5% above target: ~0.1% lower growth per inflation point
-      // - Above 5%: nonlinear drag, potentially 0.2-0.3% per point
       let inflationGrowthDrag = 0;
-      if (totalImpliedInflation > 0) {
-        // Nonlinear: higher inflation has disproportionate growth impact
-        if (totalImpliedInflation <= 2) {
-          inflationGrowthDrag = totalImpliedInflation * 0.0003; // 0.03% per pp (mild)
-        } else if (totalImpliedInflation <= 4) {
-          inflationGrowthDrag = 2 * 0.0003 + (totalImpliedInflation - 2) * 0.0007; // 0.07% per pp
-        } else if (totalImpliedInflation <= 7) {
-          inflationGrowthDrag = 2 * 0.0003 + 2 * 0.0007 + (totalImpliedInflation - 4) * 0.0015; // 0.15% per pp
-        } else if (totalImpliedInflation <= 10) {
-          inflationGrowthDrag = 2 * 0.0003 + 2 * 0.0007 + 3 * 0.0015 + (totalImpliedInflation - 7) * 0.002; // 0.2% per pp
+      if (totalCPI > 2) {  // Only drag above 2% (normal inflation)
+        const excessCPI = totalCPI - 2;
+        
+        // STEEPER tiered drag
+        if (excessCPI <= 2) {
+          // 2-4% CPI: mild drag (0.05% per pp)
+          inflationGrowthDrag = excessCPI * 0.0005;
+        } else if (excessCPI <= 4) {
+          // 4-6% CPI: moderate drag (0.15% per pp)
+          inflationGrowthDrag = 2 * 0.0005 + (excessCPI - 2) * 0.0015;
+        } else if (excessCPI <= 6) {
+          // 6-8% CPI: significant drag (0.25% per pp)
+          inflationGrowthDrag = 2 * 0.0005 + 2 * 0.0015 + (excessCPI - 4) * 0.0025;
+        } else if (excessCPI <= 10) {
+          // 8-12% CPI: severe drag (0.4% per pp)
+          inflationGrowthDrag = 2 * 0.0005 + 2 * 0.0015 + 2 * 0.0025 + (excessCPI - 6) * 0.004;
         } else {
-          // Above 10% inflation: severe growth drag (0.3% per pp)
-          inflationGrowthDrag = 2 * 0.0003 + 2 * 0.0007 + 3 * 0.0015 + 3 * 0.002 + (totalImpliedInflation - 10) * 0.003;
+          // >12% CPI: crisis drag (0.6% per pp)
+          inflationGrowthDrag = 2 * 0.0005 + 2 * 0.0015 + 2 * 0.0025 + 4 * 0.004 + (excessCPI - 10) * 0.006;
         }
       }
       
       // Population growth effect on GDP
-      // Higher TFR → larger working-age population in 20-50 years
-      // Rule of thumb: 0.1 TFR increase → 0.05% higher annual growth after 20 years
-      // This is conservative; some estimates are higher
-      const tfrDelta = tfr - 1.62; // Change from baseline
-      const populationGrowthBoost = tfrDelta * 0.005; // 0.5% per 1.0 TFR
+      const tfrDelta = tfr - 1.62;
+      const populationGrowthBoost = tfrDelta * 0.005;
+      
+      // FISCAL DOMINANCE GROWTH PENALTY
+      // In dominance: additional drag from capital flight, uncertainty, institutional decay
+      let dominanceGrowthDrag = 0;
+      if (inflationDynamics.fiscalRegime === 'dominance') {
+        // Scale with how deep into dominance we are
+        const dominanceDepth = inflationDynamics.deficitPctGDP - modelParams.fiscalDominanceThreshold;
+        dominanceGrowthDrag = 0.005 + dominanceDepth * 0.002; // 0.5% base + 0.2% per point over threshold
+        dominanceGrowthDrag = Math.min(0.02, dominanceGrowthDrag); // Cap at 2%
+      } else if (inflationDynamics.fiscalRegime === 'stressed') {
+        dominanceGrowthDrag = 0.003;
+      }
       
       // Store for display
       window.lastGDPCalc = {
-        baselineInflation: modelParams.baselineInflation,
-        deficitInducedInflation: deficitInducedInflation,
-        impliedInflation: totalImpliedInflation,
+        totalCPI: totalCPI,
         inflationGrowthDrag: inflationGrowthDrag,
-        fiscalDominanceMultiplier: fiscalDominanceMultiplier,
-        deficitPctGDP: deficitPctGDP,
-        useFullDeficit: useFullDeficitForGDP
+        dominanceGrowthDrag: dominanceGrowthDrag,
+        fiscalRegime: inflationDynamics.fiscalRegime,
+        deficitPctGDP: inflationDynamics.deficitPctGDP,
+        cbAbsorptionRate: inflationDynamics.cbAbsorptionRate
       };
       
       // Phased effects
@@ -2630,7 +2797,7 @@
       for (let year = 1; year <= years; year++) {
         let annualGrowth = baselineGrowth - taxDragOnGrowth + entitlementBoost - deficitDrag;
         
-        // Inflation drag phases in over first 10 years (takes time to become persistent)
+        // Inflation drag phases in over first 10 years
         if (year <= 10) {
           const phaseIn = year / 10;
           annualGrowth -= inflationGrowthDrag * phaseIn;
@@ -2638,9 +2805,19 @@
           annualGrowth -= inflationGrowthDrag;
         }
         
+        // Fiscal dominance drag phases in over first 5 years
+        if (dominanceGrowthDrag > 0) {
+          if (year <= 5) {
+            const phaseIn = year / 5;
+            annualGrowth -= dominanceGrowthDrag * phaseIn;
+          } else {
+            annualGrowth -= dominanceGrowthDrag;
+          }
+        }
+        
         // Population effect phases in after year 20
         if (year > 20) {
-          const phaseIn = Math.min(1, (year - 20) / 10); // Full effect by year 30
+          const phaseIn = Math.min(1, (year - 20) / 10);
           annualGrowth += populationGrowthBoost * phaseIn;
         }
         
@@ -2651,7 +2828,7 @@
     }
 
     // Baseline GDP for comparison (no policy changes)
-    const baselineGDP2075 = calculateGDP2075(1.62, 0, 0, 0);
+    const baselineGDP2075 = calculateGDP2075(1.62, 0, 0, 0, 0);
 
     function calculateFiscal() {
       let spending = 0, offsets = 0;
@@ -2692,8 +2869,9 @@
       let netLow = grossLow * factor, netHigh = grossHigh * factor;
 
       const fiscal = calculateFiscal();
-      const deficit = fiscal.net > 0 ? fiscal.net : 0;
-      const inflationPenalty = calculateInflationPenalty(deficit);
+      const deficit = fiscal.spending;  // Gross spending
+      const offsets = fiscal.offsets;   // Revenue offsets
+      const inflationPenalty = calculateInflationPenalty(deficit, offsets);
       netLow -= inflationPenalty;
       netHigh -= inflationPenalty;
 
@@ -2702,7 +2880,17 @@
       netLow -= tfrDrag;
       netHigh -= tfrDrag;
 
-      return { low: baseTFR + netLow, mid: baseTFR + (netLow + netHigh) / 2, high: baseTFR + netHigh, inflationPenalty, tfrDrag, gdpDrag, deficit };
+      return { 
+        low: baseTFR + netLow, 
+        mid: baseTFR + (netLow + netHigh) / 2, 
+        high: baseTFR + netHigh, 
+        inflationPenalty, 
+        tfrDrag, 
+        gdpDrag, 
+        deficit: fiscal.net,  // Net deficit for display
+        spending: fiscal.spending,
+        offsets: fiscal.offsets
+      };
     }
 
     function updateDisplay() {
@@ -2787,35 +2975,74 @@
         const inflationBreakdown = document.getElementById('inflation-calc-breakdown');
         const fiscalStressIndicator = document.getElementById('fiscal-stress-indicator');
         
-        if (inflationBreakdown && window.lastFiscalStress) {
-          const fs = window.lastFiscalStress;
+        if (inflationBreakdown && window.lastInflationModel) {
+          const model = window.lastInflationModel;
+          const d = model.dynamics;
+          const r = model.tfrResult;
           
-          // Build detailed breakdown
           let breakdownHtml = '';
           
-          if (fs.includesBaseline) {
-            // In fiscal stress/crisis: show full stack
-            breakdownHtml += `<span style="color: #c62828;"><strong>⚠ Fiscal dominance:</strong> baseline inflation now counts</span><br>`;
-            breakdownHtml += `Baseline: ${fs.baselineInflation.toFixed(1)}pp above target<br>`;
-            if (fs.deficitInducedInflation > 0.01) {
-              const deficitMode = fs.useFullDeficit ? 'TOTAL' : 'incremental';
-              const deficitUsed = fs.useFullDeficit ? fs.totalDeficit : tfr.deficit;
-              breakdownHtml += `+ Deficit ($${Math.round(deficitUsed).toLocaleString()}B ${deficitMode}) × ${fs.multiplier.toFixed(1)}×: +${fs.deficitInducedInflation.toFixed(1)}pp<br>`;
-            }
-            breakdownHtml += `<strong>= Penalized inflation: ${fs.inflationForPenalty.toFixed(1)}pp → −${tfr.inflationPenalty.toFixed(2)} TFR</strong>`;
-          } else {
-            // Normal/elevated: only policy-induced
-            if (fs.deficitInducedInflation > 0.01) {
-              const deficitMode = fs.useFullDeficit ? 'TOTAL' : 'incremental';
-              const deficitUsed = fs.useFullDeficit ? fs.totalDeficit : tfr.deficit;
-              breakdownHtml += `Baseline: ${fs.baselineInflation.toFixed(1)}pp (already in TFR 1.62)<br>`;
-              breakdownHtml += `<strong>+ Policy deficit:</strong> $${Math.round(deficitUsed).toLocaleString()}B × ${fs.multiplier.toFixed(1)}× = +${fs.deficitInducedInflation.toFixed(1)}pp<br>`;
-              breakdownHtml += `<strong>= New penalty: −${tfr.inflationPenalty.toFixed(2)} TFR</strong>`;
-            } else {
-              breakdownHtml += `Baseline: ${fs.baselineInflation.toFixed(1)}pp above target<br>`;
-              breakdownHtml += `<em>No policy deficit → no additional penalty</em>`;
-            }
+          // Header showing projected CPI
+          const cpiColor = d.totalCPI > 8 ? '#b71c1c' : d.totalCPI > 6 ? '#c62828' : d.totalCPI > 4 ? '#ef6c00' : '#2e7d32';
+          breakdownHtml += `<div style="font-size: 16px; font-weight: bold; margin-bottom: 8px; color: ${cpiColor};">`;
+          breakdownHtml += `Projected CPI: ${d.totalCPI.toFixed(1)}%`;
+          if (!d.expectationsAnchored) {
+            breakdownHtml += ` <span style="background: #c62828; color: white; padding: 2px 6px; font-size: 10px;">UNANCHORED</span>`;
           }
+          breakdownHtml += `</div>`;
+          
+          // Regime warning
+          if (d.fiscalRegime === 'stressed' || d.fiscalRegime === 'dominance') {
+            const regimeColor = d.fiscalRegime === 'dominance' ? '#b71c1c' : '#c62828';
+            breakdownHtml += `<div style="background: ${regimeColor}; color: white; padding: 6px 8px; margin-bottom: 8px; font-size: 11px;">`;
+            breakdownHtml += `<strong>⚠ REGIME SHIFT:</strong> Using TOTAL deficit + ${d.deficitToInflationElasticity.toFixed(2)} elasticity (${(d.deficitToInflationElasticity / modelParams.deficitToInflationBase).toFixed(1)}× base)`;
+            breakdownHtml += `</div>`;
+          }
+          
+          // Stage 1
+          breakdownHtml += `<div style="border-left: 3px solid #1976d2; padding-left: 8px; margin: 6px 0;">`;
+          breakdownHtml += `<strong>1. Deficit Pressure</strong><br>`;
+          breakdownHtml += `${d.deficitPctForPressure.toFixed(1)}% GDP × ${d.deficitToInflationElasticity.toFixed(2)} × ${d.slackMultiplier}× = <strong>${d.rawPressure.toFixed(1)}pp</strong>`;
+          breakdownHtml += `</div>`;
+          
+          // Stage 2
+          const cbColor = d.cbAbsorptionRate > 0.5 ? '#2e7d32' : d.cbAbsorptionRate > 0.2 ? '#ef6c00' : '#c62828';
+          breakdownHtml += `<div style="border-left: 3px solid ${cbColor}; padding-left: 8px; margin: 6px 0;">`;
+          breakdownHtml += `<strong>2. CB Absorption</strong><br>`;
+          breakdownHtml += `CB absorbs ${(d.cbAbsorptionRate * 100).toFixed(0)}% → net: <strong>${d.netPressure.toFixed(1)}pp</strong>`;
+          breakdownHtml += `</div>`;
+          
+          // Stage 3
+          const expColor = d.expectationsAnchored ? '#2e7d32' : '#c62828';
+          breakdownHtml += `<div style="border-left: 3px solid ${expColor}; padding-left: 8px; margin: 6px 0;">`;
+          breakdownHtml += `<strong>3. Expectations</strong> `;
+          breakdownHtml += d.expectationsAnchored ? `(anchored)` : `<span style="color: #c62828; font-weight: bold;">UNANCHORED</span>`;
+          breakdownHtml += `<br>`;
+          breakdownHtml += `${d.expectationsMultiplier.toFixed(2)}× → policy inflation: <strong>${d.policyInducedInflation.toFixed(1)}pp</strong>`;
+          breakdownHtml += `</div>`;
+          
+          // Stage 4 - TFR
+          breakdownHtml += `<div style="border-left: 3px solid #7b1fa2; padding-left: 8px; margin: 6px 0;">`;
+          breakdownHtml += `<strong>4. TFR Impact</strong><br>`;
+          if (r.usingAbsoluteCPI) {
+            breakdownHtml += `<span style="color: #c62828;">Using ABSOLUTE CPI: ${d.totalCPI.toFixed(1)}% − 2% floor = ${r.inflationForPenalty.toFixed(1)}pp</span><br>`;
+          } else {
+            breakdownHtml += `Policy-induced: ${r.inflationForPenalty.toFixed(1)}pp<br>`;
+          }
+          breakdownHtml += `TFR decline: <strong>${r.tfrDeclinePct.toFixed(1)}%</strong>`;
+          if (r.uncertaintyApplied) {
+            breakdownHtml += ` <span style="color: #c62828;">(×${modelParams.uncertaintyAmplifier} unanchored)</span>`;
+          }
+          breakdownHtml += `</div>`;
+          
+          // Total
+          const penaltyColor = tfr.inflationPenalty > 0.3 ? '#b71c1c' : tfr.inflationPenalty > 0.15 ? '#c62828' : '#333';
+          breakdownHtml += `<div style="font-size: 14px; font-weight: bold; margin-top: 10px; padding: 8px; background: #f5f5f5; border-radius: 4px; color: ${penaltyColor};">`;
+          breakdownHtml += `TOTAL PENALTY: −${tfr.inflationPenalty.toFixed(2)} TFR`;
+          if (tfr.inflationPenalty > 0.3) {
+            breakdownHtml += ` <span style="font-size: 11px;">(SEVERE)</span>`;
+          }
+          breakdownHtml += `</div>`;
           
           inflationBreakdown.innerHTML = breakdownHtml;
           
@@ -2825,29 +3052,28 @@
             const stressColors = {
               'normal': { bg: '#e8f5e9', text: '#2e7d32' },
               'elevated': { bg: '#fff3e0', text: '#ef6c00' },
-              'high': { bg: '#ffebee', text: '#c62828' },
-              'crisis': { bg: '#c62828', text: '#ffffff' }
+              'stressed': { bg: '#ffebee', text: '#c62828' },
+              'dominance': { bg: '#c62828', text: '#ffffff' }
             };
             const stressLabels = {
               'normal': 'Normal',
               'elevated': 'Elevated Risk',
-              'high': '⚠ Fiscal Stress',
-              'crisis': '🚨 FISCAL DOMINANCE'
+              'stressed': '⚠ Fiscal Stress',
+              'dominance': '🚨 FISCAL DOMINANCE'
             };
-            const colors = stressColors[fs.level] || stressColors.normal;
+            const colors = stressColors[d.fiscalRegime] || stressColors.normal;
             fiscalStressIndicator.style.background = colors.bg;
             fiscalStressIndicator.style.color = colors.text;
             
-            // Show that we switched to total deficit calculation
             let modeNote = '';
-            if (fs.useFullDeficit && (fs.level === 'high' || fs.level === 'crisis')) {
-              modeNote = ' — using TOTAL deficit (markets price unsustainability)';
+            if (d.fiscalRegime === 'stressed' || d.fiscalRegime === 'dominance') {
+              modeNote = ` — CB absorbs only ${(d.cbAbsorptionRate * 100).toFixed(0)}%`;
             }
-            fiscalStressIndicator.textContent = `${stressLabels[fs.level]} (${fs.multiplier.toFixed(1)}× @ ${fs.deficitPctGDP.toFixed(1)}% GDP)${modeNote}`;
+            fiscalStressIndicator.textContent = `${stressLabels[d.fiscalRegime]} @ ${d.deficitPctGDP.toFixed(1)}% GDP${modeNote}`;
           }
           
-          // Trigger fiscal crisis modal when entering high stress
-          if ((fs.level === 'high' || fs.level === 'crisis') && !window.fiscalCrisisWarningShown) {
+          // Trigger fiscal crisis modal when entering dominance
+          if (d.fiscalRegime === 'dominance' && !window.fiscalCrisisWarningShown) {
             window.fiscalCrisisWarningShown = true;
             document.getElementById('fiscal-crisis-modal').classList.add('visible');
           }
@@ -2865,8 +3091,9 @@
 
       // GDP 2075 projection with clean additive decomposition
       const entitlementSavings = calculateEntitlementSavings();
-      const deficit = tfr.deficit;
-      const gdp2075 = calculateGDP2075(tfr.mid, tfr.gdpDrag, entitlementSavings, deficit);
+      const deficit = tfr.spending;  // Gross spending
+      const offsets = tfr.offsets;   // Revenue offsets
+      const gdp2075 = calculateGDP2075(tfr.mid, tfr.gdpDrag, entitlementSavings, deficit, offsets);
       const gdpEl = document.getElementById('gdp-projection');
       const gdpChangeEl = document.getElementById('gdp-change');
       
@@ -2893,17 +3120,18 @@
       // We need to temporarily disable baseline deficit for this calculation
       const savedBaseline = modelParams.baselineDeficit;
       modelParams.baselineDeficit = 0; // Temporarily zero out for decomposition
-      const gdpFiscalOnly = calculateGDP2075(1.62, 0, entitlementSavings, 0); // No deficit = no inflation drag
+      const gdpFiscalOnly = calculateGDP2075(1.62, 0, entitlementSavings, 0, 0); // No deficit = no inflation drag
       modelParams.baselineDeficit = savedBaseline; // Restore
       
       // Simple crowding out effect (linear, without inflation)
-      const crowdingOutDrag = (deficit / 100) * 0.0002; // Same as in the function
+      const netDeficit = deficit - offsets;
+      const crowdingOutDrag = Math.max(0, netDeficit / 100) * 0.0002; // Same as in the function
       const crowdingOutGDP = 28 * Math.pow(1 + (0.02 - crowdingOutDrag), 50);
       const fiscalEffect = (gdpFiscalOnly - baselineGDP2075) + (crowdingOutGDP - baselineGDP2075);
       document.getElementById('gdp-fiscal-val').textContent = fiscalEffect >= 0 ? `+$${fiscalEffect.toFixed(0)}T` : `−$${Math.abs(fiscalEffect).toFixed(0)}T`;
       
       // Tax drag effect only
-      const gdpTaxOnly = calculateGDP2075(1.62, tfr.gdpDrag, 0, 0);
+      const gdpTaxOnly = calculateGDP2075(1.62, tfr.gdpDrag, 0, 0, 0);
       const taxEffect = gdpTaxOnly - baselineGDP2075;
       document.getElementById('gdp-tax-drag-val').textContent = taxEffect >= 0 ? `+$${taxEffect.toFixed(0)}T` : `−$${Math.abs(taxEffect).toFixed(0)}T`;
       
@@ -2914,23 +3142,25 @@
         inflationRow.style.display = 'flex';
         // Calculate GDP loss from inflation drag over 50 years
         const dragPerYear = window.lastGDPCalc.inflationGrowthDrag;
+        const totalDrag = dragPerYear + (window.lastGDPCalc.dominanceGrowthDrag || 0);
         const gdpWithoutInflationDrag = 28 * Math.pow(1.02, 50);
-        const gdpWithInflationDrag = 28 * Math.pow(1.02 - dragPerYear, 50);
+        const gdpWithInflationDrag = 28 * Math.pow(1.02 - totalDrag, 50);
         const inflationEffect = gdpWithInflationDrag - gdpWithoutInflationDrag;
         inflationVal.textContent = `−$${Math.abs(inflationEffect).toFixed(0)}T`;
-        inflationVal.title = `${(window.lastGDPCalc.impliedInflation).toFixed(1)}pp inflation → ${(dragPerYear * 100).toFixed(2)}% lower annual growth`;
+        inflationVal.title = `${(window.lastGDPCalc.totalInflation || 0).toFixed(1)}pp inflation → ${(totalDrag * 100).toFixed(2)}% lower annual growth`;
       } else {
         inflationRow.style.display = 'none';
       }
       
       // Population effect only
-      const gdpPopOnly = calculateGDP2075(tfr.mid, 0, 0, 0);
+      const gdpPopOnly = calculateGDP2075(tfr.mid, 0, 0, 0, 0);
       const popEffect = gdpPopOnly - baselineGDP2075;
       document.getElementById('gdp-pop-val').textContent = popEffect >= 0 ? `+$${popEffect.toFixed(0)}T` : `−$${Math.abs(popEffect).toFixed(0)}T`;
       
       // Interaction residual (total - sum of individual effects)
-      const inflationEffect = window.lastGDPCalc ? -(28 * Math.pow(1.02, 50) - 28 * Math.pow(1.02 - window.lastGDPCalc.inflationGrowthDrag, 50)) : 0;
-      const sumOfEffects = fiscalEffect + taxEffect + popEffect + (inflationEffect < 0 ? inflationEffect : 0);
+      const totalDragCalc = window.lastGDPCalc ? window.lastGDPCalc.inflationGrowthDrag + (window.lastGDPCalc.dominanceGrowthDrag || 0) : 0;
+      const inflationEffectForSum = totalDragCalc > 0 ? -(28 * Math.pow(1.02, 50) - 28 * Math.pow(1.02 - totalDragCalc, 50)) : 0;
+      const sumOfEffects = fiscalEffect + taxEffect + popEffect + (inflationEffectForSum < 0 ? inflationEffectForSum : 0);
       const interactionResidual = gdpDelta - sumOfEffects;
       document.getElementById('gdp-interaction-val').textContent = interactionResidual >= 0 ? `+$${interactionResidual.toFixed(0)}T` : `−$${Math.abs(interactionResidual).toFixed(0)}T`;
       
@@ -3585,16 +3815,16 @@
       defInflCard.innerHTML = `
         <div class="slider-header">
           <span class="params-title">Deficit → Inflation</span>
-          <span class="slider-value">${modelParams.deficitToInflation.toFixed(2)}% per 1% GDP</span>
+          <span class="slider-value">${modelParams.deficitToInflationBase.toFixed(2)}% per 1% GDP</span>
         </div>
-        <input type="range" min="10" max="60" value="${modelParams.deficitToInflation * 100}">
+        <input type="range" min="10" max="60" value="${modelParams.deficitToInflationBase * 100}">
         <p class="params-description">Central: 0.30% (SF Fed, NY Fed, Bernanke-Blanchard)</p>
       `;
       const defInflSlider = defInflCard.querySelector('input');
       const defInflValue = defInflCard.querySelector('.slider-value');
       defInflSlider.addEventListener('input', () => {
-        modelParams.deficitToInflation = parseInt(defInflSlider.value) / 100;
-        defInflValue.textContent = `${modelParams.deficitToInflation.toFixed(2)}% per 1% GDP`;
+        modelParams.deficitToInflationBase = parseInt(defInflSlider.value) / 100;
+        defInflValue.textContent = `${modelParams.deficitToInflationBase.toFixed(2)}% per 1% GDP`;
         updateDisplay();
       });
       container.appendChild(defInflCard);
@@ -3604,20 +3834,40 @@
       inflTfrCard.className = 'params-card';
       inflTfrCard.innerHTML = `
         <div class="slider-header">
-          <span class="params-title">Inflation → TFR</span>
-          <span class="slider-value">${modelParams.inflationToTFR.toFixed(2)}% decline per 1% CPI</span>
+          <span class="params-title">Inflation → TFR (Low)</span>
+          <span class="slider-value">${modelParams.inflationToTFRBase.toFixed(2)}% decline per 1pp</span>
         </div>
-        <input type="range" min="30" max="100" value="${modelParams.inflationToTFR * 100}">
-        <p class="params-description">Range: 0.5-0.8% (Pacific Islands, Comolli, Adsera-Menendez)</p>
+        <input type="range" min="30" max="100" value="${modelParams.inflationToTFRBase * 100}">
+        <p class="params-description">Base elasticity for low inflation (0-2pp above target)</p>
       `;
       const inflTfrSlider = inflTfrCard.querySelector('input');
       const inflTfrValue = inflTfrCard.querySelector('.slider-value');
       inflTfrSlider.addEventListener('input', () => {
-        modelParams.inflationToTFR = parseInt(inflTfrSlider.value) / 100;
-        inflTfrValue.textContent = `${modelParams.inflationToTFR.toFixed(2)}% decline per 1% CPI`;
+        modelParams.inflationToTFRBase = parseInt(inflTfrSlider.value) / 100;
+        inflTfrValue.textContent = `${modelParams.inflationToTFRBase.toFixed(2)}% decline per 1pp`;
         updateDisplay();
       });
       container.appendChild(inflTfrCard);
+      
+      // High inflation TFR elasticity slider
+      const inflTfrHighCard = document.createElement('div');
+      inflTfrHighCard.className = 'params-card';
+      inflTfrHighCard.innerHTML = `
+        <div class="slider-header">
+          <span class="params-title">Inflation → TFR (High)</span>
+          <span class="slider-value">${modelParams.inflationToTFRHigh.toFixed(2)}% decline per 1pp</span>
+        </div>
+        <input type="range" min="50" max="150" value="${modelParams.inflationToTFRHigh * 100}">
+        <p class="params-description">Elevated elasticity for high inflation (2pp+ above target)</p>
+      `;
+      const inflTfrHighSlider = inflTfrHighCard.querySelector('input');
+      const inflTfrHighValue = inflTfrHighCard.querySelector('.slider-value');
+      inflTfrHighSlider.addEventListener('input', () => {
+        modelParams.inflationToTFRHigh = parseInt(inflTfrHighSlider.value) / 100;
+        inflTfrHighValue.textContent = `${modelParams.inflationToTFRHigh.toFixed(2)}% decline per 1pp`;
+        updateDisplay();
+      });
+      container.appendChild(inflTfrHighCard);
       
       // Baseline Deficit Section Header
       const baselineHeader = document.createElement('div');
@@ -3632,26 +3882,47 @@
       container.appendChild(baselineHeader);
       
       // Current inflation slider
+      const baselineAboveTarget = modelParams.baselineCPI - modelParams.fedTarget;
       const inflationCard = document.createElement('div');
       inflationCard.className = 'params-card';
       inflationCard.innerHTML = `
         <div class="slider-header">
-          <span class="params-title">Current Inflation</span>
-          <span class="slider-value">${(modelParams.fedTarget + modelParams.baselineInflation).toFixed(1)}% (${modelParams.baselineInflation > 0 ? '+' : ''}${modelParams.baselineInflation.toFixed(1)}pp above target)</span>
+          <span class="params-title">Current CPI</span>
+          <span class="slider-value">${modelParams.baselineCPI.toFixed(1)}% (${baselineAboveTarget > 0 ? '+' : ''}${baselineAboveTarget.toFixed(1)}pp above target)</span>
         </div>
-        <input type="range" min="0" max="40" step="1" value="${modelParams.baselineInflation * 10}">
-        <p class="params-description">BLS Nov 2025: 2.7% CPI. Fed target: 2.0%. Set to 0 to model from neutral baseline.</p>
+        <input type="range" min="20" max="80" step="1" value="${modelParams.baselineCPI * 10}">
+        <p class="params-description">BLS Nov 2025: 2.7% CPI. Fed target: 2.0%.</p>
       `;
       const inflationSlider = inflationCard.querySelector('input');
       const inflationValue = inflationCard.querySelector('.slider-value');
       inflationSlider.addEventListener('input', () => {
-        modelParams.baselineInflation = parseInt(inflationSlider.value) / 10;
-        const total = modelParams.fedTarget + modelParams.baselineInflation;
-        const delta = modelParams.baselineInflation > 0 ? `+${modelParams.baselineInflation.toFixed(1)}pp above target` : 'at target';
-        inflationValue.textContent = `${total.toFixed(1)}% (${delta})`;
+        modelParams.baselineCPI = parseInt(inflationSlider.value) / 10;
+        const aboveTarget = modelParams.baselineCPI - modelParams.fedTarget;
+        const delta = aboveTarget > 0 ? `+${aboveTarget.toFixed(1)}pp above target` : aboveTarget < 0 ? `${aboveTarget.toFixed(1)}pp below target` : 'at target';
+        inflationValue.textContent = `${modelParams.baselineCPI.toFixed(1)}% (${delta})`;
         updateDisplay();
       });
       container.appendChild(inflationCard);
+      
+      // CB Credibility slider
+      const cbCredCard = document.createElement('div');
+      cbCredCard.className = 'params-card';
+      cbCredCard.innerHTML = `
+        <div class="slider-header">
+          <span class="params-title">CB Credibility</span>
+          <span class="slider-value">${modelParams.cbCredibility}%</span>
+        </div>
+        <input type="range" min="0" max="100" step="5" value="${modelParams.cbCredibility}">
+        <p class="params-description">Fed credibility affects inflation expectations anchoring. US Fed ~85%. Turkey post-2021: ~30%.</p>
+      `;
+      const cbCredSlider = cbCredCard.querySelector('input');
+      const cbCredValue = cbCredCard.querySelector('.slider-value');
+      cbCredSlider.addEventListener('input', () => {
+        modelParams.cbCredibility = parseInt(cbCredSlider.value);
+        cbCredValue.textContent = `${modelParams.cbCredibility}%`;
+        updateDisplay();
+      });
+      container.appendChild(cbCredCard);
       
       // Baseline deficit slider
       const baselineCard = document.createElement('div');
@@ -3673,31 +3944,25 @@
       });
       container.appendChild(baselineCard);
       
-      // Toggle for including baseline in inflation penalty
-      const penaltyToggleCard = document.createElement('div');
-      penaltyToggleCard.className = 'params-card';
-      penaltyToggleCard.innerHTML = `
+      // Fiscal dominance threshold slider
+      const fdThresholdCard = document.createElement('div');
+      fdThresholdCard.className = 'params-card';
+      fdThresholdCard.innerHTML = `
         <div class="slider-header">
-          <span class="params-title">Inflation Penalty Scope</span>
-          <select id="penalty-scope-select" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 8px; border: 1px solid #ccc; background: white;">
-            <option value="incremental" ${!modelParams.includeBaselineInPenalty ? 'selected' : ''}>Incremental Only</option>
-            <option value="total" ${modelParams.includeBaselineInPenalty ? 'selected' : ''}>Total Deficit</option>
-          </select>
+          <span class="params-title">Fiscal Dominance Threshold</span>
+          <span class="slider-value">${modelParams.fiscalDominanceThreshold}% GDP</span>
         </div>
-        <p class="params-description" id="penalty-scope-desc">Incremental: penalty on new policy spending only (baseline already priced in)</p>
+        <input type="range" min="8" max="15" step="0.5" value="${modelParams.fiscalDominanceThreshold}">
+        <p class="params-description">Deficit/GDP at which CB loses control. Default 10%. Higher = more fiscal space before crisis.</p>
       `;
-      const penaltyScopeSelect = penaltyToggleCard.querySelector('select');
-      const penaltyScopeDesc = penaltyToggleCard.querySelector('#penalty-scope-desc');
-      const scopeDescriptions = {
-        'incremental': 'Incremental: penalty on new policy spending only (baseline already priced in)',
-        'total': 'Total: penalty on full deficit (assumes markets haven\'t priced in baseline)'
-      };
-      penaltyScopeSelect.addEventListener('change', () => {
-        modelParams.includeBaselineInPenalty = penaltyScopeSelect.value === 'total';
-        penaltyScopeDesc.textContent = scopeDescriptions[penaltyScopeSelect.value];
+      const fdSlider = fdThresholdCard.querySelector('input');
+      const fdValue = fdThresholdCard.querySelector('.slider-value');
+      fdSlider.addEventListener('input', () => {
+        modelParams.fiscalDominanceThreshold = parseFloat(fdSlider.value);
+        fdValue.textContent = `${modelParams.fiscalDominanceThreshold}% GDP`;
         updateDisplay();
       });
-      container.appendChild(penaltyToggleCard);
+      container.appendChild(fdThresholdCard);
     }
 
     function initTabs() {
@@ -3802,12 +4067,14 @@
       });
     }
 
-    function getPersonalityType(tfr, fiscal, policies, entitlements, taxes, illiberalPolicies) {
+    function getPersonalityType(tfr, fiscal, policies, entitlements, taxes, illiberalPolicies, gdp2075 = 75) {
       const tfrMid = tfr.mid;
       const netFiscal = fiscal.net;
       const policyCount = policies;
       const entitlementCount = entitlements;
       const taxCount = taxes;
+      const gdpBaseline = 75; // $75T baseline
+      const gdpChange = ((gdp2075 - gdpBaseline) / gdpBaseline) * 100; // % change
       
       // Check which illiberal policies are enabled
       const hardAuthoritarian = illiberalPolicies.filter(p => 
@@ -3833,8 +4100,14 @@
         return { icon: '🎭', title: 'The Soft Authoritarian', desc: 'Nudges with teeth. You prefer carrots and sticks over outright bans.' };
       }
       
-      if (tfrMid >= 2.1 && netFiscal <= 0) {
-        return { icon: '🏆', title: 'The Unicorn', desc: 'Replacement fertility AND fiscal balance? You found the holy grail.' };
+      // The Unicorn: Replacement fertility + fiscal balance + didn't tank growth
+      if (tfrMid >= 2.1 && netFiscal <= 0 && gdpChange > -20) {
+        return { icon: '🏆', title: 'The Unicorn', desc: 'Replacement fertility AND fiscal balance AND growth? You found the holy grail.' };
+      }
+      
+      // NEW: The Growth Sacrificer - got replacement + surplus but tanked GDP
+      if (tfrMid >= 2.1 && netFiscal <= 0 && gdpChange <= -20) {
+        return { icon: '⚖️', title: 'The Growth Sacrificer', desc: 'Replacement fertility and fiscal surplus, but at what cost? GDP takes a hit.' };
       }
       
       if (tfrMid >= 2.1 && netFiscal > 500) {
@@ -3842,7 +4115,7 @@
       }
       
       if (tfrMid >= 2.0 && entitlementCount >= 4) {
-        return { icon: '⚖️', title: 'The Intergenerational Warrior', desc: 'You\'re willing to take on the AARP. Respect.' };
+        return { icon: '🗡️', title: 'The Intergenerational Warrior', desc: 'You\'re willing to take on the AARP. Respect.' };
       }
       
       if (taxCount >= 4 && entitlementCount === 0) {
@@ -3926,20 +4199,21 @@
       const tfr = calculateTFR();
       const fiscal = calculateFiscal();
       const entitlementSavings = calculateEntitlementSavings();
-      const gdp2075 = calculateGDP2075(tfr.mid, tfr.gdpDrag, entitlementSavings, tfr.deficit);
+      const gdp2075 = calculateGDP2075(tfr.mid, tfr.gdpDrag, entitlementSavings, tfr.spending, tfr.offsets);
 
       const enabledPolicies = [...liberalPolicies].filter(p => p.enabled);
       const enabledIlliberal = [...illiberalPolicies].filter(p => p.enabled);
       const enabledEntitlements = entitlementReforms.filter(r => r.enabled);
       const enabledTaxes = taxIncreases.filter(t => t.enabled);
 
-      // Get personality type
+      // Get personality type (now includes GDP check)
       const type = getPersonalityType(
         tfr, fiscal, 
         enabledPolicies.length, 
         enabledEntitlements.length, 
         enabledTaxes.length,
-        illiberalPolicies
+        illiberalPolicies,
+        gdp2075
       );
 
       document.getElementById('share-type-icon').textContent = type.icon;
