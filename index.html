@@ -1578,11 +1578,18 @@
     }
 
     @media (max-width: 500px) {
+      .splash-overlay {
+        align-items: flex-start;
+        padding-top: 30px;
+        padding-bottom: 30px;
+      }
+      .splash-icon { font-size: 36px; margin-bottom: 12px; }
+      .splash-header { margin-bottom: 20px; }
       .splash-title { font-size: 1.75rem; }
       .splash-subtitle { font-size: 1rem; }
       .splash-challenge { flex-direction: column; gap: 12px; }
       .splash-goal-value, .splash-constraint-value { font-size: 1.1rem; }
-      .splash-caveats { padding: 16px; }
+      .splash-caveats { padding: 16px; margin-bottom: 20px; }
       .splash-caveats-list { font-size: 0.9rem; }
       .splash-start-btn { padding: 14px 36px; font-size: 1rem; }
     }
@@ -4077,7 +4084,8 @@
       const inflationMethodology = document.getElementById('inflation-methodology');
       const inflationBack = inflationMethodology.querySelector('.penalty-back-button');
       
-      inflationBadge.addEventListener('click', () => {
+      inflationBadge.addEventListener('click', (e) => {
+        e.stopPropagation();
         showMethodology(inflationMethodology);
       });
       
@@ -4091,7 +4099,8 @@
       const growthMethodology = document.getElementById('growth-methodology');
       const growthBack = growthMethodology.querySelector('.penalty-back-button');
       
-      growthBadge.addEventListener('click', () => {
+      growthBadge.addEventListener('click', (e) => {
+        e.stopPropagation();
         showMethodology(growthMethodology);
       });
       
@@ -4105,7 +4114,8 @@
       const gdpMethodology = document.getElementById('gdp-methodology');
       const gdpBack = gdpMethodology.querySelector('.gdp-back-button');
       
-      gdpValue.addEventListener('click', () => {
+      gdpValue.addEventListener('click', (e) => {
+        e.stopPropagation();
         showMethodology(gdpMethodology);
       });
       
@@ -4200,7 +4210,17 @@
       }
       
       // The Unicorn: Replacement fertility + fiscal balance + didn't tank growth
+      // Check if achieved via entitlement reform or taxes
       if (tfrMid >= 2.1 && netFiscal <= 0 && gdpChange > -20) {
+        if (entitlementCount >= 2 && taxCount >= 2) {
+          return { icon: '🏆', title: 'The Coalition Builder', desc: 'Holy grail achieved by making everyone equally unhappy. Seniors AND the rich? Bold.' };
+        }
+        if (entitlementCount >= 2) {
+          return { icon: '🏆', title: 'The Boomer Slayer', desc: 'Holy grail achieved... by raiding the AARP\'s lunch money. They\'ll remember this at the polls.' };
+        }
+        if (taxCount >= 3) {
+          return { icon: '🏆', title: 'The Robin Hood', desc: 'Holy grail achieved by soaking the rich. The 1% sends their regards.' };
+        }
         return { icon: '🏆', title: 'The Unicorn', desc: 'Replacement fertility AND fiscal balance AND growth? You found the holy grail.' };
       }
       
