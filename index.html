@@ -279,28 +279,6 @@
       color: var(--ink);
     }
 
-    @media (max-width: 400px) {
-      .gdp-methodology {
-        width: 280px;
-        right: -10px;
-        max-width: calc(100vw - 40px);
-      }
-    }
-
-    @media (max-width: 360px) {
-      .gdp-methodology {
-        position: fixed;
-        left: 10px;
-        right: 10px;
-        bottom: auto;
-        top: 50%;
-        transform: translateY(-50%);
-        width: auto;
-        max-height: 70vh;
-        overflow-y: auto;
-      }
-    }
-
     .penalties {
       display: flex;
       gap: 12px;
@@ -637,16 +615,7 @@
       background: var(--accent);
     }
 
-    @media (max-width: 400px) {
-      .penalty-methodology {
-        width: 280px;
-        left: 0;
-        right: auto;
-        max-width: calc(100vw - 40px);
-      }
-    }
-
-    @media (max-width: 360px) {
+    @media (max-width: 500px) {
       .penalty-methodology {
         position: fixed;
         left: 10px;
@@ -655,9 +624,47 @@
         top: 50%;
         transform: translateY(-50%);
         width: auto;
+        max-width: none;
         max-height: 80vh;
         overflow-y: auto;
+        z-index: 2001;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.4);
       }
+      
+      .gdp-methodology {
+        position: fixed;
+        left: 10px;
+        right: 10px;
+        bottom: auto;
+        top: 50%;
+        transform: translateY(-50%);
+        width: auto;
+        max-width: none;
+        max-height: 70vh;
+        overflow-y: auto;
+        z-index: 2001;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+      }
+    }
+
+    /* Mobile methodology backdrop */
+    .methodology-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 2000;
+    }
+    
+    .methodology-backdrop.visible {
+      display: block;
+    }
+    
+    body.methodology-open {
+      overflow: hidden;
     }
 
     /* Floating Share Button */
@@ -1715,43 +1722,69 @@
         </div>
         <div class="penalty-methodology" id="inflation-methodology">
           <div class="penalty-methodology-header">
-            <span class="penalty-methodology-title">Inflation Model v3</span>
+            <span class="penalty-methodology-title">Inflation Model v4</span>
             <button class="penalty-back-button">← Back</button>
           </div>
           <div class="penalty-methodology-content">
-            <p style="background: #ffebee; padding: 6px; margin-bottom: 8px; font-size: 11px;">
-              <strong>v3 Fixes:</strong> Higher elasticity in crisis (2.5-4×), absolute CPI for TFR penalty, steeper TFR elasticities (1.5-10%/pp vs 0.5-1.2%)
-            </p>
-            
             <p style="border-left: 3px solid #1976d2; padding-left: 8px;"><strong>Stage 1: Deficit → Inflation</strong></p>
             <table class="penalty-math-table">
-              <tr><td>Normal/Elevated</td><td>Policy deficit × 0.30</td></tr>
-              <tr style="background: #fff3e0;"><td>Stressed</td><td>TOTAL deficit × <strong>0.50</strong></td></tr>
-              <tr style="background: #ffcdd2;"><td>Dominance</td><td>TOTAL deficit × <strong>0.75-1.2</strong></td></tr>
+              <tr><td>Normal</td><td>Policy deficit × 0.30</td></tr>
+              <tr><td>Elevated (6-8%)</td><td>Blended deficit × 0.30</td></tr>
+              <tr style="background: #fff3e0;"><td>Stressed (8-10%)</td><td>Total deficit × 0.30–0.45</td></tr>
+              <tr style="background: #ffcdd2;"><td>Dominance (&gt;10%)</td><td>Total deficit × 0.45–0.75</td></tr>
             </table>
+            <p style="font-size: 10px; color: #666; margin-top: 4px;">
+              <em>Sources:</em> Catão & Terrones (2005) find 0.2-0.4pp inflation per 1% GDP deficit; Lin & Chu (2013) meta-analysis confirms range; SF Fed (Jordà 2022), Bernanke-Blanchard NBER (2023) on post-COVID fiscal-inflation link.
+            </p>
             
             <p style="border-left: 3px solid #2e7d32; padding-left: 8px; margin-top: 8px;"><strong>Stage 2: CB Absorption</strong></p>
             <table class="penalty-math-table">
               <tr><td>&lt;6% GDP</td><td>75%</td></tr>
               <tr><td>6-8%</td><td>50-75%</td></tr>
-              <tr><td>8-10%</td><td>20-50%</td></tr>
-              <tr style="background: #ffcdd2;"><td>&gt;10%</td><td>&lt;20%</td></tr>
+              <tr><td>8-10%</td><td>35-50%</td></tr>
+              <tr style="background: #ffcdd2;"><td>&gt;10%</td><td>25-35%</td></tr>
             </table>
+            <p style="font-size: 10px; color: #666; margin-top: 4px;">
+              <em>Sources:</em> Sargent & Wallace (1981) "Unpleasant Monetarist Arithmetic"; BIS Papers No. 65; Cochrane (2023) "Fiscal Theory of the Price Level"; Boston Fed (2025) on household dominance expectations.
+            </p>
             
             <p style="border-left: 3px solid #ef6c00; padding-left: 8px; margin-top: 8px;"><strong>Stage 3: Expectations</strong></p>
             <p style="font-size: 11px;">Unanchor thresholds by regime: Normal 4%, Stressed 3.5%, Dominance 3%</p>
+            <p style="font-size: 10px; color: #666; margin-top: 4px;">
+              <em>Sources:</em> Leeper (1991) active/passive policy regimes; Bianchi & Melosi (2017) on regime-switching; 1970s US unanchoring at ~6% CPI.
+            </p>
             
-            <p style="border-left: 3px solid #7b1fa2; padding-left: 8px; margin-top: 8px;"><strong>Stage 4: CPI → TFR (STEEPER)</strong></p>
+            <p style="border-left: 3px solid #7b1fa2; padding-left: 8px; margin-top: 8px;"><strong>Stage 4: CPI → TFR</strong></p>
             <table class="penalty-math-table">
               <tr><td>0-2pp</td><td>−1.5% TFR/pp</td></tr>
               <tr><td>2-5pp</td><td>−3.0% TFR/pp</td></tr>
               <tr><td>5-10pp</td><td>−5.0% TFR/pp</td></tr>
               <tr><td>10-20pp</td><td>−7.0% TFR/pp</td></tr>
               <tr style="background: #ffcdd2;"><td>&gt;20pp</td><td>−10.0% TFR/pp</td></tr>
-              <tr style="background: #ffcdd2;"><td>Unanchored</td><td>×1.5</td></tr>
+              <tr style="background: #ffcdd2;"><td>Uncertainty amp</td><td>×1.0–1.5 (gradual)</td></tr>
             </table>
-            <p style="font-size: 10px; color: #c62828; margin-top: 4px;">
-              <strong>Crisis regime:</strong> Uses ABSOLUTE CPI (minus 2% floor), not policy-induced delta
+            <p style="font-size: 10px; color: #666; margin-top: 4px;">
+              <em>Sources:</em> Adsera (2004, 2011) uncertainty-fertility; Sobotka et al. (2011) recession effects; Comolli (2017) Great Recession.
+            </p>
+            <p style="font-size: 10px; color: #666; margin-top: 2px;">
+              <em>Uncertainty amplifier:</em> Ramps from ×1.0 at crisis threshold to ×1.5 at +3pp above. Eliminates step-function cliff.
+            </p>
+            
+            <div style="background: #f5f5f5; padding: 8px; margin-top: 10px; border-left: 3px solid #666;">
+              <p style="font-size: 10px; margin: 0 0 6px 0;"><strong>Historical Calibration:</strong></p>
+              <p style="font-size: 10px; color: #333; margin: 0 0 4px 0;">
+                <strong>Turkey 2018-24:</strong> CPI peaked ~85%, TFR fell 2.10→1.51 (−28%). Implies ~0.35% TFR per 1pp—but spread over years. Acute shock elasticity higher.
+              </p>
+              <p style="font-size: 10px; color: #333; margin: 0 0 4px 0;">
+                <strong>Russia 1992-99:</strong> Hyperinflation + transition crisis, TFR collapsed 1.89→1.16 (−39%). Economic chaos amplified beyond pure inflation.
+              </p>
+              <p style="font-size: 10px; color: #333; margin: 0;">
+                <strong>E. Europe 1989-95:</strong> Transition economies saw 30-40% TFR declines under combined inflation + uncertainty shock.
+              </p>
+            </div>
+            
+            <p style="font-size: 10px; color: #c62828; margin-top: 8px;">
+              <strong>Crisis regime:</strong> Uses ABSOLUTE CPI (minus 2% floor). TFR floor: 0.80
             </p>
             
             <p style="margin-top: 10px;"><strong>Current calculation:</strong></p>
@@ -1788,6 +1821,9 @@
         </div>
       </div>
     </div>
+    
+    <!-- Methodology Backdrop for Mobile -->
+    <div class="methodology-backdrop" id="methodology-backdrop"></div>
     
     <!-- Deficit Warning Modal -->
     <div class="modal-overlay" id="deficit-modal">
@@ -2444,8 +2480,9 @@
       baselineDeficit: 1900,         // $1.9T baseline deficit
     };
     
-    // === INFLATION DYNAMICS MODEL v3 ===
+    // === INFLATION DYNAMICS MODEL v4 ===
     // This models the transmission: Fiscal Policy → CB Response → Inflation → TFR
+    // v4 changes: Smoother regime transitions, calibrated to avoid cliff effects
     function calculateInflationDynamics(policyDeficit, policyOffsets) {
       const netPolicyImpact = policyDeficit - policyOffsets;
       const totalDeficit = modelParams.baselineDeficit + netPolicyImpact;
@@ -2460,7 +2497,7 @@
       }[modelParams.economicSlack] || 1.0;
       
       // ========================================
-      // DETERMINE FISCAL REGIME FIRST
+      // DETERMINE FISCAL REGIME
       // ========================================
       let cbAbsorptionRate;
       let fiscalRegime;
@@ -2474,42 +2511,51 @@
         fiscalRegime = 'elevated';
       } else if (deficitPctGDP < modelParams.fiscalDominanceThreshold) {
         const stress = (deficitPctGDP - 8) / 2;
-        cbAbsorptionRate = 0.50 - stress * 0.30;
+        cbAbsorptionRate = 0.50 - stress * 0.15; // Slower decline: floor at 0.35 not 0.20
         fiscalRegime = 'stressed';
       } else {
-        cbAbsorptionRate = Math.max(0, 0.20 - (deficitPctGDP - 10) * 0.05);
+        // Dominance: CB absorption floors at 25%, not zero
+        cbAbsorptionRate = Math.max(0.25, 0.35 - (deficitPctGDP - 10) * 0.025);
         fiscalRegime = 'dominance';
       }
       
       // ========================================
       // STAGE 1: Deficit → Inflation Pressure
       // ========================================
-      // FIX #1: REGIME-DEPENDENT ELASTICITY
-      // Normal: 0.30 (standard literature estimate)
-      // Stressed: 0.50 (markets pricing monetization risk)
-      // Dominance: 0.70-1.0+ (FTPL territory, expectations of monetization)
-      
+      // v4: Smoother elasticity scaling, lower cap
       let deficitToInflationElasticity = modelParams.deficitToInflationBase;
       
       if (fiscalRegime === 'stressed') {
-        deficitToInflationElasticity = modelParams.deficitToInflationBase * 1.7; // ~0.50
+        // Gradual increase from 0.30 to 0.45 across stressed range
+        const stressProgress = (deficitPctGDP - 8) / 2;
+        deficitToInflationElasticity = modelParams.deficitToInflationBase * (1 + stressProgress * 0.5);
       } else if (fiscalRegime === 'dominance') {
-        // In dominance, elasticity scales with how deep into crisis
+        // In dominance, elasticity scales more gently: 1.5x at threshold, up to 2.5x max
         const dominanceDepth = deficitPctGDP - modelParams.fiscalDominanceThreshold;
-        const dominanceMultiplier = 2.5 + dominanceDepth * 0.3; // 2.5× at threshold, higher as deficit grows
-        deficitToInflationElasticity = modelParams.deficitToInflationBase * Math.min(4.0, dominanceMultiplier);
+        const dominanceMultiplier = 1.5 + dominanceDepth * 0.15; // Slower scaling
+        deficitToInflationElasticity = modelParams.deficitToInflationBase * Math.min(2.5, dominanceMultiplier);
       }
       
-      // Which deficit to use for pressure calculation
-      let deficitForPressure;
+      // ========================================
+      // SMOOTH TRANSITION: Policy → Total Deficit
+      // ========================================
+      // v4: Phase in total deficit gradually instead of binary switch
+      // Below 6%: 100% policy deficit
+      // 6-8%: Blend from policy to total (elevated)
+      // Above 8%: 100% total deficit (stressed/dominance)
+      
       let deficitPctForPressure;
       
-      if (fiscalRegime === 'normal' || fiscalRegime === 'elevated') {
-        deficitForPressure = Math.max(0, netPolicyImpact);
+      if (fiscalRegime === 'normal') {
         deficitPctForPressure = Math.max(0, policyDeficitPctGDP);
+      } else if (fiscalRegime === 'elevated') {
+        // Blend: lerp from policy deficit to total deficit across 6-8% range
+        const blendFactor = (deficitPctGDP - 6) / 2; // 0 at 6%, 1 at 8%
+        const policyContrib = Math.max(0, policyDeficitPctGDP) * (1 - blendFactor);
+        const totalContrib = deficitPctGDP * blendFactor;
+        deficitPctForPressure = policyContrib + totalContrib;
       } else {
-        // REGIME SHIFT: TOTAL deficit becomes inflationary
-        deficitForPressure = totalDeficit;
+        // Stressed/Dominance: Full total deficit
         deficitPctForPressure = deficitPctGDP;
       }
       
@@ -2543,14 +2589,14 @@
       
       if (projectedCPI > unanchorThreshold) {
         const unanchoringPressure = (projectedCPI - unanchorThreshold) / (crisisThreshold - unanchorThreshold);
-        expectationsMultiplier = 1.0 + Math.min(1.0, unanchoringPressure) * 0.5;
+        expectationsMultiplier = 1.0 + Math.min(1.0, unanchoringPressure) * 0.3; // Reduced from 0.5
         expectationsAnchored = projectedCPI < crisisThreshold;
       }
       
       if (!expectationsAnchored) {
-        // Fully unanchored: spiral effect scales with how far past crisis threshold
-        const spiralDepth = Math.min(2.0, (projectedCPI - crisisThreshold) / 3);
-        expectationsMultiplier *= (1.3 + spiralDepth * 0.35);
+        // v4: Gentler spiral effect
+        const spiralDepth = Math.min(1.5, (projectedCPI - crisisThreshold) / 4); // Reduced from /3
+        expectationsMultiplier *= (1.2 + spiralDepth * 0.25); // Reduced multipliers
       }
       
       // CB credibility affects anchoring
@@ -2570,7 +2616,6 @@
         deficitPctGDP: deficitPctGDP,
         policyDeficitPctGDP: policyDeficitPctGDP,
         fiscalRegime: fiscalRegime,
-        deficitForPressure: deficitForPressure,
         deficitPctForPressure: deficitPctForPressure,
         deficitToInflationElasticity: deficitToInflationElasticity,
         rawPressure: rawPressure,
@@ -2655,24 +2700,42 @@
         tfrDeclinePct = 2 * 1.5 + 3 * 3.0 + 5 * 5.0 + 10 * 7.0 + (inflationForPenalty - 20) * 10.0;
       }
       
-      // Uncertainty amplification when expectations unanchor
-      if (!inf.expectationsAnchored) {
-        tfrDeclinePct *= modelParams.uncertaintyAmplifier;
+      // v4.1: GRADUAL uncertainty amplification
+      // Instead of binary ×1.5 when unanchored, ramp from 1.0 to 1.5
+      // based on how far past the crisis threshold we are.
+      // This eliminates the step-function cliff at the unanchoring point.
+      let uncertaintyAmp = 1.0;
+      if (inf.totalCPI > inf.crisisThreshold) {
+        // Ramp: reaches 1.5 at 3pp above crisis threshold
+        const depth = inf.totalCPI - inf.crisisThreshold;
+        uncertaintyAmp = 1.0 + Math.min(0.5, depth / 6);
       }
+      tfrDeclinePct *= uncertaintyAmp;
       
       // Convert to absolute TFR penalty
       const baseTFR = 1.62;
-      let penalty = (tfrDeclinePct / 100) * baseTFR;
+      let uncappedPenalty = (tfrDeclinePct / 100) * baseTFR;
       
-      // Cap penalty at reasonable maximum (can't go below ~0.8 TFR historically)
-      penalty = Math.min(penalty, 0.82);
+      // v4: Cap FINAL TFR at 0.80, not the component
+      // This allows the model to show the difference between "bad" and "catastrophic"
+      const minTFR = 0.80;
+      const maxAllowedPenalty = baseTFR - minTFR; // 0.82
+      let penalty = Math.min(uncappedPenalty, maxAllowedPenalty);
+      
+      // Track whether cap was hit and by how much
+      const capHit = uncappedPenalty > maxAllowedPenalty;
+      const excessPenalty = capHit ? uncappedPenalty - maxAllowedPenalty : 0;
       
       return {
         penalty: penalty,
+        uncappedPenalty: uncappedPenalty,
+        capHit: capHit,
+        excessPenalty: excessPenalty,
         inflationForPenalty: inflationForPenalty,
         tfrDeclinePct: tfrDeclinePct,
         usingAbsoluteCPI: usingAbsoluteCPI,
-        uncertaintyApplied: !inf.expectationsAnchored,
+        uncertaintyAmp: uncertaintyAmp,
+        uncertaintyApplied: uncertaintyAmp > 1.0,
         details: inf
       };
     }
@@ -3031,7 +3094,7 @@
           }
           breakdownHtml += `TFR decline: <strong>${r.tfrDeclinePct.toFixed(1)}%</strong>`;
           if (r.uncertaintyApplied) {
-            breakdownHtml += ` <span style="color: #c62828;">(×${modelParams.uncertaintyAmplifier} unanchored)</span>`;
+            breakdownHtml += ` <span style="color: #c62828;">(×${r.uncertaintyAmp.toFixed(2)} uncertainty)</span>`;
           }
           breakdownHtml += `</div>`;
           
@@ -3039,7 +3102,9 @@
           const penaltyColor = tfr.inflationPenalty > 0.3 ? '#b71c1c' : tfr.inflationPenalty > 0.15 ? '#c62828' : '#333';
           breakdownHtml += `<div style="font-size: 14px; font-weight: bold; margin-top: 10px; padding: 8px; background: #f5f5f5; border-radius: 4px; color: ${penaltyColor};">`;
           breakdownHtml += `TOTAL PENALTY: −${tfr.inflationPenalty.toFixed(2)} TFR`;
-          if (tfr.inflationPenalty > 0.3) {
+          if (r.capHit) {
+            breakdownHtml += ` <span style="font-size: 11px; background: #b71c1c; color: white; padding: 2px 6px;">(CAPPED from −${r.uncappedPenalty.toFixed(2)})</span>`;
+          } else if (tfr.inflationPenalty > 0.3) {
             breakdownHtml += ` <span style="font-size: 11px;">(SEVERE)</span>`;
           }
           breakdownHtml += `</div>`;
@@ -3978,18 +4043,47 @@
     }
 
     function initPenaltyBadges() {
+      const backdrop = document.getElementById('methodology-backdrop');
+      const isMobile = () => window.innerWidth <= 500;
+      
+      function showMethodology(el) {
+        el.classList.add('visible');
+        if (isMobile()) {
+          backdrop.classList.add('visible');
+          document.body.classList.add('methodology-open');
+        }
+      }
+      
+      function hideMethodology(el) {
+        el.classList.remove('visible');
+        // Check if any methodology is still visible
+        const anyVisible = document.querySelectorAll('.penalty-methodology.visible, .gdp-methodology.visible').length > 0;
+        if (!anyVisible) {
+          backdrop.classList.remove('visible');
+          document.body.classList.remove('methodology-open');
+        }
+      }
+      
+      function hideAllMethodologies() {
+        document.querySelectorAll('.penalty-methodology.visible, .gdp-methodology.visible').forEach(el => {
+          el.classList.remove('visible');
+        });
+        backdrop.classList.remove('visible');
+        document.body.classList.remove('methodology-open');
+      }
+      
       // Inflation badge flip
       const inflationBadge = document.getElementById('penalty-inflation');
       const inflationMethodology = document.getElementById('inflation-methodology');
       const inflationBack = inflationMethodology.querySelector('.penalty-back-button');
       
       inflationBadge.addEventListener('click', () => {
-        inflationMethodology.classList.add('visible');
+        showMethodology(inflationMethodology);
       });
       
       inflationBack.addEventListener('click', (e) => {
         e.stopPropagation();
-        inflationMethodology.classList.remove('visible');
+        hideMethodology(inflationMethodology);
       });
 
       // Growth badge flip
@@ -3998,12 +4092,12 @@
       const growthBack = growthMethodology.querySelector('.penalty-back-button');
       
       growthBadge.addEventListener('click', () => {
-        growthMethodology.classList.add('visible');
+        showMethodology(growthMethodology);
       });
       
       growthBack.addEventListener('click', (e) => {
         e.stopPropagation();
-        growthMethodology.classList.remove('visible');
+        hideMethodology(growthMethodology);
       });
 
       // GDP projection click
@@ -4012,24 +4106,29 @@
       const gdpBack = gdpMethodology.querySelector('.gdp-back-button');
       
       gdpValue.addEventListener('click', () => {
-        gdpMethodology.classList.add('visible');
+        showMethodology(gdpMethodology);
       });
       
       gdpBack.addEventListener('click', (e) => {
         e.stopPropagation();
-        gdpMethodology.classList.remove('visible');
+        hideMethodology(gdpMethodology);
       });
 
-      // Close methodologies when clicking outside
+      // Close methodologies when clicking backdrop
+      backdrop.addEventListener('click', () => {
+        hideAllMethodologies();
+      });
+
+      // Close methodologies when clicking outside (desktop)
       document.addEventListener('click', (e) => {
         if (!inflationBadge.contains(e.target) && !inflationMethodology.contains(e.target)) {
-          inflationMethodology.classList.remove('visible');
+          hideMethodology(inflationMethodology);
         }
         if (!growthBadge.contains(e.target) && !growthMethodology.contains(e.target)) {
-          growthMethodology.classList.remove('visible');
+          hideMethodology(growthMethodology);
         }
         if (!gdpValue.contains(e.target) && !gdpMethodology.contains(e.target)) {
-          gdpMethodology.classList.remove('visible');
+          hideMethodology(gdpMethodology);
         }
       });
     }
