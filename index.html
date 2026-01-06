@@ -770,6 +770,75 @@
     .share-policy-item.entitlement { border-left: 2px solid var(--success); }
     .share-policy-item.tax { border-left: 2px solid #5d4037; }
     .share-policy-item.illiberal { border-left: 2px solid var(--accent); }
+    .share-policy-item.immigration { border-left: 2px solid #1976d2; }
+
+    .feasibility-section {
+      margin: 16px 0;
+      padding: 12px;
+      background: var(--paper-dark);
+      border-radius: 4px;
+    }
+
+    .feasibility-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .feasibility-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .feasibility-score {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 3px;
+    }
+
+    .feasibility-score.high { background: #e8f5e9; color: #2e7d32; }
+    .feasibility-score.medium { background: #fff8e1; color: #f57f17; }
+    .feasibility-score.low { background: #ffebee; color: #c62828; }
+    .feasibility-score.very-low { background: #c62828; color: white; }
+
+    .feasibility-bar {
+      height: 6px;
+      background: var(--rule);
+      border-radius: 3px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .feasibility-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .feasibility-factors {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .feasibility-factor {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+    }
+
+    .feasibility-factor-impact {
+      font-weight: 600;
+    }
+
+    .feasibility-factor-impact.positive { color: #2e7d32; }
+    .feasibility-factor-impact.negative { color: #c62828; }
+    .feasibility-factor-impact.neutral { color: var(--muted); }
 
     .share-buttons {
       display: flex;
@@ -1185,6 +1254,7 @@
     }
 
     .methodology-card.illiberal { border-left: 4px solid var(--accent); }
+    .methodology-card.entitlement { border-left: 4px solid var(--success); }
 
     .methodology-header {
       display: flex;
@@ -2235,6 +2305,19 @@
             </div>
           </div>
 
+          <div class="feasibility-section">
+            <div class="feasibility-header">
+              <span class="feasibility-title">Political Feasibility</span>
+              <span class="feasibility-score medium" id="feasibility-score">C</span>
+            </div>
+            <div class="feasibility-bar">
+              <div class="feasibility-bar-fill" id="feasibility-bar" style="width: 50%; background: #f57f17;"></div>
+            </div>
+            <div class="feasibility-factors" id="feasibility-factors">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
           <div class="share-buttons">
             <button class="share-btn share-btn-x" id="share-x">
               <span>𝕏</span> Share
@@ -2610,7 +2693,12 @@
         savingsLow: 80, savingsHigh: 100, 
         description: 'Phase in over 12 years.', 
         enabled: false,
-        sliderConfig: { label: 'Eligibility age', min: 66, max: 70, default: 67, format: v => `${v} years` }
+        sliderConfig: { label: 'Eligibility age', min: 66, max: 70, default: 67, format: v => `${v} years` },
+        methodology: {
+          derivation: 'Each year increase in eligibility age saves ~$40-50B annually by shifting costs to private insurance and employers. CBO estimates $19B over 10 years for 2-year increase. Phased implementation reduces disruption.',
+          sources: ['CBO Budget Options (2022)', 'CRFB Medicare Analysis (2023)'],
+          caveats: 'Shifts costs to employers/individuals, may increase uninsured rate for 65-66 year olds.'
+        }
       },
       { 
         id: 'ss-means-test', 
@@ -2618,7 +2706,12 @@
         savingsLow: 120, savingsHigh: 150, 
         description: 'Reduce benefits for high earners.', 
         enabled: false,
-        sliderConfig: { label: 'Income threshold', min: 75, max: 200, default: 100, format: v => `>$${v}k` }
+        sliderConfig: { label: 'Income threshold', min: 75, max: 200, default: 100, format: v => `>$${v}k` },
+        methodology: {
+          derivation: 'Reducing benefits for retirees with income >$100k affects ~15% of beneficiaries. Progressive reduction preserves benefits for middle class while generating significant savings.',
+          sources: ['SSA Office of the Actuary', 'Urban Institute (2021)'],
+          caveats: 'Transforms SS from universal to welfare program. May reduce political support and encourage benefit avoidance.'
+        }
       },
       { 
         id: 'ss-cola', 
@@ -2626,7 +2719,12 @@
         savingsLow: 80, savingsHigh: 100, 
         description: 'Switch to Chained CPI.', 
         enabled: false,
-        sliderConfig: { label: 'Annual reduction', min: 25, max: 75, default: 50, format: v => `−${(v/100).toFixed(2)}%` }
+        sliderConfig: { label: 'Annual reduction', min: 25, max: 75, default: 50, format: v => `−${(v/100).toFixed(2)}%` },
+        methodology: {
+          derivation: 'Chained CPI grows ~0.25-0.3% slower than CPI-W. Effect compounds: after 10 years, benefits ~3% lower; after 25 years, ~7% lower. Saves $10-15B/year initially, growing over time.',
+          sources: ['BLS Chained CPI Data', 'CBO COLA Analysis (2023)'],
+          caveats: 'Disproportionately affects oldest beneficiaries. Benefits erode more over longer retirements.'
+        }
       },
       { 
         id: 'medicare-drugs', 
@@ -2634,7 +2732,12 @@
         savingsLow: 50, savingsHigh: 80, 
         description: 'Expand negotiation authority.', 
         enabled: false,
-        sliderConfig: { label: 'Drugs covered', min: 50, max: 250, default: 100, format: v => `${v} drugs` }
+        sliderConfig: { label: 'Drugs covered', min: 50, max: 250, default: 100, format: v => `${v} drugs` },
+        methodology: {
+          derivation: 'IRA allows Medicare to negotiate 10 drugs starting 2026, expanding to 20 by 2029. CBO estimates $98B savings over 10 years. Expanding to 100+ drugs proportionally increases savings.',
+          sources: ['CBO IRA Scoring (2022)', 'KFF Drug Pricing Analysis'],
+          caveats: 'May reduce pharma R&D investment. Savings depend on negotiation effectiveness and drug selection.'
+        }
       },
       { 
         id: 'ss-retirement-70', 
@@ -2642,7 +2745,12 @@
         savingsLow: 100, savingsHigh: 150, 
         description: 'Phase in over 18 years.', 
         enabled: false,
-        sliderConfig: { label: 'Full retirement age', min: 68, max: 72, default: 70, format: v => `${v} years` }
+        sliderConfig: { label: 'Full retirement age', min: 68, max: 72, default: 70, format: v => `${v} years` },
+        methodology: {
+          derivation: 'Each year increase in full retirement age is equivalent to ~6.7% benefit cut. Raising FRA from 67 to 70 reduces lifetime benefits ~20%. Slow phase-in allows workers to adjust plans.',
+          sources: ['SSA Actuarial Analysis', 'CRFB Social Security Options'],
+          caveats: 'Disproportionately affects workers in physically demanding jobs. Life expectancy gains not uniform across income levels.'
+        }
       },
       { 
         id: 'ss-cap', 
@@ -2650,7 +2758,12 @@
         savingsLow: 60, savingsHigh: 80, 
         description: 'Maximum monthly benefit.', 
         enabled: false,
-        sliderConfig: { label: 'Monthly cap', min: 2500, max: 4000, default: 3200, format: v => `$${v.toLocaleString()}/mo` }
+        sliderConfig: { label: 'Monthly cap', min: 2500, max: 4000, default: 3200, format: v => `$${v.toLocaleString()}/mo` },
+        methodology: {
+          derivation: 'Current maximum benefit is ~$4,555/mo (2024) for workers retiring at 70 with high lifetime earnings. Capping at $3,200 affects top ~10% of earners.',
+          sources: ['SSA Benefit Calculator', 'AARP Benefits Guide'],
+          caveats: 'Weakens link between contributions and benefits. May reduce support among higher earners who pay more into system.'
+        }
       },
       { 
         id: 'medicare-premiums', 
@@ -2658,7 +2771,12 @@
         savingsLow: 40, savingsHigh: 60, 
         description: 'Income-related Part B/D premiums.', 
         enabled: false,
-        sliderConfig: { label: 'Surcharge threshold', min: 50, max: 150, default: 85, format: v => `>$${v}k` }
+        sliderConfig: { label: 'Surcharge threshold', min: 50, max: 150, default: 85, format: v => `>$${v}k` },
+        methodology: {
+          derivation: 'IRMAA already charges higher premiums for incomes >$97k (2024). Lowering threshold and increasing surcharge percentages expands revenue. Each $10k reduction in threshold adds ~$5-8B.',
+          sources: ['CMS Medicare Premiums', 'MedPAC Payment Policy (2023)'],
+          caveats: 'Higher-income seniors already pay more. Further increases may push some toward Medicare Advantage or private coverage.'
+        }
       }
     ];
 
@@ -4161,41 +4279,77 @@
         return;
       }
 
-      // Entitlement reform cards with optional sliders
-      const card = document.createElement('div');
-      card.className = 'policy-card entitlement-card';
+      // Entitlement reform cards with flip for methodology
+      const cardContainer = document.createElement('div');
+      cardContainer.className = 'card-container';
 
       const savingsMid = Math.round((reform.savingsLow + reform.savingsHigh) / 2);
       const hasDrag = reform.growthDrag > 0;
       const sc = reform.sliderConfig;
+      const hasMethodology = reform.methodology;
 
-      card.innerHTML = `
-        <div class="policy-header">
-          <span class="policy-title" style="cursor: default;">${reform.name}</span>
-          <div class="policy-stats">
-            <span class="policy-stat cost reform-savings">$${savingsMid}B/yr</span>
-            ${hasDrag ? `<span class="policy-stat drag">−${reform.growthDrag.toFixed(2)} TFR</span>` : ''}
+      // Build methodology back if available
+      let methodologyHTML = '';
+      if (hasMethodology) {
+        const m = reform.methodology;
+        methodologyHTML = `
+          <div class="card-back">
+            <div class="methodology-card entitlement">
+              <div class="methodology-header">
+                <span class="methodology-title">Methodology</span>
+                <button class="back-button" data-flip="true">← Back</button>
+              </div>
+              <div class="methodology-section">
+                <div class="methodology-section-title">Derivation</div>
+                <p style="font-size: 12px; line-height: 1.5;">${m.derivation}</p>
+              </div>
+              <div class="methodology-section">
+                <div class="methodology-section-title">Sources</div>
+                <p style="font-size: 11px; color: var(--muted);">${m.sources.join(' · ')}</p>
+              </div>
+              ${m.caveats ? `
+              <div class="methodology-section">
+                <div class="methodology-section-title">Caveats</div>
+                <p style="font-size: 11px; color: #c62828;">${m.caveats}</p>
+              </div>
+              ` : ''}
+            </div>
           </div>
-        </div>
-        <p class="policy-description">${reform.description}${hasDrag ? ` <em style="color:#5d4037;">(${reform.dragRationale})</em>` : ''}</p>
-        <div class="toggle-row">
-          <span class="toggle-label">Disabled</span>
-          <label class="toggle"><input type="checkbox"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
-        </div>
-        ${sc ? `
-        <div class="slider-row hidden">
-          <div class="slider-header">
-            <span class="slider-label">${sc.label}</span>
-            <span class="slider-value">${sc.format(sc.default)}</span>
+        `;
+      }
+
+      cardContainer.innerHTML = `
+        <div class="card-flipper">
+          <div class="card-front">
+            <div class="policy-card entitlement-card">
+              <div class="policy-header">
+                <span class="policy-title" ${hasMethodology ? 'data-flip="true"' : 'style="cursor: default;"'}>${reform.name}</span>
+                <div class="policy-stats">
+                  <span class="policy-stat cost reform-savings">$${savingsMid}B/yr</span>
+                  ${hasDrag ? `<span class="policy-stat drag">−${reform.growthDrag.toFixed(2)} TFR</span>` : ''}
+                </div>
+              </div>
+              <p class="policy-description">${reform.description}${hasDrag ? ` <em style="color:#5d4037;">(${reform.dragRationale})</em>` : ''}</p>
+              <div class="toggle-row">
+                <span class="toggle-label">Disabled</span>
+                <label class="toggle"><input type="checkbox"><div class="toggle-track"><div class="toggle-thumb"></div></div></label>
+              </div>
+              ${sc ? `
+              <div class="slider-row hidden">
+                <div class="slider-header">
+                  <span class="slider-label">${sc.label}</span>
+                  <span class="slider-value">${sc.format(sc.default)}</span>
+                </div>
+                <input type="range" min="${sc.min}" max="${sc.max}" value="${sc.default}">
+              </div>
+              ` : ''}
+            </div>
           </div>
-          <input type="range" min="${sc.min}" max="${sc.max}" value="${sc.default}">
+          ${methodologyHTML}
         </div>
-        ` : ''}
       `;
 
-      const title = card.querySelector('.policy-title');
-      title.style.cursor = 'default';
-
+      const card = cardContainer.querySelector('.policy-card');
       const toggle = card.querySelector('input[type="checkbox"]');
       const toggleLabel = card.querySelector('.toggle-label');
       const sliderRow = card.querySelector('.slider-row');
@@ -4262,10 +4416,17 @@
         });
       }
 
-      const wrapper = document.createElement('div');
-      wrapper.style.marginBottom = '12px';
-      wrapper.appendChild(card);
-      container.appendChild(wrapper);
+      // Add flip functionality if methodology exists
+      if (hasMethodology) {
+        cardContainer.querySelectorAll('[data-flip]').forEach(el => {
+          el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            cardContainer.classList.toggle('flipped');
+          });
+        });
+      }
+
+      container.appendChild(cardContainer);
     }
 
     function renderTaxCard(tax, container) {
@@ -5550,6 +5711,139 @@
       return { icon: '🔬', title: 'The Policy Wonk', desc: 'A thoughtful mix of interventions. Keep experimenting!' };
     }
 
+    function calculateFeasibility() {
+      // Base score: 60 (moderately feasible by default)
+      let score = 60;
+      const factors = [];
+      
+      const fiscal = calculateFiscal();
+      const tfr = calculateTFR();
+      const enabledPolicies = [...liberalPolicies].filter(p => p.enabled);
+      const enabledIlliberal = [...illiberalPolicies].filter(p => p.enabled);
+      const enabledEntitlements = entitlementReforms.filter(r => r.enabled);
+      const enabledTaxes = taxIncreases.filter(t => t.enabled);
+      const immConfig = immigrationConfig;
+      
+      // 1. FISCAL COST
+      // High spending = hard to pass
+      if (fiscal.spending > 300) {
+        const penalty = Math.min(25, Math.floor((fiscal.spending - 300) / 50) * 5);
+        score -= penalty;
+        factors.push({ label: 'High spending', impact: -penalty, class: 'negative' });
+      } else if (fiscal.spending > 0 && fiscal.spending <= 100) {
+        score += 5;
+        factors.push({ label: 'Modest spending', impact: +5, class: 'positive' });
+      }
+      
+      // 2. OFFSETS / PAY-FORS
+      // Having offsets makes it more feasible
+      if (fiscal.offsets > 0) {
+        const offsetRatio = fiscal.offsets / Math.max(1, fiscal.spending);
+        if (offsetRatio >= 1) {
+          score += 15;
+          factors.push({ label: 'Fully funded', impact: +15, class: 'positive' });
+        } else if (offsetRatio >= 0.5) {
+          score += 8;
+          factors.push({ label: 'Partially funded', impact: +8, class: 'positive' });
+        }
+      }
+      
+      // 3. ENTITLEMENT CUTS
+      // Very politically difficult
+      if (enabledEntitlements.length > 0) {
+        const penalty = enabledEntitlements.length * 8;
+        score -= penalty;
+        factors.push({ label: `${enabledEntitlements.length} entitlement cut${enabledEntitlements.length > 1 ? 's' : ''}`, impact: -penalty, class: 'negative' });
+      }
+      
+      // 4. TAX INCREASES
+      // Moderately difficult
+      if (enabledTaxes.length > 0) {
+        const penalty = enabledTaxes.length * 5;
+        score -= penalty;
+        factors.push({ label: `${enabledTaxes.length} tax increase${enabledTaxes.length > 1 ? 's' : ''}`, impact: -penalty, class: 'negative' });
+      }
+      
+      // 5. ILLIBERAL POLICIES
+      // Very controversial
+      if (enabledIlliberal.length > 0) {
+        const penalty = enabledIlliberal.length * 12;
+        score -= penalty;
+        factors.push({ label: `${enabledIlliberal.length} illiberal polic${enabledIlliberal.length > 1 ? 'ies' : 'y'}`, impact: -penalty, class: 'negative' });
+      }
+      
+      // 6. POPULAR POLICIES (child allowance, paid leave)
+      const popularIds = ['child-allowance', 'paid-leave', 'childcare-subsidy'];
+      const popularCount = enabledPolicies.filter(p => popularIds.includes(p.id)).length;
+      if (popularCount > 0) {
+        const bonus = popularCount * 5;
+        score += bonus;
+        factors.push({ label: `${popularCount} popular polic${popularCount > 1 ? 'ies' : 'y'}`, impact: +bonus, class: 'positive' });
+      }
+      
+      // 7. IMMIGRATION CHANGES
+      if (immConfig.selectionMechanism !== 'current') {
+        // Changing the system is politically difficult
+        if (immConfig.selectionMechanism === 'points') {
+          score -= 8;
+          factors.push({ label: 'Points system overhaul', impact: -8, class: 'negative' });
+        } else if (immConfig.selectionMechanism === 'diversity') {
+          score -= 15;
+          factors.push({ label: 'Diversity expansion', impact: -15, class: 'negative' });
+        } else if (immConfig.selectionMechanism === 'employment') {
+          score -= 5;
+          factors.push({ label: 'H1B expansion', impact: -5, class: 'negative' });
+        }
+      }
+      
+      // Immigration level changes
+      if (immConfig.annualLevel > 1500) {
+        const penalty = Math.min(15, Math.floor((immConfig.annualLevel - 1500) / 500) * 8);
+        score -= penalty;
+        factors.push({ label: 'High immigration level', impact: -penalty, class: 'negative' });
+      } else if (immConfig.annualLevel < 500) {
+        score -= 10;
+        factors.push({ label: 'Low immigration level', impact: -10, class: 'negative' });
+      }
+      
+      // 8. BIPARTISAN APPEAL
+      // Mix of liberal fertility policies + entitlement reform = bipartisan
+      if (enabledPolicies.length > 0 && enabledEntitlements.length > 0) {
+        score += 10;
+        factors.push({ label: 'Bipartisan mix', impact: +10, class: 'positive' });
+      }
+      
+      // 9. SIMPLICITY BONUS
+      // Fewer moving parts = easier to pass
+      const totalPolicies = enabledPolicies.length + enabledIlliberal.length + enabledEntitlements.length + enabledTaxes.length;
+      if (totalPolicies <= 3 && totalPolicies > 0) {
+        score += 8;
+        factors.push({ label: 'Simple package', impact: +8, class: 'positive' });
+      } else if (totalPolicies > 8) {
+        score -= 10;
+        factors.push({ label: 'Complex package', impact: -10, class: 'negative' });
+      }
+      
+      // Clamp score
+      score = Math.max(0, Math.min(100, score));
+      
+      // Grade
+      let grade, gradeClass, barColor;
+      if (score >= 75) {
+        grade = 'A'; gradeClass = 'high'; barColor = '#2e7d32';
+      } else if (score >= 60) {
+        grade = 'B'; gradeClass = 'high'; barColor = '#558b2f';
+      } else if (score >= 45) {
+        grade = 'C'; gradeClass = 'medium'; barColor = '#f57f17';
+      } else if (score >= 30) {
+        grade = 'D'; gradeClass = 'low'; barColor = '#e65100';
+      } else {
+        grade = 'F'; gradeClass = 'very-low'; barColor = '#c62828';
+      }
+      
+      return { score, grade, gradeClass, barColor, factors };
+    }
+
     function initShareModal() {
       const modal = document.getElementById('share-modal');
       const openBtn = document.getElementById('open-share-modal');
@@ -5655,6 +5949,37 @@
         listEl.innerHTML = allEnabled.map(p => 
           `<span class="share-policy-item ${p.type}">${p.name}</span>`
         ).join('');
+      }
+      
+      // Add immigration changes if any
+      if (immigrationConfig.selectionMechanism !== 'current' || immigrationConfig.annualLevel !== 1000) {
+        const mechNames = { current: 'Current', points: 'Points', employment: 'H1B', family: 'Family', diversity: 'Diversity' };
+        const immDesc = `Immigration: ${immigrationConfig.annualLevel}k/yr ${mechNames[immigrationConfig.selectionMechanism]}`;
+        listEl.innerHTML += `<span class="share-policy-item immigration">${immDesc}</span>`;
+      }
+      
+      // Calculate and display feasibility
+      const feasibility = calculateFeasibility();
+      
+      const scoreEl = document.getElementById('feasibility-score');
+      scoreEl.textContent = feasibility.grade;
+      scoreEl.className = `feasibility-score ${feasibility.gradeClass}`;
+      
+      const barEl = document.getElementById('feasibility-bar');
+      barEl.style.width = `${feasibility.score}%`;
+      barEl.style.background = feasibility.barColor;
+      
+      const factorsEl = document.getElementById('feasibility-factors');
+      if (feasibility.factors.length === 0) {
+        factorsEl.innerHTML = '<div class="feasibility-factor"><span>No policies selected</span><span class="feasibility-factor-impact neutral">—</span></div>';
+      } else {
+        // Show top 4 factors
+        factorsEl.innerHTML = feasibility.factors.slice(0, 4).map(f => `
+          <div class="feasibility-factor">
+            <span>${f.label}</span>
+            <span class="feasibility-factor-impact ${f.class}">${f.impact > 0 ? '+' : ''}${f.impact}</span>
+          </div>
+        `).join('');
       }
     }
 
