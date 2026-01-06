@@ -2878,10 +2878,10 @@
         name: 'Current System',
         desc: 'Mix of family, employment, diversity, and refugee admissions',
         controls: [
-          { id: 'family', label: 'Family-Based', min: 30, max: 80, unit: '%', desc: 'Immediate relatives + family preference' },
-          { id: 'employment', label: 'Employment-Based', min: 5, max: 40, unit: '%', desc: 'EB-1 through EB-5 visas' },
-          { id: 'diversity', label: 'Diversity Lottery', min: 0, max: 15, unit: '%', desc: 'Random selection from underrepresented countries' },
-          { id: 'refugee', label: 'Refugee/Asylum', min: 5, max: 30, unit: '%', desc: 'Humanitarian admissions' }
+          { id: 'family', label: 'Family-Based', min: 20, max: 85, unit: '%', desc: 'Immediate relatives + family preference' },
+          { id: 'employment', label: 'Employment-Based', min: 5, max: 60, unit: '%', desc: 'EB-1 through EB-5 visas' },
+          { id: 'diversity', label: 'Diversity Lottery', min: 0, max: 20, unit: '%', desc: 'Random selection from underrepresented countries' },
+          { id: 'refugee', label: 'Refugee/Asylum', min: 0, max: 40, unit: '%', desc: 'Humanitarian admissions' }
         ]
       },
       {
@@ -5085,7 +5085,17 @@
       
       const params = immigrationConfig.params[mech.id];
       
-      container.innerHTML = mech.controls.map(ctrl => {
+      // For current system, show total
+      const isCurrent = mech.id === 'current';
+      let totalHtml = '';
+      if (isCurrent) {
+        const total = params.family + params.employment + params.diversity + params.refugee;
+        totalHtml = `<div style="text-align: right; font-size: 11px; color: #666; margin-bottom: 8px;">
+          Total: <span id="current-total">${total}</span>%
+        </div>`;
+      }
+      
+      container.innerHTML = totalHtml + mech.controls.map(ctrl => {
         const value = params[ctrl.id];
         const step = ctrl.step || 1;
         const displayValue = ctrl.format ? ctrl.format(value) : `${value}${ctrl.unit}`;
@@ -5110,8 +5120,56 @@
         
         slider.addEventListener('input', () => {
           const newValue = ctrl.step === 0.1 ? parseFloat(slider.value) : parseInt(slider.value);
-          params[ctrl.id] = newValue;
-          valueEl.textContent = ctrl.format ? ctrl.format(newValue) : `${newValue}${ctrl.unit}`;
+          
+          // For current system, maintain 100% total
+          if (isCurrent) {
+            const shareKeys = ['family', 'employment', 'diversity', 'refugee'];
+            const otherKeys = shareKeys.filter(k => k !== ctrl.id);
+            const oldOtherTotal = otherKeys.reduce((sum, k) => sum + params[k], 0);
+            const targetOtherTotal = 100 - newValue;
+            
+            if (oldOtherTotal > 0 && targetOtherTotal >= 0) {
+              // Scale other sliders proportionally
+              const scale = targetOtherTotal / oldOtherTotal;
+              otherKeys.forEach(k => {
+                const ctrlDef = mech.controls.find(c => c.id === k);
+                let newVal = Math.round(params[k] * scale);
+                newVal = Math.max(ctrlDef.min, Math.min(ctrlDef.max, newVal));
+                params[k] = newVal;
+              });
+              
+              // Adjust for rounding errors
+              const actualTotal = newValue + otherKeys.reduce((sum, k) => sum + params[k], 0);
+              if (actualTotal !== 100) {
+                // Find the largest other slider and adjust it
+                const largest = otherKeys.reduce((a, b) => params[a] > params[b] ? a : b);
+                params[largest] += (100 - actualTotal);
+              }
+            }
+            
+            params[ctrl.id] = newValue;
+            
+            // Update all slider displays
+            mech.controls.forEach(c => {
+              const s = document.getElementById(`ctrl-${c.id}`);
+              const v = document.getElementById(`value-${c.id}`);
+              if (s && v) {
+                s.value = params[c.id];
+                v.textContent = c.format ? c.format(params[c.id]) : `${params[c.id]}${c.unit}`;
+              }
+            });
+            
+            // Update total display
+            const totalEl = document.getElementById('current-total');
+            if (totalEl) {
+              const total = shareKeys.reduce((sum, k) => sum + params[k], 0);
+              totalEl.textContent = total;
+            }
+          } else {
+            params[ctrl.id] = newValue;
+            valueEl.textContent = ctrl.format ? ctrl.format(newValue) : `${newValue}${ctrl.unit}`;
+          }
+          
           updateCompositionBar();
           updateImmigrationDisplay();
           updateDisplay();
