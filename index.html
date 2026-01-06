@@ -1593,6 +1593,300 @@
       .splash-caveats-list { font-size: 0.9rem; }
       .splash-start-btn { padding: 14px 36px; font-size: 1rem; }
     }
+
+    /* Immigration Tab Styles */
+    .immigration-section {
+      margin-bottom: 24px;
+    }
+
+    .immigration-level-card {
+      background: var(--paper);
+      border: 1px solid var(--ink);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .immigration-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .immigration-card-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .immigration-level-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .immigration-slider-container {
+      margin-bottom: 8px;
+    }
+
+    .immigration-slider-container input[type="range"] {
+      width: 100%;
+      height: 8px;
+      -webkit-appearance: none;
+      background: var(--paper-dark);
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .immigration-slider-container input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      background: var(--ink);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .immigration-slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .immigration-baseline-note {
+      font-size: 11px;
+      color: #666;
+      font-style: italic;
+    }
+
+    .immigration-note {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .selection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .selection-card {
+      background: var(--paper);
+      border: 2px solid var(--paper-dark);
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .selection-card:hover {
+      border-color: var(--ink);
+    }
+
+    .selection-card.selected {
+      border-color: var(--accent);
+      background: rgba(139, 90, 43, 0.05);
+    }
+
+    .selection-card-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .selection-card-title input[type="radio"] {
+      margin: 0;
+    }
+
+    .selection-card-desc {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .selection-card-effects {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .selection-effect {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .selection-effect.positive {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .selection-effect.negative {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .selection-effect.neutral {
+      background: #f5f5f5;
+      color: #666;
+    }
+
+    /* Mechanism Controls */
+    .mechanism-controls {
+      background: var(--paper);
+      border: 1px solid var(--paper-dark);
+      padding: 20px;
+    }
+
+    .mechanism-control-row {
+      margin-bottom: 16px;
+    }
+
+    .mechanism-control-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .mechanism-control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .mechanism-control-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .mechanism-control-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .mechanism-control-slider {
+      width: 100%;
+      height: 8px;
+      -webkit-appearance: none;
+      background: var(--paper-dark);
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .mechanism-control-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--ink);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .mechanism-control-desc {
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    /* Composition Bar */
+    .composition-bar {
+      display: flex;
+      height: 32px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .composition-segment {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: bold;
+      min-width: 30px;
+      transition: flex 0.3s ease;
+    }
+
+    .composition-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 11px;
+    }
+
+    .composition-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .composition-legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    .composition-legend-stats {
+      color: #666;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .immigration-impact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .impact-card {
+      background: var(--paper);
+      border: 1px solid var(--ink);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .impact-label {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .impact-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .impact-value.positive { color: var(--success); }
+    .impact-value.negative { color: var(--danger); }
+
+    .impact-note {
+      font-size: 10px;
+      color: #999;
+      margin-top: 6px;
+    }
+
+    @media (max-width: 500px) {
+      .selection-grid {
+        grid-template-columns: 1fr;
+      }
+      .composition-legend {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .immigration-impact-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
   </style>
 </head>
 <body>
@@ -1701,6 +1995,10 @@
                 <span>Population effect</span>
                 <span id="gdp-pop-val">+$0T</span>
               </div>
+              <div class="gdp-breakdown-row" id="gdp-immigration-row">
+                <span>Immigration</span>
+                <span id="gdp-immigration-val">$0T</span>
+              </div>
               <div class="gdp-breakdown-row interaction-row">
                 <span>Interaction</span>
                 <span id="gdp-interaction-val">$0T</span>
@@ -1714,9 +2012,15 @@
             <p><strong>Tax drag:</strong> Each 0.01 TFR drag ≈ 0.1% lower annual growth, compounded over 50 years.</p>
             <p><strong>Inflation drag:</strong> Persistent inflation from fiscal dominance reduces growth through investment uncertainty, menu costs, and capital misallocation. ~0.05-0.2% lower annual growth per 1pp inflation.</p>
             <p><strong>Population:</strong> Higher TFR → larger workforce. Each +1.0 TFR ≈ +0.5% annual growth (phases in year 20-30).</p>
+            <p><strong>Immigration:</strong> Adds population + productivity. Effect on GDP/capita depends on immigrant productivity vs native (employment rate × skill premium).</p>
             <p style="font-size: 10px; color: #666;"><strong>Sources:</strong> CBO long-term projections; Maestas et al. (2016); Elmendorf & Sheiner (2017); Fischer (1993), Barro (1995), Bruno & Easterly (1998) on inflation-growth.</p>
           </div>
         </div>
+      </div>
+      <div class="fiscal-item" style="border-left: 1px solid rgba(255,255,255,0.2); padding-left: 12px;">
+        <div class="fiscal-label">GDP/cap 2075</div>
+        <div class="fiscal-value" id="gdp-per-capita">$175k</div>
+        <div class="fiscal-sublabel" id="gdp-per-capita-change"></div>
       </div>
     </div>
 
@@ -1962,6 +2266,9 @@
     <button class="tab-btn" data-tab="2">
       Taxes<span class="tab-count" id="count-taxes">0</span>
     </button>
+    <button class="tab-btn" data-tab="3">
+      Immigration<span class="tab-count" id="count-immigration">0</span>
+    </button>
   </nav>
 
   <div class="tab-container">
@@ -1993,6 +2300,84 @@
       <h2 class="section-header">Tax Increases</h2>
       <p class="section-intro">Alternative funding. Tap any policy name to see sources for growth drag estimates. Adjust thresholds to see revenue/drag tradeoffs.</p>
       <div id="tax-increases"></div>
+    </div>
+
+    <div class="tab-panel" id="panel-3">
+      <h2 class="section-header">Immigration Policy</h2>
+      <p class="section-intro">Immigration affects TFR (immigrant fertility + native crowdout), GDP (population + productivity), and fiscal balance (net lifetime contributions). Based on Danish Finance Ministry lifecycle data and demographic convergence research.</p>
+      
+      <div class="immigration-section">
+        <div class="immigration-level-card">
+          <div class="immigration-card-header">
+            <span class="immigration-card-title">Annual Immigration Level</span>
+            <span class="immigration-level-value" id="immigration-level-display">1.0M</span>
+          </div>
+          <div class="immigration-slider-container">
+            <input type="range" id="immigration-level-slider" min="0" max="3000" value="1000" step="100">
+            <div class="immigration-slider-labels">
+              <span>0</span>
+              <span>1.5M</span>
+              <span>3M</span>
+            </div>
+          </div>
+          <div class="immigration-baseline-note">Current: ~1M legal/year. Does not include undocumented (~500k-1M/year est.)</div>
+        </div>
+      </div>
+
+      <div class="immigration-section">
+        <div class="subsection-header">Selection Mechanism</div>
+        <p class="immigration-note">How immigrants are selected affects skill composition, fiscal impact, and fertility.</p>
+        <div id="selection-mechanisms" class="selection-grid"></div>
+      </div>
+
+      <div class="immigration-section">
+        <div class="subsection-header">Policy Controls</div>
+        <p class="immigration-note">Adjust parameters for the selected mechanism.</p>
+        <div id="mechanism-controls" class="mechanism-controls"></div>
+      </div>
+
+      <div class="immigration-section">
+        <div class="subsection-header">Resulting Composition</div>
+        <div class="composition-bar" id="composition-bar"></div>
+        <div class="composition-legend" id="composition-legend"></div>
+      </div>
+
+      <div class="immigration-section">
+        <div class="subsection-header">Impact Summary</div>
+        <div class="callout" style="margin-bottom: 16px;">
+          <div class="callout-title">⚠️ Empirical Disclaimer</div>
+          These estimates reflect observed statistical patterns, not inherent characteristics. Outcomes vary enormously by individual. Fiscal impacts depend heavily on host-country policies and labor market conditions.
+        </div>
+        <div class="immigration-impact-grid">
+          <div class="impact-card">
+            <div class="impact-label">TFR Effect</div>
+            <div class="impact-value" id="immigration-tfr-effect">+0.00</div>
+            <div class="impact-note" id="immigration-tfr-note">Gen 1 boost, converges over 25yr</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-label">50yr Fiscal NPV</div>
+            <div class="impact-value" id="immigration-fiscal-effect">$0T</div>
+            <div class="impact-note" id="immigration-fiscal-note">Lifetime tax - benefits, all cohorts</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-label">GDP 2075 Effect</div>
+            <div class="impact-value" id="immigration-gdp-effect">+0%</div>
+            <div class="impact-note" id="immigration-gdp-note">Population + productivity</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="immigration-section">
+        <div class="subsection-header">Methodology</div>
+        <div class="methodology-card" style="padding: 16px;">
+          <p><strong>Generational Effects:</strong> 2nd-gen shows partial convergence (40% toward native), NOT full reversion to mean. Danish data: MENAPT gen2 employment ~65% (vs gen1 52%, native 79%). Gen2 fiscal ~50% better than gen1 but still below native for low-skill origins. Parrado & Morgan (2008), Hansen et al. (2017).</p>
+          <p><strong>Native Fertility Crowdout:</strong> Calibrated to Seah (2018) Mariel Boatlift: 7% labor shock → 8-11% rent increase → 14% fertility decline among renters. Refugee/diversity streams cause ~60% more crowdout per capita (lower income, higher density). Saiz (2007), Dettling & Kearney (2014).</p>
+          <p><strong>Fiscal NPV:</strong> Danish Finance Ministry (2018) lifecycle by origin. MENAPT gen1: −$165k NPV, gen2: −$79k NPV. Selection mechanism matters: employment-based ~3× better fiscal than family/refugee.</p>
+          <p><strong>GDP Channel:</strong> Per-capita productivity = employment rate × skill premium. These parameters carry substantial uncertainty—actual integration outcomes vary by host-country policy, labor market conditions, and origin-specific factors. Model uses Danish/Canadian benchmarks but does not capture all integration frictions.</p>
+          <p><strong>Integration Penalty:</strong> Above 1.5M/year, productivity is penalized 10% per 500k (max 30% at 3M). Reflects labor market absorption limits, infrastructure strain, and social service capacity constraints at high inflow levels.</p>
+          <p><strong>Housing Costs:</strong> Immigration increases housing demand. Rather than modeling housing separately, this effect is captured through the native fertility crowdout channel (rent-driven fertility decline). Local housing constraints and zoning effects are not modeled separately.</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2449,6 +2834,143 @@
       }
     ];
 
+    // === IMMIGRATION POLICY DATA ===
+    // Based on: Danish Finance Ministry (2018), Borjas (1999), Peri (2012), 
+    // Putterman & Weil (2010), Borjas (1999), Peri (2012)
+    
+    const immigrationConfig = {
+      annualLevel: 1000,  // thousands (1M baseline)
+      selectionMechanism: 'current',
+      // Mechanism-specific parameters
+      params: {
+        current: {
+          family: 66,      // % family-based
+          employment: 15,  // % employment-based
+          diversity: 5,    // % diversity lottery
+          refugee: 14      // % refugee/asylum
+        },
+        points: {
+          threshold: 67,       // Points threshold (Canada uses 67)
+          educationWeight: 25, // Max points for education
+          languageWeight: 20,  // Max points for language
+          ageWeight: 12,       // Max points for age
+          jobOfferBonus: 10    // Points for confirmed job offer
+        },
+        employment: {
+          h1bCap: 150,         // H1B cap in thousands (current: 85k)
+          wagePremium: 1.2,    // Wage floor multiplier (1.2 = 20% above prevailing)
+          h1bFee: 10           // Application fee in $k (higher = more selective)
+        },
+        family: {
+          extendedFamily: 50,  // % allowing extended family (siblings, adult children)
+          sponsorIncome: 30    // Minimum sponsor income in $k
+        },
+        diversity: {
+          slots: 55,           // Annual slots in thousands (current: 55k)
+          educationReq: 1      // 0=none, 1=HS, 2=Bachelor's
+        }
+      }
+    };
+
+    const selectionMechanisms = [
+      {
+        id: 'current',
+        name: 'Current System',
+        desc: 'Mix of family, employment, diversity, and refugee admissions',
+        controls: [
+          { id: 'family', label: 'Family-Based', min: 30, max: 80, unit: '%', desc: 'Immediate relatives + family preference' },
+          { id: 'employment', label: 'Employment-Based', min: 5, max: 40, unit: '%', desc: 'EB-1 through EB-5 visas' },
+          { id: 'diversity', label: 'Diversity Lottery', min: 0, max: 15, unit: '%', desc: 'Random selection from underrepresented countries' },
+          { id: 'refugee', label: 'Refugee/Asylum', min: 5, max: 30, unit: '%', desc: 'Humanitarian admissions' }
+        ]
+      },
+      {
+        id: 'points',
+        name: 'Points System',
+        desc: 'Canada/Australia model. Merit-based selection.',
+        controls: [
+          { id: 'threshold', label: 'Points Threshold', min: 50, max: 90, unit: 'pts', desc: 'Higher = more selective (Canada: 67)' },
+          { id: 'educationWeight', label: 'Education Weight', min: 10, max: 40, unit: 'pts', desc: 'Points for degrees (PhD=max)' },
+          { id: 'languageWeight', label: 'Language Weight', min: 5, max: 30, unit: 'pts', desc: 'Points for English proficiency' },
+          { id: 'jobOfferBonus', label: 'Job Offer Bonus', min: 0, max: 25, unit: 'pts', desc: 'Extra points for confirmed employment' }
+        ]
+      },
+      {
+        id: 'employment',
+        name: 'Employment Priority',
+        desc: 'H1B expansion with employer sponsorship.',
+        controls: [
+          { id: 'h1bCap', label: 'H1B Annual Cap', min: 65, max: 500, unit: 'k', desc: 'Current cap: 85k (65k + 20k advanced degree)' },
+          { id: 'wagePremium', label: 'Wage Floor', min: 1.0, max: 2.0, step: 0.1, unit: '×', desc: 'Multiple of prevailing wage' },
+          { id: 'h1bFee', label: 'H1B Fee', min: 1, max: 50, unit: '$k', desc: 'Higher fee = more selective + revenue' }
+        ]
+      },
+      {
+        id: 'family',
+        name: 'Family Reunification',
+        desc: 'Priority for family ties and chain migration.',
+        controls: [
+          { id: 'extendedFamily', label: 'Extended Family', min: 0, max: 100, unit: '%', desc: '% including siblings, adult children' },
+          { id: 'sponsorIncome', label: 'Sponsor Income Req', min: 0, max: 75, unit: '$k', desc: 'Minimum income to sponsor relatives' }
+        ]
+      },
+      {
+        id: 'diversity',
+        name: 'Diversity Lottery',
+        desc: 'Random selection from underrepresented countries.',
+        controls: [
+          { id: 'slots', label: 'Annual Slots', min: 10, max: 200, unit: 'k', desc: 'Number of diversity visas (current: 55k)' },
+          { id: 'educationReq', label: 'Education Requirement', min: 0, max: 2, step: 1, unit: '', desc: '0=None, 1=HS, 2=Bachelor\'s', format: v => ['None', 'High School', 'Bachelor\'s'][v] }
+        ]
+      }
+    ];
+
+    // Source region data (used internally for calculations)
+    // Fiscal NPV based on Danish Finance Ministry lifecycle data
+    // Employment rates based on Danish Statistics (2018 report)
+    const sourceRegions = {
+      westernHighIncome: {
+        name: 'Western',
+        color: '#1976d2',
+        initialTFR: 1.65,
+        fiscalNPV: 280,      // +$280k lifetime
+        skillPremium: 1.25,
+        employmentRate: 0.76  // Close to native (79%)
+      },
+      asiaHighSkill: {
+        name: 'Asia (H-Skill)',
+        color: '#7b1fa2',
+        initialTFR: 1.75,
+        fiscalNPV: 320,      // Best fiscal (H1B selection)
+        skillPremium: 1.35,
+        employmentRate: 0.82  // Above native (positive selection)
+      },
+      latinAmerica: {
+        name: 'Latin America',
+        color: '#388e3c',
+        initialTFR: 2.35,
+        fiscalNPV: -45,      // Slight negative
+        skillPremium: 0.85,
+        employmentRate: 0.68  // Below native
+      },
+      menapt: {
+        name: 'MENAPT',
+        color: '#d32f2f',
+        initialTFR: 2.75,
+        fiscalNPV: -165,     // Danish data: -85k DKK/year = ~-$165k NPV
+        skillPremium: 0.70,
+        employmentRate: 0.52  // Danish: 56% non-Western vs 79% native
+      },
+      otherNonWestern: {
+        name: 'Other',
+        color: '#f57c00',
+        initialTFR: 2.55,
+        fiscalNPV: -85,
+        skillPremium: 0.78,
+        employmentRate: 0.58
+      }
+    };
+
     const modelParams = { 
       interactionDiscount: 25, 
       contextAdjustment: 10, 
@@ -2862,6 +3384,12 @@
         cbAbsorptionRate: inflationDynamics.cbAbsorptionRate
       };
       
+      // Immigration GDP effect
+      const immigrationImpacts = calculateImmigrationImpacts();
+      // Convert total % effect to annual rate over 50 years
+      // e.g., 20% total effect = ~0.36% per year compounded
+      const immigrationGDPBoost = Math.pow(1 + immigrationImpacts.gdpEffect / 100, 1/50) - 1;
+      
       // Phased effects
       let gdp = currentGDP;
       for (let year = 1; year <= years; year++) {
@@ -2891,6 +3419,14 @@
           annualGrowth += populationGrowthBoost * phaseIn;
         }
         
+        // Immigration GDP effect phases in over 30 years
+        if (year <= 30) {
+          const phaseIn = year / 30;
+          annualGrowth += immigrationGDPBoost * phaseIn;
+        } else {
+          annualGrowth += immigrationGDPBoost;
+        }
+        
         gdp *= (1 + annualGrowth);
       }
       
@@ -2911,7 +3447,52 @@
       });
       entitlementReforms.forEach(r => { if (r.enabled) offsets += (r.savingsLow + r.savingsHigh) / 2; });
       taxIncreases.forEach(t => { if (t.enabled) offsets += (t.savingsLow + t.savingsHigh) / 2; });
-      return { spending, offsets, net: spending - offsets };
+      
+      // Immigration fiscal effect (annual, marginal vs CBO baseline)
+      // CBO baseline assumes ~1M immigrants/year with current system at default params
+      
+      // Save current settings
+      const savedLevel = immigrationConfig.annualLevel;
+      const savedMech = immigrationConfig.selectionMechanism;
+      const savedCurrentParams = { ...immigrationConfig.params.current };
+      
+      // Set to baseline: 1M/yr with current system at default params
+      immigrationConfig.annualLevel = 1000;
+      immigrationConfig.selectionMechanism = 'current';
+      immigrationConfig.params.current = { family: 66, employment: 15, diversity: 5, refugee: 14 };
+      const baselineImpacts = calculateImmigrationImpacts();
+      
+      // Restore current settings
+      immigrationConfig.annualLevel = savedLevel;
+      immigrationConfig.selectionMechanism = savedMech;
+      immigrationConfig.params.current = savedCurrentParams;
+      const currentImpacts = calculateImmigrationImpacts();
+      
+      // Calculate per-immigrant fiscal for both (including gen2)
+      const baselineAnnual = 1000000;
+      const currentAnnual = savedLevel * 1000;
+      
+      // NPV is total over 50 years for gen1 + gen2
+      // Total people = annual * 50 * 1.75 (where 0.75 is gen2 per gen1)
+      const baselineFiscalPerImm = (baselineImpacts.fiscalNPV * 1e12) / (baselineAnnual * 50 * 1.75) / 1000; // $k
+      const currentFiscalPerImm = (currentImpacts.fiscalNPV * 1e12) / (currentAnnual * 50 * 1.75) / 1000; // $k
+      
+      // Annual marginal effect in $B:
+      // Level effect: extra immigrants at current fiscal rate
+      // Composition effect: baseline immigrants at different fiscal rate
+      const levelChange = currentAnnual - baselineAnnual;
+      const levelEffect = (levelChange * currentFiscalPerImm) / 1e6; // $B
+      const compositionEffect = (baselineAnnual * (currentFiscalPerImm - baselineFiscalPerImm)) / 1e6; // $B
+      const immigrationFiscalEffect = levelEffect + compositionEffect;
+      
+      // Positive fiscal = revenue (reduces deficit), negative = cost (increases deficit)
+      if (immigrationFiscalEffect > 0) {
+        offsets += immigrationFiscalEffect;
+      } else {
+        spending += Math.abs(immigrationFiscalEffect);
+      }
+      
+      return { spending, offsets, net: spending - offsets, immigrationEffect: immigrationFiscalEffect };
     }
 
     function calculateTFR() {
@@ -2950,13 +3531,20 @@
       netLow -= tfrDrag;
       netHigh -= tfrDrag;
 
+      // Immigration TFR effect
+      const immigrationImpacts = calculateImmigrationImpacts();
+      const immigrationTFR = immigrationImpacts.tfrEffect;
+      netLow += immigrationTFR;
+      netHigh += immigrationTFR;
+
       return { 
         low: baseTFR + netLow, 
         mid: baseTFR + (netLow + netHigh) / 2, 
         high: baseTFR + netHigh, 
         inflationPenalty, 
         tfrDrag, 
-        gdpDrag, 
+        gdpDrag,
+        immigrationTFR,
         deficit: fiscal.net,  // Net deficit for display
         spending: fiscal.spending,
         offsets: fiscal.offsets
@@ -3026,12 +3614,27 @@
         totalDeficitEl.style.color = ''; // Default
       }
       
-      if (fiscal.net === 0) {
+      if (fiscal.net === 0 && Math.abs(fiscal.immigrationEffect || 0) < 1) {
         deficitBreakdownEl.textContent = `${deficitPctGDP.toFixed(1)}% GDP (baseline)`;
-      } else if (fiscal.net > 0) {
-        deficitBreakdownEl.textContent = `${deficitPctGDP.toFixed(1)}% GDP (+$${Math.round(fiscal.net)}B)`;
       } else {
-        deficitBreakdownEl.textContent = `${deficitPctGDP.toFixed(1)}% GDP (−$${Math.abs(Math.round(fiscal.net))}B)`;
+        let breakdown = `${deficitPctGDP.toFixed(1)}% GDP`;
+        const policyNet = fiscal.net - (fiscal.immigrationEffect || 0);
+        const parts = [];
+        
+        if (Math.abs(policyNet) >= 1) {
+          parts.push(policyNet > 0 ? `+$${Math.round(policyNet)}B policy` : `−$${Math.abs(Math.round(policyNet))}B policy`);
+        }
+        if (Math.abs(fiscal.immigrationEffect || 0) >= 1) {
+          const immEffect = fiscal.immigrationEffect;
+          parts.push(immEffect > 0 ? `+$${Math.round(immEffect)}B imm.` : `−$${Math.abs(Math.round(immEffect))}B imm.`);
+        }
+        
+        if (parts.length > 0) {
+          breakdown += ` (${parts.join(', ')})`;
+        } else if (fiscal.net !== 0) {
+          breakdown += fiscal.net > 0 ? ` (+$${Math.round(fiscal.net)}B)` : ` (−$${Math.abs(Math.round(fiscal.net))}B)`;
+        }
+        deficitBreakdownEl.textContent = breakdown;
       }
 
       const inflationContainer = document.getElementById('inflation-container');
@@ -3165,7 +3768,30 @@
       const entitlementSavings = calculateEntitlementSavings();
       const deficit = tfr.spending;  // Gross spending
       const offsets = tfr.offsets;   // Revenue offsets
-      const gdp2075 = calculateGDP2075(tfr.mid, tfr.gdpDrag, entitlementSavings, deficit, offsets);
+      let gdp2075 = calculateGDP2075(tfr.mid, tfr.gdpDrag, entitlementSavings, deficit, offsets);
+      
+      // Add MARGINAL immigration GDP effect (vs baseline 1M/year current system)
+      // Save current settings
+      const savedLevel = immigrationConfig.annualLevel;
+      const savedMech = immigrationConfig.selectionMechanism;
+      const savedCurrentParams = {...immigrationConfig.params.current};
+      
+      // Calculate baseline (1M/year, current system, default params)
+      immigrationConfig.annualLevel = 1000;
+      immigrationConfig.selectionMechanism = 'current';
+      immigrationConfig.params.current = { family: 66, employment: 15, diversity: 5, refugee: 14 };
+      const baselineImmImpacts = calculateImmigrationImpacts();
+      
+      // Restore and calculate current
+      immigrationConfig.annualLevel = savedLevel;
+      immigrationConfig.selectionMechanism = savedMech;
+      immigrationConfig.params.current = savedCurrentParams;
+      const immImpacts = calculateImmigrationImpacts();
+      
+      // Marginal GDP effect = current - baseline
+      const immGdpEffect = immImpacts.gdpEffect - baselineImmImpacts.gdpEffect;
+      gdp2075 = gdp2075 * (1 + immGdpEffect / 100);
+      
       const gdpEl = document.getElementById('gdp-projection');
       const gdpChangeEl = document.getElementById('gdp-change');
       
@@ -3183,6 +3809,46 @@
       } else {
         gdpChangeEl.textContent = `${gdpPct.toFixed(1)}%`;
         gdpChangeEl.className = 'fiscal-sublabel negative';
+      }
+
+      // GDP per capita calculation
+      // Population 2075 baseline: 380M (CBO projection)
+      // Adjustments: TFR effect + immigration effect
+      const baselinePop2075 = 380; // millions
+      
+      // TFR effect on population: higher TFR = more births over 50 years
+      // Rough estimate: +0.1 TFR → +1% population by 2075 (births compound)
+      const tfrPopEffect = (tfr.mid - 1.62) * 10; // % change
+      
+      // Immigration effect on population (reuse immImpacts from above)
+      const immigrationPop = (immImpacts.level * 50 * 1.75) / 1000; // millions (gen1 + gen2)
+      const baselineImmPop = (1000 * 50 * 1.75) / 1000; // baseline is 1M/yr
+      const netImmPop = immigrationPop - baselineImmPop; // marginal vs baseline
+      
+      const pop2075 = baselinePop2075 * (1 + tfrPopEffect/100) + netImmPop;
+      const baselineGDPPerCapita = (baselineGDP2075 * 1e12) / (baselinePop2075 * 1e6); // $
+      const gdpPerCapita2075 = (gdp2075 * 1e12) / (pop2075 * 1e6); // $
+      
+      const gdpPerCapitaEl = document.getElementById('gdp-per-capita');
+      const gdpPerCapitaChangeEl = document.getElementById('gdp-per-capita-change');
+      
+      if (gdpPerCapitaEl) {
+        gdpPerCapitaEl.textContent = `$${Math.round(gdpPerCapita2075 / 1000)}k`;
+        
+        const perCapitaPctChange = ((gdpPerCapita2075 / baselineGDPPerCapita) - 1) * 100;
+        
+        if (Math.abs(perCapitaPctChange) < 0.5) {
+          gdpPerCapitaChangeEl.textContent = '(baseline)';
+          gdpPerCapitaChangeEl.className = 'fiscal-sublabel';
+        } else if (perCapitaPctChange > 0) {
+          gdpPerCapitaChangeEl.textContent = `+${perCapitaPctChange.toFixed(1)}%`;
+          gdpPerCapitaChangeEl.className = 'fiscal-sublabel positive';
+          gdpPerCapitaEl.className = 'fiscal-value positive';
+        } else {
+          gdpPerCapitaChangeEl.textContent = `${perCapitaPctChange.toFixed(1)}%`;
+          gdpPerCapitaChangeEl.className = 'fiscal-sublabel negative';
+          gdpPerCapitaEl.className = 'fiscal-value negative';
+        }
       }
 
       // Clean additive decomposition: each effect computed holding others at baseline
@@ -3229,10 +3895,26 @@
       const popEffect = gdpPopOnly - baselineGDP2075;
       document.getElementById('gdp-pop-val').textContent = popEffect >= 0 ? `+$${popEffect.toFixed(0)}T` : `−$${Math.abs(popEffect).toFixed(0)}T`;
       
+      // Immigration effect (already calculated above as immGdpEffect)
+      const gdpImmigrationRow = document.getElementById('gdp-immigration-row');
+      const gdpImmigrationVal = document.getElementById('gdp-immigration-val');
+      if (gdpImmigrationRow && gdpImmigrationVal) {
+        // Immigration effect in $T (immGdpEffect is % change)
+        const immEffectT = baselineGDP2075 * (immGdpEffect / 100);
+        if (Math.abs(immEffectT) < 0.5) {
+          gdpImmigrationRow.style.display = 'none';
+        } else {
+          gdpImmigrationRow.style.display = 'flex';
+          gdpImmigrationVal.textContent = immEffectT >= 0 ? `+$${immEffectT.toFixed(0)}T` : `−$${Math.abs(immEffectT).toFixed(0)}T`;
+          gdpImmigrationVal.style.color = immEffectT >= 0 ? '#7cb342' : '#ef5350';
+        }
+      }
+      
       // Interaction residual (total - sum of individual effects)
       const totalDragCalc = window.lastGDPCalc ? window.lastGDPCalc.inflationGrowthDrag + (window.lastGDPCalc.dominanceGrowthDrag || 0) : 0;
       const inflationEffectForSum = totalDragCalc > 0 ? -(28 * Math.pow(1.02, 50) - 28 * Math.pow(1.02 - totalDragCalc, 50)) : 0;
-      const sumOfEffects = fiscalEffect + taxEffect + popEffect + (inflationEffectForSum < 0 ? inflationEffectForSum : 0);
+      const immEffectForSum = baselineGDP2075 * (immGdpEffect / 100);
+      const sumOfEffects = fiscalEffect + taxEffect + popEffect + (inflationEffectForSum < 0 ? inflationEffectForSum : 0) + immEffectForSum;
       const interactionResidual = gdpDelta - sumOfEffects;
       document.getElementById('gdp-interaction-val').textContent = interactionResidual >= 0 ? `+$${interactionResidual.toFixed(0)}T` : `−$${Math.abs(interactionResidual).toFixed(0)}T`;
       
@@ -3718,6 +4400,9 @@
         updateDisplay();
       });
 
+      // Initialize tax revenue display with threshold-adjusted values
+      updateTaxRevenue(tax, costStat, dragStat);
+
       container.appendChild(cardContainer);
     }
 
@@ -4035,6 +4720,549 @@
         updateDisplay();
       });
       container.appendChild(fdThresholdCard);
+    }
+
+    // === IMMIGRATION FUNCTIONS ===
+    
+    // Derive source composition from mechanism and its parameters
+    function deriveSourceComposition() {
+      const mech = immigrationConfig.selectionMechanism;
+      const params = immigrationConfig.params[mech];
+      
+      // Base composition varies by mechanism
+      let weights = {
+        westernHighIncome: 0,
+        asiaHighSkill: 0,
+        latinAmerica: 0,
+        menapt: 0,
+        otherNonWestern: 0
+      };
+      
+      switch (mech) {
+        case 'current':
+          // Family-based: mostly LatAm (chain migration), some Asia
+          // Employment: mostly Asia high-skill, some Western
+          // Diversity: mostly Africa, MENAPT
+          // Refugee: MENAPT, other
+          const fam = params.family / 100;
+          const emp = params.employment / 100;
+          const div = params.diversity / 100;
+          const ref = params.refugee / 100;
+          
+          weights.westernHighIncome = emp * 20 + fam * 5;
+          weights.asiaHighSkill = emp * 60 + fam * 20;
+          weights.latinAmerica = fam * 55 + ref * 20;
+          weights.menapt = ref * 40 + div * 30 + fam * 10;
+          weights.otherNonWestern = div * 70 + ref * 40 + fam * 10;
+          break;
+          
+        case 'points':
+          // Higher threshold = more selective = more high-skill
+          const selectivity = (params.threshold - 50) / 40; // 0-1 scale
+          const eduBias = params.educationWeight / 40;
+          const langBias = params.languageWeight / 30;
+          
+          weights.westernHighIncome = 15 + selectivity * 20 + langBias * 15;
+          weights.asiaHighSkill = 25 + selectivity * 25 + eduBias * 20;
+          weights.latinAmerica = 30 - selectivity * 20;
+          weights.menapt = 15 - selectivity * 10;
+          weights.otherNonWestern = 15 - selectivity * 10;
+          break;
+          
+        case 'employment':
+          // H1B dominated by India/China
+          // Higher wage floor = more senior/high-skill
+          // Higher fee = more selective
+          const wageSelect = (params.wagePremium - 1.0);
+          const feeSelect = params.h1bFee / 50;
+          
+          weights.westernHighIncome = 10 + wageSelect * 20 + feeSelect * 15;
+          weights.asiaHighSkill = 65 + feeSelect * 10;
+          weights.latinAmerica = 10 - feeSelect * 5;
+          weights.menapt = 8 - feeSelect * 3;
+          weights.otherNonWestern = 7 - feeSelect * 3;
+          break;
+          
+        case 'family':
+          // Extended family = more chain migration from existing immigrant communities
+          // Higher sponsor income = slightly more affluent chains
+          const extended = params.extendedFamily / 100;
+          const incomeReq = params.sponsorIncome / 75;
+          
+          weights.westernHighIncome = 8 + incomeReq * 10;
+          weights.asiaHighSkill = 15 + incomeReq * 5;
+          weights.latinAmerica = 50 + extended * 10 - incomeReq * 15;
+          weights.menapt = 12 + extended * 5;
+          weights.otherNonWestern = 15 + extended * 5 - incomeReq * 5;
+          break;
+          
+        case 'diversity':
+          // Lottery from underrepresented countries
+          // Education req shifts composition slightly
+          const eduReq = params.educationReq; // 0, 1, or 2
+          
+          weights.westernHighIncome = 5 + eduReq * 3;
+          weights.asiaHighSkill = 10 + eduReq * 8;
+          weights.latinAmerica = 15 - eduReq * 3; // Many LatAm not underrepresented
+          weights.menapt = 25 - eduReq * 5;
+          weights.otherNonWestern = 45 - eduReq * 3; // Mostly Africa
+          break;
+      }
+      
+      // Normalize to 100%
+      const total = Object.values(weights).reduce((a, b) => a + b, 0);
+      for (const k in weights) {
+        weights[k] = Math.max(0, (weights[k] / total) * 100);
+      }
+      
+      return weights;
+    }
+
+    function calculateImmigrationImpacts() {
+      const level = immigrationConfig.annualLevel;
+      const mech = immigrationConfig.selectionMechanism;
+      const params = immigrationConfig.params[mech];
+      
+      // Get derived source composition
+      const effectiveWeights = deriveSourceComposition();
+      
+      // Calculate blended metrics from composition
+      // Using Danish Finance Ministry lifecycle data calibration
+      let blendedTFR = 0;
+      let blendedFiscalNPV = 0;
+      let blendedSkillPremium = 0;
+      let blendedEmploymentRate = 0;
+      
+      for (const regionId in effectiveWeights) {
+        const weight = effectiveWeights[regionId] / 100;
+        const region = sourceRegions[regionId];
+        if (!region) continue;
+        
+        blendedTFR += weight * region.initialTFR;
+        blendedFiscalNPV += weight * region.fiscalNPV;
+        blendedSkillPremium += weight * region.skillPremium;
+        blendedEmploymentRate += weight * region.employmentRate;
+      }
+      
+      // ================================================
+      // MECHANISM-SPECIFIC MODIFIERS
+      // Based on Danish data: selection mechanism matters enormously
+      // Employment-based: +60% fiscal vs baseline
+      // Points system: +40% fiscal
+      // Family reunification: -20% fiscal  
+      // Refugee/Diversity: -30% to -50% fiscal
+      // GDP bonus is ADDITIVE to skill premium, not multiplicative
+      // ================================================
+      let fiscalBonus = 1, gdpBonus = 0, tfrMod = 0;  // gdpBonus is now additive
+      let crowdoutMultiplier = 1; // Stream-specific crowdout intensity
+      
+      switch (mech) {
+        case 'current':
+          // Baseline mix - crowdout scales with refugee share
+          const refShare = params.refugee / 100;
+          const divShare = params.diversity / 100;
+          crowdoutMultiplier = 1 + (refShare + divShare) * 0.5;
+          // Fiscal scales with employment share
+          const empShare = params.employment / 100;
+          fiscalBonus = 0.85 + empShare * 1.0; // Employment improves fiscal
+          gdpBonus = -0.05 + empShare * 0.15; // Slight negative baseline, employment helps
+          break;
+          
+        case 'points':
+          const selectivity = (params.threshold - 50) / 40;
+          fiscalBonus = 1.2 + selectivity * 0.4; // Points = much better fiscal
+          gdpBonus = 0.05 + selectivity * 0.10; // +5% to +15% skill boost from selection
+          tfrMod = -selectivity * 0.12; // High-skill = lower fertility
+          crowdoutMultiplier = 0.6 - selectivity * 0.2; // Less crowdout (higher income)
+          break;
+          
+        case 'employment':
+          const wageBonus = params.wagePremium - 1.0;
+          const feeBonus = params.h1bFee / 50;
+          // Danish data: employment-based = best fiscal outcomes
+          fiscalBonus = 1.4 + wageBonus * 0.4 + feeBonus * 0.3;
+          gdpBonus = 0.10 + wageBonus * 0.10 + feeBonus * 0.05; // +10% to +25% skill boost
+          tfrMod = -0.08 - wageBonus * 0.08; // Tech workers have fewer kids
+          crowdoutMultiplier = 0.4; // High-skill = minimal crowdout
+          break;
+          
+        case 'family':
+          const extended = params.extendedFamily / 100;
+          const incomeReq = params.sponsorIncome / 75;
+          // Family reunification = worse fiscal than employment
+          // But sponsor income requirements help
+          fiscalBonus = 0.75 - extended * 0.2 + incomeReq * 0.3;
+          gdpBonus = -0.05 - extended * 0.05 + incomeReq * 0.08; // -10% to +3%
+          tfrMod = 0.08 + extended * 0.08;
+          crowdoutMultiplier = 1.2 + extended * 0.3 - incomeReq * 0.4;
+          break;
+          
+        case 'diversity':
+          const eduReq = params.educationReq;
+          // Diversity lottery = worst fiscal outcomes (Danish MENAPT data)
+          // Unless education requirements are strict
+          fiscalBonus = 0.5 + eduReq * 0.2; // Even with BA, still below baseline
+          gdpBonus = -0.15 + eduReq * 0.08; // -15% to -7% even with education req
+          tfrMod = 0.18 - eduReq * 0.06;
+          // High crowdout: lower income, more density, slower labor integration
+          crowdoutMultiplier = 1.6 - eduReq * 0.3;
+          break;
+      }
+      
+      blendedFiscalNPV *= fiscalBonus;
+      blendedSkillPremium += gdpBonus; // ADDITIVE, not multiplicative
+      blendedTFR += tfrMod;
+      
+      // Population calculations
+      const totalImmigrants = level * 50 * 1000;
+      const gen2 = totalImmigrants * 0.75;
+      const totalPopAdded = totalImmigrants + gen2;
+      
+      const baselinePop2075 = 380000000;
+      const popWithImmigration = baselinePop2075 + totalPopAdded;
+      const popGrowthPct = ((popWithImmigration - baselinePop2075) / baselinePop2075) * 100;
+      
+      // TFR effect
+      const immigrantBirthShare = Math.min(0.30, (level / 1000) * 0.15);
+      const nativeTFR = 1.62;
+      const gen2TFR = nativeTFR * 0.8 + blendedTFR * 0.2;
+      const effectiveImmigrantTFR = (blendedTFR + gen2TFR) / 2;
+      const directTFREffect = immigrantBirthShare * (effectiveImmigrantTFR - nativeTFR);
+      
+      // ================================================
+      // NATIVE FERTILITY CROWDOUT
+      // Calibrated to Seah (2018) Mariel Boatlift study:
+      // 7% labor force increase → 8-11% rent increase → 14% fertility decline
+      // Effect is MUCH stronger for low-skill/refugee streams
+      // ================================================
+      const baselineLevel = 1000;
+      const excessImmigration = Math.max(0, level - baselineLevel);
+      
+      // Housing pressure: base effect scaled by stream
+      // Mariel: 14% fertility decline from 7% pop shock among renters
+      // Translates to roughly -0.02 TFR per 500k at baseline composition
+      const baseHousingCrowdout = (excessImmigration / 500) * 0.012;
+      const housingCrowdout = baseHousingCrowdout * crowdoutMultiplier;
+      
+      // Labor market pressure: scales with low-skill share AND employment competition
+      const lowSkillShare = (
+        (effectiveWeights.latinAmerica || 0) * 0.7 +
+        (effectiveWeights.menapt || 0) * 0.6 +
+        (effectiveWeights.otherNonWestern || 0) * 0.65 +
+        (effectiveWeights.westernHighIncome || 0) * 0.2 +
+        (effectiveWeights.asiaHighSkill || 0) * 0.15
+      ) / 100;
+      
+      // Labor crowdout also affected by stream (refugees compete differently than H1Bs)
+      const baseLaborCrowdout = (excessImmigration / 500) * 0.006 * (lowSkillShare / 0.5);
+      const laborCrowdout = baseLaborCrowdout * crowdoutMultiplier;
+      
+      // Total native crowdout
+      const nativeCrowdout = housingCrowdout + laborCrowdout;
+      const nationalTFREffect = directTFREffect - nativeCrowdout;
+      
+      // ================================================
+      // GEN2 CHARACTERISTICS
+      // Danish data: 2nd generation shows PARTIAL convergence, NOT reversion to mean
+      // MENAPT gen2 employment: ~65% (vs gen1 52%, native 79%)
+      // MENAPT gen2 fiscal: still negative but ~50% better than gen1
+      // High-skill gen2: closer to native (parents selected for success)
+      // ================================================
+      const gen2ConvergenceFactor = 0.4; // 40% toward native, 60% retain parent characteristics
+      
+      const gen2EmploymentRate = blendedEmploymentRate + (0.79 - blendedEmploymentRate) * gen2ConvergenceFactor;
+      const gen2SkillPremium = blendedSkillPremium + (1.0 - blendedSkillPremium) * gen2ConvergenceFactor;
+      const gen2FiscalNPV = blendedFiscalNPV + (50 - blendedFiscalNPV) * gen2ConvergenceFactor; // 50k = slight positive baseline
+      
+      // ================================================
+      // FISCAL IMPACT - include both generations
+      // Gen1: full origin characteristics
+      // Gen2: partial convergence (still below native for low-skill origins)
+      // ================================================
+      const gen1FiscalTotal = (blendedFiscalNPV * 1000 * totalImmigrants) / 1e12;
+      const gen2FiscalTotal = (gen2FiscalNPV * 1000 * gen2) / 1e12;
+      const totalFiscalNPV = gen1FiscalTotal + gen2FiscalTotal;
+      
+      // ================================================
+      // GDP EFFECT - weighted by generation
+      // Gen1: origin employment × skill premium
+      // Gen2: partially converged employment × skill premium
+      // ================================================
+      const nativeBenchmark = 0.79; // Native employment rate (productivity normalized to 1.0)
+      
+      const gen1PerCapita = blendedEmploymentRate * blendedSkillPremium;
+      const gen2PerCapita = gen2EmploymentRate * gen2SkillPremium;
+      
+      // Weighted average productivity for all immigrants
+      const gen1Weight = totalImmigrants / totalPopAdded;
+      const gen2Weight = gen2 / totalPopAdded;
+      const blendedPerCapita = gen1PerCapita * gen1Weight + gen2PerCapita * gen2Weight;
+      
+      const gdpPerCapitaRatio = blendedPerCapita / nativeBenchmark;
+      
+      // ================================================
+      // HIGH-LEVEL INTEGRATION PENALTY
+      // Above 1.5M/year, integration frictions compound:
+      // - Labor market absorption capacity
+      // - Housing/infrastructure strain
+      // - Social service capacity
+      // ================================================
+      let integrationPenalty = 1.0;
+      if (level > 1500) {
+        // 10% productivity penalty per 500k above 1.5M, maxing at 30%
+        const excessLevel = (level - 1500) / 500;
+        integrationPenalty = Math.max(0.7, 1 - excessLevel * 0.10);
+      }
+      
+      // GDP growth = pop growth × per-capita productivity × integration factor
+      const gdpFromPop = popGrowthPct * gdpPerCapitaRatio * integrationPenalty;
+      
+      // Additional productivity spillovers (innovation, entrepreneurship) for high-skill only
+      // Very modest: high-skill immigrants boost TFP ~0.5% per 1% of population
+      const spilloverEffect = blendedSkillPremium > 1.05 ? 
+        (blendedSkillPremium - 1) * (totalPopAdded / popWithImmigration) * 50 : 0;
+      
+      const totalGDPEffect = gdpFromPop + spilloverEffect;
+      
+      return {
+        tfrEffect: nationalTFREffect,
+        directTFREffect,
+        nativeCrowdout,
+        housingCrowdout,
+        laborCrowdout,
+        fiscalNPV: totalFiscalNPV,
+        gdpEffect: totalGDPEffect,
+        blendedImmigrantTFR: blendedTFR,
+        effectiveWeights,
+        level,
+        lowSkillShare,
+        crowdoutMultiplier,
+        blendedEmploymentRate,
+        blendedSkillPremium,
+        gdpPerCapitaRatio,
+        integrationPenalty
+      };
+    }
+
+    function renderSelectionMechanisms() {
+      const container = document.getElementById('selection-mechanisms');
+      container.innerHTML = '';
+      
+      selectionMechanisms.forEach(mech => {
+        const card = document.createElement('div');
+        card.className = `selection-card ${immigrationConfig.selectionMechanism === mech.id ? 'selected' : ''}`;
+        card.innerHTML = `
+          <div class="selection-card-title">
+            <input type="radio" name="selection-mechanism" value="${mech.id}" 
+                   ${immigrationConfig.selectionMechanism === mech.id ? 'checked' : ''}>
+            ${mech.name}
+          </div>
+          <div class="selection-card-desc">${mech.desc}</div>
+        `;
+        
+        card.addEventListener('click', () => {
+          immigrationConfig.selectionMechanism = mech.id;
+          renderSelectionMechanisms();
+          renderMechanismControls();
+          updateCompositionBar();
+          updateImmigrationDisplay();
+          updateDisplay();
+        });
+        
+        container.appendChild(card);
+      });
+    }
+
+    function renderMechanismControls() {
+      const container = document.getElementById('mechanism-controls');
+      if (!container) return;
+      
+      const mech = selectionMechanisms.find(m => m.id === immigrationConfig.selectionMechanism);
+      if (!mech || !mech.controls) {
+        container.innerHTML = '<p style="color: #666; font-style: italic;">No adjustable parameters for this mechanism.</p>';
+        return;
+      }
+      
+      const params = immigrationConfig.params[mech.id];
+      
+      container.innerHTML = mech.controls.map(ctrl => {
+        const value = params[ctrl.id];
+        const step = ctrl.step || 1;
+        const displayValue = ctrl.format ? ctrl.format(value) : `${value}${ctrl.unit}`;
+        
+        return `
+          <div class="mechanism-control-row">
+            <div class="mechanism-control-header">
+              <span class="mechanism-control-label">${ctrl.label}</span>
+              <span class="mechanism-control-value" id="value-${ctrl.id}">${displayValue}</span>
+            </div>
+            <input type="range" class="mechanism-control-slider" id="ctrl-${ctrl.id}"
+                   min="${ctrl.min}" max="${ctrl.max}" value="${value}" step="${step}">
+            <div class="mechanism-control-desc">${ctrl.desc}</div>
+          </div>
+        `;
+      }).join('');
+      
+      // Add event listeners
+      mech.controls.forEach(ctrl => {
+        const slider = document.getElementById(`ctrl-${ctrl.id}`);
+        const valueEl = document.getElementById(`value-${ctrl.id}`);
+        
+        slider.addEventListener('input', () => {
+          const newValue = ctrl.step === 0.1 ? parseFloat(slider.value) : parseInt(slider.value);
+          params[ctrl.id] = newValue;
+          valueEl.textContent = ctrl.format ? ctrl.format(newValue) : `${newValue}${ctrl.unit}`;
+          updateCompositionBar();
+          updateImmigrationDisplay();
+          updateDisplay();
+        });
+      });
+    }
+
+    function updateCompositionBar() {
+      const barContainer = document.getElementById('composition-bar');
+      const legendContainer = document.getElementById('composition-legend');
+      if (!barContainer) return;
+      
+      const weights = deriveSourceComposition();
+      
+      barContainer.innerHTML = Object.entries(weights).map(([id, pct]) => {
+        const region = sourceRegions[id];
+        if (pct < 2) return ''; // Don't show tiny segments
+        return `<div class="composition-segment" style="flex: ${pct}; background: ${region.color};">${Math.round(pct)}%</div>`;
+      }).join('');
+      
+      if (legendContainer) {
+        legendContainer.innerHTML = Object.entries(weights).map(([id, pct]) => {
+          const region = sourceRegions[id];
+          const fiscalStr = region.fiscalNPV >= 0 ? `+$${region.fiscalNPV}k` : `-$${Math.abs(region.fiscalNPV)}k`;
+          const empPct = Math.round(region.employmentRate * 100);
+          return `
+            <div class="composition-legend-item">
+              <div class="composition-legend-dot" style="background: ${region.color};"></div>
+              <span>${region.name}</span>
+              <span class="composition-legend-stats">${Math.round(pct)}% · ${fiscalStr} · ${empPct}% emp</span>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function updateImmigrationDisplay() {
+      const impacts = calculateImmigrationImpacts();
+      
+      // Update level display
+      const levelDisplay = document.getElementById('immigration-level-display');
+      if (levelDisplay) {
+        levelDisplay.textContent = `${(immigrationConfig.annualLevel / 1000).toFixed(1)}M`;
+      }
+      
+      // Update impact cards
+      const tfrEffectEl = document.getElementById('immigration-tfr-effect');
+      const fiscalEffectEl = document.getElementById('immigration-fiscal-effect');
+      const gdpEffectEl = document.getElementById('immigration-gdp-effect');
+      
+      if (tfrEffectEl) {
+        const tfrStr = impacts.tfrEffect >= 0 ? `+${impacts.tfrEffect.toFixed(2)}` : impacts.tfrEffect.toFixed(2);
+        tfrEffectEl.textContent = tfrStr;
+        tfrEffectEl.className = `impact-value ${impacts.tfrEffect >= 0 ? 'positive' : 'negative'}`;
+        
+        const tfrNoteEl = document.getElementById('immigration-tfr-note');
+        if (tfrNoteEl) {
+          const directStr = impacts.directTFREffect >= 0 ? `+${impacts.directTFREffect.toFixed(2)}` : impacts.directTFREffect.toFixed(2);
+          if (impacts.nativeCrowdout > 0.005) {
+            const multiplierNote = impacts.crowdoutMultiplier > 1.2 ? ' (high)' : 
+                                   impacts.crowdoutMultiplier < 0.7 ? ' (low)' : '';
+            tfrNoteEl.innerHTML = `Direct: ${directStr}, Crowdout: −${impacts.nativeCrowdout.toFixed(2)}${multiplierNote}`;
+          } else {
+            tfrNoteEl.textContent = `Direct immigrant fertility effect`;
+          }
+        }
+      }
+      
+      if (fiscalEffectEl) {
+        const fiscalStr = impacts.fiscalNPV >= 0 ? `+$${impacts.fiscalNPV.toFixed(1)}T` : `-$${Math.abs(impacts.fiscalNPV).toFixed(1)}T`;
+        fiscalEffectEl.textContent = fiscalStr;
+        fiscalEffectEl.className = `impact-value ${impacts.fiscalNPV >= 0 ? 'positive' : 'negative'}`;
+        
+        // Show annual deficit impact (calculated in calculateFiscal)
+        const fiscalNoteEl = document.getElementById('immigration-fiscal-note');
+        if (fiscalNoteEl) {
+          // Get the fiscal calculation which includes immigration effect
+          const fiscal = calculateFiscal();
+          const annualEffect = fiscal.immigrationEffect || 0;
+          
+          if (Math.abs(annualEffect) >= 1) {
+            // Positive fiscal = reduces deficit, negative = increases deficit
+            if (annualEffect > 0) {
+              fiscalNoteEl.textContent = `−$${Math.round(annualEffect)}B/yr to deficit`;
+            } else {
+              fiscalNoteEl.textContent = `+$${Math.abs(Math.round(annualEffect))}B/yr to deficit`;
+            }
+          } else {
+            fiscalNoteEl.textContent = `Lifetime tax − benefits`;
+          }
+        }
+      }
+      
+      if (gdpEffectEl) {
+        // Calculate marginal GDP effect vs baseline (1M/year current system)
+        const savedLevel = immigrationConfig.annualLevel;
+        const savedMech = immigrationConfig.selectionMechanism;
+        const savedCurrentParams = {...immigrationConfig.params.current};
+        
+        immigrationConfig.annualLevel = 1000;
+        immigrationConfig.selectionMechanism = 'current';
+        immigrationConfig.params.current = { family: 66, employment: 15, diversity: 5, refugee: 14 };
+        const baselineImpacts = calculateImmigrationImpacts();
+        
+        immigrationConfig.annualLevel = savedLevel;
+        immigrationConfig.selectionMechanism = savedMech;
+        immigrationConfig.params.current = savedCurrentParams;
+        
+        const marginalGdpEffect = impacts.gdpEffect - baselineImpacts.gdpEffect;
+        
+        const gdpStr = marginalGdpEffect >= 0 ? `+${marginalGdpEffect.toFixed(1)}%` : `${marginalGdpEffect.toFixed(1)}%`;
+        gdpEffectEl.textContent = gdpStr;
+        gdpEffectEl.className = `impact-value ${marginalGdpEffect >= 0 ? 'positive' : 'negative'}`;
+        
+        // Update GDP note - show integration penalty if active
+        const gdpNoteEl = document.getElementById('immigration-gdp-note');
+        if (gdpNoteEl) {
+          if (impacts.integrationPenalty < 0.99) {
+            const penaltyPct = Math.round((1 - impacts.integrationPenalty) * 100);
+            gdpNoteEl.textContent = `−${penaltyPct}% integration penalty`;
+          } else {
+            gdpNoteEl.textContent = `vs 1M/yr current system`;
+          }
+        }
+      }
+      
+      // Update tab badge
+      const countEl = document.getElementById('count-immigration');
+      if (countEl) {
+        let changes = 0;
+        if (immigrationConfig.annualLevel !== 1000) changes++;
+        if (immigrationConfig.selectionMechanism !== 'current') changes++;
+        countEl.textContent = changes;
+      }
+    }
+
+    function initImmigration() {
+      const levelSlider = document.getElementById('immigration-level-slider');
+      if (levelSlider) {
+        levelSlider.addEventListener('input', () => {
+          immigrationConfig.annualLevel = parseInt(levelSlider.value);
+          updateCompositionBar();
+          updateImmigrationDisplay();
+          updateDisplay();
+        });
+      }
+      
+      renderSelectionMechanisms();
+      renderMechanismControls();
+      updateCompositionBar();
+      updateImmigrationDisplay();
     }
 
     function initTabs() {
@@ -4405,6 +5633,7 @@
       taxIncreases.forEach(t => renderReformCard(t, document.getElementById('tax-increases'), true));
       renderModelParams(document.getElementById('model-params'));
       initTabs();
+      initImmigration();
       initPenaltyBadges();
       initDeficitModal();
       initShareModal();
