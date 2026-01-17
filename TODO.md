@@ -72,8 +72,8 @@ This document tracks planned improvements to make the game more playable, access
 
 ## Save System
 
-- [ ] **Auto-save indicator** - Visual confirmation when game auto-saves
-- [ ] **"Last saved" display** - Show time since last save in UI
+- [x] **Auto-save indicator** - Visual confirmation when game auto-saves
+- [x] **"Last saved" display** - Show time since last save in UI
 - [ ] **Multiple save slots** - Allow 3-5 different save files
 - [ ] **Export/Import saves** - Allow backing up progress to file
 
@@ -81,7 +81,7 @@ This document tracks planned improvements to make the game more playable, access
 
 ## Quick Actions & UX
 
-- [ ] **Keyboard shortcuts** - Number keys (1-9) for common event choices
+- [x] **Keyboard shortcuts** - Number keys (1-9) for common event choices
 - [ ] **Quick-access panel** - Frequently used actions without modal navigation
 - [ ] **Undo last action** - Allow reversing accidental clicks (within same week)
 
@@ -178,7 +178,9 @@ This document tracks planned improvements to make the game more playable, access
 
 ## Completed
 
-_Move items here as they are finished_
+- [x] **Keyboard shortcuts** - Number keys (1-9) for common event choices
+- [x] **Auto-save indicator** - Visual confirmation when game auto-saves (every 2 minutes)
+- [x] **"Last saved" display** - Show time since last save in UI header
 
 ---
 

@@ -11864,8 +11864,10 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
                 let saveData = JSON.stringify(state);
                 localStorage.setItem('lifeGameSave', saveData);
                 localStorage.setItem('lifeGameSaveDate', new Date().toISOString());
+                lastAutoSaveTime = new Date();
                 closeGameMenu();
-                alert('Game saved! ✅');
+                showAutoSaveIndicator();
+                updateLastSavedDisplay();
             } catch (e) {
                 alert('Failed to save game: ' + e.message);
             }
@@ -17771,11 +17773,134 @@ Self-Control: ${pendingTraits.selfControl}/10 - ${TRAIT_DESCRIPTORS.selfControl[
             let events = getPhaseEvents();
             displayEvent(events[0]);
             updateUI();
-            
+
             // Initialize mobile status cards after a short delay
             setTimeout(() => {
                 initMobileStatusCards();
             }, 100);
+
+            // Add keyboard shortcuts for event choices (1-9 keys)
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+
+            // Initialize auto-save (every 2 minutes)
+            setInterval(autoSave, 120000);
+
+            // Update last saved display
+            updateLastSavedDisplay();
         }
+
+        // Keyboard shortcuts handler for event choices
+        function handleKeyboardShortcuts(e) {
+            // Don't trigger if any modal is open
+            const modals = [
+                'housingModal', 'transportModal', 'tutorialModal', 'gameMenuModal',
+                'confirmEndModal', 'employmentModal', 'educationModal', 'partnerModal',
+                'creditModal', 'relationshipsModal', 'fishingModal', 'habitsModal',
+                'subscriptionsModal', 'freeTimeModal', 'gameOverScreen'
+            ];
+
+            for (let modalId of modals) {
+                let modal = document.getElementById(modalId);
+                if (modal && !modal.classList.contains('hidden')) {
+                    return; // Modal is open, don't handle shortcut
+                }
+            }
+
+            // Don't trigger if user is typing in an input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                return;
+            }
+
+            // Number keys 1-9 for choices
+            const key = e.key;
+            if (key >= '1' && key <= '9') {
+                const choiceIndex = parseInt(key) - 1;
+                const container = document.getElementById('choicesContainer');
+                const buttons = container.querySelectorAll('.choice-btn:not([disabled])');
+
+                if (buttons[choiceIndex]) {
+                    e.preventDefault();
+                    buttons[choiceIndex].click();
+                }
+            }
+        }
+
+        // Auto-save functionality with visual indicator
+        let lastAutoSaveTime = null;
+
+        function autoSave() {
+            try {
+                let saveData = JSON.stringify(state);
+                localStorage.setItem('lifeGameSave', saveData);
+                localStorage.setItem('lifeGameSaveDate', new Date().toISOString());
+                lastAutoSaveTime = new Date();
+
+                // Show auto-save indicator
+                showAutoSaveIndicator();
+                updateLastSavedDisplay();
+            } catch (e) {
+                console.error('Auto-save failed:', e.message);
+            }
+        }
+
+        function showAutoSaveIndicator() {
+            // Create indicator if it doesn't exist
+            let indicator = document.getElementById('autoSaveIndicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = 'autoSaveIndicator';
+                indicator.className = 'fixed top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-lg text-sm z-50 transition-opacity duration-500';
+                indicator.innerHTML = '💾 Auto-saved';
+                document.body.appendChild(indicator);
+            }
+
+            // Show and fade out
+            indicator.style.opacity = '1';
+            indicator.style.display = 'block';
+
+            setTimeout(() => {
+                indicator.style.opacity = '0';
+            }, 1500);
+
+            setTimeout(() => {
+                indicator.style.display = 'none';
+            }, 2000);
+        }
+
+        function updateLastSavedDisplay() {
+            let saveDate = localStorage.getItem('lifeGameSaveDate');
+            let display = document.getElementById('lastSavedDisplay');
+
+            if (display) {
+                if (saveDate) {
+                    let date = new Date(saveDate);
+                    let now = new Date();
+                    let diffMs = now - date;
+                    let diffMins = Math.floor(diffMs / 60000);
+                    let diffHours = Math.floor(diffMins / 60);
+                    let diffDays = Math.floor(diffHours / 24);
+
+                    let timeAgo;
+                    if (diffMins < 1) {
+                        timeAgo = 'Just now';
+                    } else if (diffMins < 60) {
+                        timeAgo = `${diffMins}m ago`;
+                    } else if (diffHours < 24) {
+                        timeAgo = `${diffHours}h ago`;
+                    } else {
+                        timeAgo = `${diffDays}d ago`;
+                    }
+
+                    display.innerText = `💾 ${timeAgo}`;
+                    display.title = `Last saved: ${date.toLocaleString()}`;
+                } else {
+                    display.innerText = '💾 Not saved';
+                    display.title = 'Game has not been saved yet';
+                }
+            }
+        }
+
+        // Update last saved display every minute
+        setInterval(updateLastSavedDisplay, 60000);
 
         init();
